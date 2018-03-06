@@ -6,4 +6,5 @@ package cn.com.chinalife.ecdata.utils;
 public class CommonConstant {
     public static String beginAppendTime = " 00:00:00";
     public static String endAppendTime = " 23:59:59";
+    public static String queryFailureStr = "查询失败!";
 }

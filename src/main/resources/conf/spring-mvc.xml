@@ -24,6 +24,14 @@
         <property name="suffix" value=".jsp"></property>
     </bean>
 
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes" value="text/html;charset=utf-8"></property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
     <import resource="classpath:conf/spring-mongo.xml"/>
     <import resource="classpath:conf/spring-mybatis.xml"/>
 </beans>

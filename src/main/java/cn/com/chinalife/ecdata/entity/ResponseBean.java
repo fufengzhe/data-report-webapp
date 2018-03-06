@@ -5,7 +5,7 @@ package cn.com.chinalife.ecdata.entity;
  */
 public class ResponseBean {
     private int respCode = 0;
-    private String respMsg = "success";
+    private String respMsg = "查询成功!";
     private Object detailInfo;
 
     public int getRespCode() {

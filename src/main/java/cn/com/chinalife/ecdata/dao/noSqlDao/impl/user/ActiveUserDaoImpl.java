@@ -1,4 +1,4 @@
-package cn.com.chinalife.ecdata.dao.noSqlDao.impl;
+package cn.com.chinalife.ecdata.dao.noSqlDao.impl.user;
 
 import cn.com.chinalife.ecdata.dao.noSqlDao.user.ActiveUserDao;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
