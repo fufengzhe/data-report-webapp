@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
             String path = httpServletRequest.getServletPath();
             for (Auth auth : authList) {
                 if (path != null && path.contains(auth.getResourcePath())) {
-                    logger.info("service返回结果为 {}", JSON.toJSONString(authList));
+                    logger.info("service返回结果为 {},请求路径为 {}", JSON.toJSONString(authList), path);
                     return true;
                 }
             }
