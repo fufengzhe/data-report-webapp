@@ -1,0 +1,30 @@
+package cn.com.chinalife.ecdata.service.impl.user;
+
+import cn.com.chinalife.ecdata.dao.sqlDao.user.LogUserDao;
+import cn.com.chinalife.ecdata.entity.user.LogUser;
+import cn.com.chinalife.ecdata.service.user.UserLogService;
+import cn.com.chinalife.ecdata.utils.CommonConstant;
+import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
+import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * Created by xiexiangyu on 2018/3/7.
+ */
+@Service
+public class UserLogServiceImpl implements UserLogService {
+    private final Logger logger = LoggerFactory.getLogger(UserLogServiceImpl.class);
+    @Autowired
+    LogUserDao logUserDao;
+
+    public LogUser login(LogUser requestUser) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(requestUser));
+        DataSourceContextHolder.setDbType(CommonConstant.userAuthDataSource);
+        LogUser logUser = logUserDao.findUser(requestUser);
+        logger.info("service返回结果为 {}", JSON.toJSONString(logUser));
+        return logUser;
+    }
+}

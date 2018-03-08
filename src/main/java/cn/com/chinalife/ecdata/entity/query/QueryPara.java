@@ -7,6 +7,8 @@ public class QueryPara {
     private String startDate;
     private String endDate;
     private String userSource;
+    private String username;
+    private String password;
 
     public String getStartDate() {
         return startDate;
@@ -32,12 +34,30 @@ public class QueryPara {
         this.userSource = userSource;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
-        return "Query{" +
+        return "QueryPara{" +
                 "startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
                 ", userSource='" + userSource + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }
