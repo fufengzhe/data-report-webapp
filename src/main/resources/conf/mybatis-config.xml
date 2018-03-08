@@ -10,6 +10,7 @@
         <typeAlias alias="RegisterUser" type="cn.com.chinalife.ecdata.entity.user.RegisterUser" />
         <typeAlias alias="UserSource" type="cn.com.chinalife.ecdata.entity.user.UserSource" />
         <typeAlias alias="LogUser" type="cn.com.chinalife.ecdata.entity.user.LogUser" />
+        <typeAlias alias="Auth" type="cn.com.chinalife.ecdata.entity.Auth" />
     </typeAliases>
 </configuration>
 

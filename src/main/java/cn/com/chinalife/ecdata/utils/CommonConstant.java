@@ -10,5 +10,6 @@ public class CommonConstant {
     public static String userAuthDataSource = "userAuthDataSource";
     public static String businessDataSource = "businessDataSource";
     public static String notLoggedIn = "notLoggedIn";
+    public static String unauthorized = "unauthorized";
 
 }
