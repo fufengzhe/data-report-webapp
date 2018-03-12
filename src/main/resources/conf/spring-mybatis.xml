@@ -29,6 +29,10 @@
         <property name="minIdle" value="3"/>
         <!-- 获取连接最大等待时间 -->
         <property name="maxWait" value="60000"/>
+        <!--<property name="timeBetweenEvictionRunsMillis" value="21600000"></property>-->
+        <!--<property name="testWhileIdle" value="true"></property>-->
+        <!--<property name="validationQuery" value="SELECT 1"></property>-->
+        <!--<property name="testOnBorrow" value="false"></property>-->
     </bean>
 
     <bean id="userAuthDataSource" class="org.apache.commons.dbcp.BasicDataSource">
@@ -36,6 +40,20 @@
         <property name="url" value="jdbc:mysql://127.0.0.1/user_auth"></property>
         <property name="username" value="root"></property>
         <property name="password" value="111111"></property>
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="5"/>
+        <!-- 连接池最大数量 -->
+        <property name="maxActive" value="100"/>
+        <!-- 连接池最大空闲 -->
+        <property name="maxIdle" value="20"/>
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle" value="3"/>
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="60000"/>
+        <property name="timeBetweenEvictionRunsMillis" value="21600000"></property>
+        <property name="testWhileIdle" value="true"></property>
+        <property name="validationQuery" value="SELECT 1"></property>
+        <property name="testOnBorrow" value="false"></property>
     </bean>
 
     <!-- 动态配置数据源 -->
@@ -46,7 +64,7 @@
                 <entry value-ref="userAuthDataSource" key="userAuthDataSource"></entry>
             </map>
         </property>
-        <property name="defaultTargetDataSource" ref="businessDataSource"></property>      <!-- 默认使用ds1的数据源 -->
+        <property name="defaultTargetDataSource" ref="businessDataSource"></property>
     </bean>
 
     <!-- 结合Spring和Mybatis -->
