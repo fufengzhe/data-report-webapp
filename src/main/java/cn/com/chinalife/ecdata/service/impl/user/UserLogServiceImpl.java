@@ -3,8 +3,7 @@ package cn.com.chinalife.ecdata.service.impl.user;
 import cn.com.chinalife.ecdata.dao.sqlDao.user.LogUserDao;
 import cn.com.chinalife.ecdata.entity.user.LogUser;
 import cn.com.chinalife.ecdata.service.user.UserLogService;
-import cn.com.chinalife.ecdata.utils.CommonConstant;
-import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
+import cn.com.chinalife.ecdata.utils.AuthUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +21,24 @@ public class UserLogServiceImpl implements UserLogService {
 
     public LogUser login(LogUser requestUser) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(requestUser));
-        DataSourceContextHolder.setDbType(CommonConstant.userAuthDataSource);
-        LogUser logUser = logUserDao.findUser(requestUser);
+//        DataSourceContextHolder.setDbType(CommonConstant.userAuthDataSource);
+//        LogUser logUser = logUserDao.findUser(requestUser);
+        LogUser logUser = this.findLogUserUsingAuthUtils(requestUser);
         logger.info("service返回结果为 {}", JSON.toJSONString(logUser));
+        return logUser;
+    }
+
+    private LogUser findLogUserUsingAuthUtils(LogUser requestUser) {
+        LogUser logUser = null;
+        for (LogUser temp : AuthUtils.existedAuthLogUserList) {
+            if (temp.getUsername().equals(requestUser.getUsername()) && temp.getPassword().equals(requestUser.getPassword())) {
+                logUser = new LogUser();
+                logUser.setUsername(temp.getUsername());
+//                logUser.setPassword(temp.getPassword());
+                logUser.setResource(temp.getResource());
+                break;
+            }
+        }
         return logUser;
     }
 }

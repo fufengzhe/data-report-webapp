@@ -31,20 +31,15 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
             Cookie[] cookies = httpServletRequest.getCookies();
             if (cookies != null) {
                 String username = null;
-                String password = null;
                 for (Cookie cookie : cookies) {
                     if ("username".equals(cookie.getName())) {
                         username = cookie.getValue();
                     }
-                    if ("password".equals(cookie.getName())) {
-                        password = cookie.getValue();
-                    }
                 }
-                if (username != null && password != null) {
-                    logger.info("interceptor检查到cookie信息 username:{},password{}", username, password);
+                if (username != null) {
+                    logger.info("interceptor检查到cookie信息 username:{}", username);
                     logUser = new LogUser();
                     logUser.setUsername(username);
-                    logUser.setPassword(password);
                     return authService.authCheck(logUser, httpServletRequest, httpServletResponse);
                 }
             }

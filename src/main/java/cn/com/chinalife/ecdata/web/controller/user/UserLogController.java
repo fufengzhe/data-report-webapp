@@ -39,13 +39,12 @@ public class UserLogController {
                 Cookie username = new Cookie("username", logUser.getUsername());
                 username.setMaxAge(Integer.MAX_VALUE);
                 username.setPath("/");
-                Cookie password = new Cookie("password", logUser.getPassword());
-                password.setMaxAge(Integer.MAX_VALUE);
-                password.setPath("/");
                 response.addCookie(username);
-                response.addCookie(password);
                 session.setAttribute("user", logUser);
                 responseBean.setDetailInfo(logUser);
+            } else {
+                responseBean.setRespCode(1);
+                responseBean.setRespMsg("未找到该用户");
             }
         } catch (Exception e) {
             logger.error("异常信息为", e);
@@ -72,15 +71,10 @@ public class UserLogController {
                         httpServletResponse.addCookie(cookie);
                         count++;
                     }
-                    if ("password".equals(cookie.getName())) {
-                        CommonUtils.setCookieInvalid(cookie);
-                        httpServletResponse.addCookie(cookie);
-                        count++;
-                    }
                 }
             }
             httpServletRequest.getSession().invalidate();
-            if (count >= 2) {
+            if (count >= 1) {
                 responseBean.setRespMsg("退出成功!");
             }
         } catch (Exception e) {
