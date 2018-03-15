@@ -11,6 +11,9 @@
         <typeAlias alias="UserSource" type="cn.com.chinalife.ecdata.entity.user.UserSource" />
         <typeAlias alias="LogUser" type="cn.com.chinalife.ecdata.entity.user.LogUser" />
         <typeAlias alias="Auth" type="cn.com.chinalife.ecdata.entity.Auth" />
+        <typeAlias alias="Premium" type="cn.com.chinalife.ecdata.entity.trade.Premium" />
+        <typeAlias alias="Order" type="cn.com.chinalife.ecdata.entity.trade.Order" />
+        <typeAlias alias="Branch" type="cn.com.chinalife.ecdata.entity.trade.Branch" />
     </typeAliases>
 </configuration>
 
