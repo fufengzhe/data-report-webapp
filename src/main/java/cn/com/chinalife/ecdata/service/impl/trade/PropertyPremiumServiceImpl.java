@@ -27,10 +27,10 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
     @Autowired
     PropertyPremiumDao propertyPremiumDao;
 
-    public Premium getPremiumOverview() {
+    public Premium getPropertyPremiumOverview() {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
-        Premium premium = propertyPremiumDao.getPremiumOverview();
+        Premium premium = propertyPremiumDao.getPropertyPremiumOverview();
         premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
         premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
         premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), premium.getYearGoal(), 4)));
@@ -38,7 +38,7 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
         return premium;
     }
 
-    public List<Premium> getPremiumDetail(QueryPara queryPara) {
+    public List<Premium> getPropertyPremiumDetail(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         //计算批退和批改之前的明细
@@ -77,7 +77,6 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
     }
 
     private List<Premium> groupListByDeptNo(List<Order> orderList, List<Branch> branchList) {
-        List<Premium> premiumList = new ArrayList<Premium>();
         Map<String, String> branchNoAndNameMap = new HashMap<String, String>();
         for (Branch branch : branchList) {
             branchNoAndNameMap.put(branch.getBranchNo(), branch.getBranchName());
@@ -101,17 +100,6 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
             }
             branchNameAndPremiumMap.put(branchName, accumulatedPremium);
         }
-        for (Map.Entry<String, BigDecimal> entry : branchNameAndPremiumMap.entrySet()) {
-            Premium premium = new Premium();
-            premium.setBranchName(entry.getKey());
-            premium.setAccumulatedAmount(CommonUtils.divideWithXPrecision(entry.getValue(), new BigDecimal("10000"), 2)); //换算成万
-            premiumList.add(premium);
-        }
-        Collections.sort(premiumList, new Comparator<Premium>() {
-            public int compare(Premium o1, Premium o2) {
-                return o2.getAccumulatedAmount().subtract(o1.getAccumulatedAmount()).compareTo(new BigDecimal("0"));
-            }
-        });
-        return premiumList;
+        return CommonUtils.getPremiumListUsingMap(branchNameAndPremiumMap);
     }
 }

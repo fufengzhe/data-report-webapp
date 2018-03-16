@@ -1,7 +1,10 @@
 package cn.com.chinalife.ecdata.utils;
 
+import cn.com.chinalife.ecdata.entity.trade.Premium;
+
 import javax.servlet.http.Cookie;
 import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Created by xiexiangyu on 2018/3/8.
@@ -26,6 +29,23 @@ public class CommonUtils {
     public static String getPercentageStr(BigDecimal bigDecimal) {
         return bigDecimal.multiply(new BigDecimal("100")).setScale(2) + "%";
     }
+
+    public static List<Premium> getPremiumListUsingMap(Map<String, BigDecimal> map) {
+        List<Premium> premiumList = new ArrayList<Premium>();
+        for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
+            Premium premium = new Premium();
+            premium.setBranchName(entry.getKey());
+            premium.setAccumulatedAmount(CommonUtils.divideWithXPrecision(entry.getValue(), new BigDecimal("10000"), 2)); //换算成万
+            premiumList.add(premium);
+        }
+        Collections.sort(premiumList, new Comparator<Premium>() {
+            public int compare(Premium o1, Premium o2) {
+                return o2.getAccumulatedAmount().subtract(o1.getAccumulatedAmount()).compareTo(new BigDecimal("0"));
+            }
+        });
+        return premiumList;
+    }
+
 
     public static void main(String[] args) {
         System.out.println(divideWithXPrecision(new BigDecimal("11"), new BigDecimal("211"), 4));

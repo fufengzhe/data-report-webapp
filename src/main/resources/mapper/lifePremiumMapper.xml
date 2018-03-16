@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.trade.LifePremiumDao">
+    <select id="getLifePremiumOverview" resultType="Premium">
+        SELECT
+            STAT_DAY statDay,KPI_VALUE_D dayAmount,KPI_VALUE_LD lastDayAmount,KPI_VALUE_M monthAmount,
+            KPI_VALUE_LM lastMonthAmount,KPI_VALUE_Y yearAmount,GOAL_VALUE yearGoal
+        FROM
+	        DMP_APP.APP_KPI_VALUE2018_D
+        WHERE
+	        FIRST_LEVEL = '002'
+    </select>
+
+    <select id="getPremiumDetailWithOnlyAgentAndPolicyNo" resultType="Order" parameterType="QueryPara">
+        SELECT
+        a.AGENT_ID agentId,nvl(b.plc_no,a.policy_no) policyNo
+        FROM TSS_SX.ts_order_base A INNER JOIN TSS_SX.TS_ORDER_DELIVER b ON A .order_id = b.order_id
+        AND A.CHECK_PASS_TIME IS NOT NULL
+        AND
+        <![CDATA[
+         b.elimi_TIME >= concat(#{startDate},' 00:00:00')
+		]]>
+        AND
+        <![CDATA[
+        b.elimi_TIME >= concat(#{endDate},' 23:59:59')
+        ]]>
+    </select>
+
+    <select id="getPremiumDetailWithOnlyPolicyNoAndPremium" resultType="Order" parameterType="java.lang.String">
+        SELECT
+        cntr_no policyNo,SUM ( CASE moneyin_itrvl
+        WHEN 'W' THEN
+			TO_NUMBER (std_premium)
+		WHEN 'Y' THEN
+			TO_NUMBER (std_premium)
+		WHEN 'H' THEN
+			TO_NUMBER (std_premium) * 2
+		WHEN 'Q' THEN
+			TO_NUMBER (std_premium) * 4
+		WHEN 'M' THEN
+			TO_NUMBER (std_premium) * 12
+		ELSE
+			0
+		END ) premium
+        FROM TSS_SX.ftp_dlfiledata WHERE biz_type = '6'
+        AND ${_parameter} GROUP BY cntr_no
+    </select>
+</mapper>

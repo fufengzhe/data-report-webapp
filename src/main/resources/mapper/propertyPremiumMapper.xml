@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.trade.PropertyPremiumDao">
-    <select id="getPremiumOverview" resultType="Premium">
+    <select id="getPropertyPremiumOverview" resultType="Premium">
         SELECT
             STAT_DAY statDay,KPI_VALUE_D dayAmount,KPI_VALUE_LD lastDayAmount,KPI_VALUE_M monthAmount,
             KPI_VALUE_LM lastMonthAmount,KPI_VALUE_Y yearAmount,GOAL_VALUE yearGoal

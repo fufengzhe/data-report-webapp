@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * Created by xiexiangyu on 2018/3/14.
  */
-public interface PropertyPremiumService {
-    Premium getPropertyPremiumOverview();
+public interface LifePremiumService {
+    Premium getLifePremiumOverview();
 
-    List<Premium> getPropertyPremiumDetail(QueryPara queryPara);
+    List<Premium> getLifePremiumDetail(QueryPara queryPara);
 }

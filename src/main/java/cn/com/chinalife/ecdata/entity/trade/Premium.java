@@ -7,6 +7,7 @@ import java.math.BigDecimal;
  */
 public class Premium {
     private String statDay;
+    private String secondName;
     private BigDecimal dayAmount;
     private BigDecimal lastDayAmount;
     private String dayRatio;
@@ -14,6 +15,7 @@ public class Premium {
     private BigDecimal lastMonthAmount;
     private String monthRatio;
     private BigDecimal yearAmount;
+    private String yearAmountStr; //百分比
     private BigDecimal yearGoal;
     private String completeRatio;
     private BigDecimal accumulatedAmount;
@@ -25,6 +27,14 @@ public class Premium {
 
     public void setStatDay(String statDay) {
         this.statDay = statDay;
+    }
+
+    public String getSecondName() {
+        return secondName;
+    }
+
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
     }
 
     public BigDecimal getDayAmount() {
@@ -83,6 +93,14 @@ public class Premium {
         this.yearAmount = yearAmount;
     }
 
+    public String getYearAmountStr() {
+        return yearAmountStr;
+    }
+
+    public void setYearAmountStr(String yearAmountStr) {
+        this.yearAmountStr = yearAmountStr;
+    }
+
     public BigDecimal getYearGoal() {
         return yearGoal;
     }
@@ -115,5 +133,22 @@ public class Premium {
         this.branchName = branchName;
     }
 
-
+    @Override
+    public String toString() {
+        return "Premium{" +
+                "statDay='" + statDay + '\'' +
+                ", secondName='" + secondName + '\'' +
+                ", dayAmount=" + dayAmount +
+                ", lastDayAmount=" + lastDayAmount +
+                ", dayRatio='" + dayRatio + '\'' +
+                ", monthAmount=" + monthAmount +
+                ", lastMonthAmount=" + lastMonthAmount +
+                ", monthRatio='" + monthRatio + '\'' +
+                ", yearAmount=" + yearAmount +
+                ", yearGoal=" + yearGoal +
+                ", completeRatio='" + completeRatio + '\'' +
+                ", accumulatedAmount=" + accumulatedAmount +
+                ", branchName='" + branchName + '\'' +
+                '}';
+    }
 }

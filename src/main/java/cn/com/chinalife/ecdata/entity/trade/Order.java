@@ -10,6 +10,7 @@ public class Order {
     private String policyNoSY;
     private String policyNo;
     private String departNo;
+    private String agentId;
     private BigDecimal premium;
 
     public String getPolicyNoJQ() {
@@ -44,6 +45,14 @@ public class Order {
         this.departNo = departNo;
     }
 
+    public String getAgentId() {
+        return agentId;
+    }
+
+    public void setAgentId(String agentId) {
+        this.agentId = agentId;
+    }
+
     public BigDecimal getPremium() {
         return premium;
     }
@@ -59,6 +68,7 @@ public class Order {
                 ", policyNoSY='" + policyNoSY + '\'' +
                 ", policyNo='" + policyNo + '\'' +
                 ", departNo='" + departNo + '\'' +
+                ", agentId='" + agentId + '\'' +
                 ", premium=" + premium +
                 '}';
     }

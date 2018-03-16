@@ -1,9 +1,8 @@
 package cn.com.chinalife.ecdata.web.controller.trade;
 
 import cn.com.chinalife.ecdata.entity.ResponseBean;
-import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.trade.Premium;
-import cn.com.chinalife.ecdata.service.trade.PropertyPremiumService;
+import cn.com.chinalife.ecdata.service.trade.PlatformTradeAmountService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
@@ -19,20 +18,20 @@ import java.util.List;
  * Created by xiexiangyu on 2018/2/28.
  */
 @Controller
-@RequestMapping("/property")
-public class PropertyPremiumController {
-    private final Logger logger = LoggerFactory.getLogger(PropertyPremiumController.class);
+@RequestMapping("/platform")
+public class PlatformTradeAmountController {
+    private final Logger logger = LoggerFactory.getLogger(PlatformTradeAmountController.class);
     @Autowired
-    PropertyPremiumService propertyPremiumService;
+    PlatformTradeAmountService platformTradeAmountService;
 
-    @RequestMapping("/premiumOverview")
+    @RequestMapping("/tradeAmount")
     @ResponseBody
-    public String queryPremiumOverview() {
+    public String queryPlatformTradeAmount() {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
         ResponseBean responseBean = new ResponseBean();
         try {
-            Premium premium = propertyPremiumService.getPropertyPremiumOverview();
-            responseBean.setDetailInfo(premium);
+            List<Premium> premiumList = platformTradeAmountService.getPlatformTradeAmount();
+            responseBean.setDetailInfo(premiumList);
         } catch (Exception e) {
             logger.error("异常信息为", e);
             responseBean.setRespCode(1);
@@ -43,14 +42,32 @@ public class PropertyPremiumController {
         }
     }
 
-    @RequestMapping("/premiumDetail")
+    @RequestMapping("/tradeNum")
     @ResponseBody
-    public String queryPremiumDetail(QueryPara queryPara) {
-        logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
+    public String queryPlatformTradeNum() {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
         ResponseBean responseBean = new ResponseBean();
         try {
-            List<Premium> premiumList = propertyPremiumService.getPropertyPremiumDetail(queryPara);
+            List<Premium> premiumList = platformTradeAmountService.getPlatformTradeNum();
             responseBean.setDetailInfo(premiumList);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
+    @RequestMapping("/signRatio")
+    @ResponseBody
+    public String queryPlatformSignRatio() {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            Premium premium = platformTradeAmountService.getPlatformSignRatio();
+            responseBean.setDetailInfo(premium);
         } catch (Exception e) {
             logger.error("异常信息为", e);
             responseBean.setRespCode(1);

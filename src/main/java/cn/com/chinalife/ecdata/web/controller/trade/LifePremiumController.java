@@ -3,7 +3,7 @@ package cn.com.chinalife.ecdata.web.controller.trade;
 import cn.com.chinalife.ecdata.entity.ResponseBean;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.trade.Premium;
-import cn.com.chinalife.ecdata.service.trade.PropertyPremiumService;
+import cn.com.chinalife.ecdata.service.trade.LifePremiumService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
@@ -19,11 +19,11 @@ import java.util.List;
  * Created by xiexiangyu on 2018/2/28.
  */
 @Controller
-@RequestMapping("/property")
-public class PropertyPremiumController {
-    private final Logger logger = LoggerFactory.getLogger(PropertyPremiumController.class);
+@RequestMapping("/life")
+public class LifePremiumController {
+    private final Logger logger = LoggerFactory.getLogger(LifePremiumController.class);
     @Autowired
-    PropertyPremiumService propertyPremiumService;
+    LifePremiumService lifePremiumService;
 
     @RequestMapping("/premiumOverview")
     @ResponseBody
@@ -31,7 +31,7 @@ public class PropertyPremiumController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
         ResponseBean responseBean = new ResponseBean();
         try {
-            Premium premium = propertyPremiumService.getPropertyPremiumOverview();
+            Premium premium = lifePremiumService.getLifePremiumOverview();
             responseBean.setDetailInfo(premium);
         } catch (Exception e) {
             logger.error("异常信息为", e);
@@ -49,7 +49,7 @@ public class PropertyPremiumController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
         ResponseBean responseBean = new ResponseBean();
         try {
-            List<Premium> premiumList = propertyPremiumService.getPropertyPremiumDetail(queryPara);
+            List<Premium> premiumList = lifePremiumService.getLifePremiumDetail(queryPara);
             responseBean.setDetailInfo(premiumList);
         } catch (Exception e) {
             logger.error("异常信息为", e);
@@ -60,4 +60,5 @@ public class PropertyPremiumController {
             return JSON.toJSONString(responseBean);
         }
     }
+
 }
