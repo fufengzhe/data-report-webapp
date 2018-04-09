@@ -34,29 +34,29 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     LifePremiumService lifePremiumService;
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?")
     private void scheduledEntry() throws InterruptedException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = prepareQueryPara();
         int effectedRowNum;
 
         logger.info("开始更新注册相关的数据");
-        effectedRowNum = updateRegister(queryPara);
+        effectedRowNum = this.updateRegister(queryPara);
         logger.info("结束更新注册相关的数据，受影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新活跃相关的天维度数据");
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfDate);
-        effectedRowNum = updateActive(queryPara);
+        effectedRowNum = this.updateActive(queryPara);
         logger.info("结束更新活跃相关的天维度数据，受影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新活跃相关的月维度数据");
         queryPara.setStartDate(DateUtils.getMonthBeginDateUsingYesterday(DateUtils.getYesterday()));
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfMonth);
-        effectedRowNum = updateActive(queryPara);
+        effectedRowNum = this.updateActive(queryPara);
         logger.info("结束更新活跃相关的月维度数据，受影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新寿险保费相关数据");
-        effectedRowNum = updateLifePremium(queryPara);
+        effectedRowNum = this.updateLifePremium(queryPara);
         logger.info("结束更新寿险保费相关数据，受影响的条数为 {}", effectedRowNum);
     }
 

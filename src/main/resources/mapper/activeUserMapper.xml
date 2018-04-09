@@ -31,7 +31,7 @@
         <![CDATA[
                     and STAT_TIME <= #{endDate}
         ]]>
-        ORDER BY INDEX_SOURCE,STAT_TIME
+        ORDER BY INDEX_VALUE DESC,INDEX_SOURCE,STAT_TIME
     </select>
 
     <select id="getMonthActiveUserNumOfAllSourcesFromStatResult" resultType="ActiveUser" parameterType="QueryPara">
