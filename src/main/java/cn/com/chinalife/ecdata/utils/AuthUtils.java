@@ -26,7 +26,7 @@ public class AuthUtils {
         LogUser active = new LogUser();
         active.setUsername("active");
         active.setPassword("111111");
-        active.setResource("/activeUser/numQuery");
+        active.setResource("/activeUser/numQuery;/activeUser/detailQuery");
         AuthUtils.existedAuthLogUserList.add(active);
     }
 

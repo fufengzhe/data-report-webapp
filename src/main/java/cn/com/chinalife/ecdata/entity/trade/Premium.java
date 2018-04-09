@@ -20,7 +20,8 @@ public class Premium {
     private String completeRatio;
     private BigDecimal accumulatedAmount;
     private String branchName;
-
+    private String timeSpan;
+    private String indexName;
     public String getStatDay() {
         return statDay;
     }
@@ -133,6 +134,22 @@ public class Premium {
         this.branchName = branchName;
     }
 
+    public String getTimeSpan() {
+        return timeSpan;
+    }
+
+    public void setTimeSpan(String timeSpan) {
+        this.timeSpan = timeSpan;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
     @Override
     public String toString() {
         return "Premium{" +
@@ -145,10 +162,13 @@ public class Premium {
                 ", lastMonthAmount=" + lastMonthAmount +
                 ", monthRatio='" + monthRatio + '\'' +
                 ", yearAmount=" + yearAmount +
+                ", yearAmountStr='" + yearAmountStr + '\'' +
                 ", yearGoal=" + yearGoal +
                 ", completeRatio='" + completeRatio + '\'' +
                 ", accumulatedAmount=" + accumulatedAmount +
                 ", branchName='" + branchName + '\'' +
+                ", timeSpan='" + timeSpan + '\'' +
+                ", indexName='" + indexName + '\'' +
                 '}';
     }
 }

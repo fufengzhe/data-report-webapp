@@ -14,4 +14,101 @@
                     and makedate <= TO_DATE(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
         ]]>
     </select>
+
+    <select id="getRegisterNumOverview" resultType="RegisterUser" parameterType="QueryPara">
+        SELECT min(TO_CHAR(SYSDATE-1,'YYYY-MM-DD')) statDay,
+        CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购') THEN '创新' WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通') THEN '网销'
+        ELSE '未知渠道' END indexSource,
+        SUM (CASE WHEN STAT_TIME = TO_CHAR(SYSDATE-1,'YYYY-MM-DD') THEN INDEX_VALUE ELSE 0 END ) dayNum,
+        SUM (CASE WHEN STAT_TIME = TO_CHAR(SYSDATE-2,'YYYY-MM-DD') THEN INDEX_VALUE ELSE 0 END ) lastDayNum,
+        SUM (CASE WHEN STAT_TIME >= CONCAT(TO_CHAR(SYSDATE-1,'YYYY-MM'),'-01')
+        <![CDATA[
+                    and STAT_TIME <= TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
+        ]]>
+        THEN INDEX_VALUE ELSE 0 END ) monthNum,
+        SUM (CASE WHEN STAT_TIME >= CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01')
+        <![CDATA[
+                    and STAT_TIME <= CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-31')
+        ]]>
+        THEN INDEX_VALUE ELSE 0 END ) lastMonthNum,
+        SUM (CASE WHEN STAT_TIME >= CONCAT(to_char(sysdate-1,'yyyy'),'-01-01')
+        <![CDATA[
+                    and STAT_TIME <= TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
+        ]]>
+        THEN INDEX_VALUE ELSE 0 END ) yearNum,
+        min(CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购') THEN 1000000 WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通') THEN 1530000
+        ELSE 0 END) yearGoal
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME = 'registerNum' AND STAT_TIME_SPAN = 'D' AND INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通')
+        GROUP BY  CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购') THEN '创新' WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通') THEN '网销'
+        ELSE '未知渠道' END
+        UNION ALL
+        select TO_CHAR(SYSDATE-1,'YYYY-MM-DD') statDay,'总计' indexSource,
+        SUM (CASE WHEN STAT_TIME = TO_CHAR(SYSDATE-1,'YYYY-MM-DD') THEN INDEX_VALUE ELSE 0 END ) dayNum,
+        SUM (CASE WHEN STAT_TIME = TO_CHAR(SYSDATE-2,'YYYY-MM-DD') THEN INDEX_VALUE ELSE 0 END ) lastDayNum,
+        SUM (CASE WHEN STAT_TIME >= CONCAT(TO_CHAR(SYSDATE-1,'YYYY-MM'),'-01')
+        <![CDATA[
+                    and STAT_TIME <= TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
+        ]]>
+        THEN INDEX_VALUE ELSE 0 END ) monthNum,
+        SUM (CASE WHEN STAT_TIME >= CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01')
+        <![CDATA[
+                    and STAT_TIME <= CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-31')
+        ]]>
+        THEN INDEX_VALUE ELSE 0 END ) lastMonthNum,
+        SUM (CASE WHEN STAT_TIME >= CONCAT(to_char(sysdate-1,'yyyy'),'-01-01')
+        <![CDATA[
+                    and STAT_TIME <= TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
+        ]]>
+        THEN INDEX_VALUE ELSE 0 END ) yearNum,
+        1000000+1530000 yearGoal
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME = 'registerNum' AND STAT_TIME_SPAN = 'D' AND INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通')
+    </select>
+
+    <select id="getRegisterUserNumOfAllSources" resultType="RegisterUser" parameterType="QueryPara">
+        SELECT
+        USERSOURCE userSource,TO_CHAR (makedate, 'yyyy-MM-dd') registerDate,count(*) registerUserNum
+        FROM CHINALIFEEC.GE_USER_PERSONAL
+        WHERE ${whereCondition}
+        <![CDATA[
+			        makedate >= TO_DATE(concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+        <![CDATA[
+                    and makedate <= TO_DATE(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+        GROUP BY USERSOURCE,TO_CHAR (makedate, 'yyyy-MM-dd')
+    </select>
+
+    <insert id="updateRegister" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.STAT_RESULT
+        (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, INDEX_VALUE, INDEX_SOURCE, CREATE_TIME,UPDATE_TIME)
+        SELECT t1.registerDate,t1.timeSpan,t1.indexName,t1.registerUserNum,t1.userSource,t1.createTime,t1.updateTime FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.registerDate,jdbcType=VARCHAR} registerDate,
+            #{item.timeSpan,jdbcType=VARCHAR} timeSpan,
+            #{item.indexName,jdbcType=VARCHAR} indexName,
+            #{item.registerUserNum,jdbcType=NUMERIC} registerUserNum,
+            #{item.userSource,jdbcType=VARCHAR} userSource,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
+
+    <select id="getRegisterUserNumOfAllSourcesFromStatResult" resultType="RegisterUser" parameterType="QueryPara">
+        SELECT
+        INDEX_SOURCE userSource,#{startDate} startDate,#{endDate} endDate,sum(INDEX_VALUE) registerUserNum
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME = 'registerNum' AND
+        <![CDATA[
+			        STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY INDEX_SOURCE ORDER BY registerUserNum DESC
+    </select>
 </mapper>

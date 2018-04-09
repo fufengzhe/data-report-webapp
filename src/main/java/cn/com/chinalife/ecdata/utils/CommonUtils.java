@@ -30,6 +30,15 @@ public class CommonUtils {
         return bigDecimal.multiply(new BigDecimal("100")).setScale(2) + "%";
     }
 
+    //单位从个转换为万
+    public static BigDecimal convertToTenThousandUnit(BigDecimal numToConvert) {
+        if (numToConvert == BigDecimal.ZERO || numToConvert.doubleValue() == 0) {
+            return BigDecimal.ZERO;
+        }else{
+            return divideWithXPrecision(numToConvert,new BigDecimal(10000),2);
+        }
+    }
+
     public static List<Premium> getPremiumListUsingMap(Map<String, BigDecimal> map) {
         List<Premium> premiumList = new ArrayList<Premium>();
         for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
@@ -48,7 +57,6 @@ public class CommonUtils {
 
 
     public static void main(String[] args) {
-        System.out.println(divideWithXPrecision(new BigDecimal("11"), new BigDecimal("211"), 4));
-        System.out.println(getPercentageStr(divideWithXPrecision(new BigDecimal("11"), new BigDecimal("211"), 4)));
+        System.out.println(convertToTenThousandUnit(new BigDecimal(11565.11)));
     }
 }

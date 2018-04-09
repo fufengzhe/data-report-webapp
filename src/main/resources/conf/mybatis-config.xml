@@ -8,6 +8,7 @@
     <typeAliases>
         <typeAlias alias="QueryPara" type="cn.com.chinalife.ecdata.entity.query.QueryPara" />
         <typeAlias alias="RegisterUser" type="cn.com.chinalife.ecdata.entity.user.RegisterUser" />
+        <typeAlias alias="ActiveUser" type="cn.com.chinalife.ecdata.entity.user.ActiveUser" />
         <typeAlias alias="UserSource" type="cn.com.chinalife.ecdata.entity.user.UserSource" />
         <typeAlias alias="LogUser" type="cn.com.chinalife.ecdata.entity.user.LogUser" />
         <typeAlias alias="Auth" type="cn.com.chinalife.ecdata.entity.Auth" />

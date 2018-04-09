@@ -9,6 +9,9 @@ public class QueryPara {
     private String userSource;
     private String username;
     private String password;
+    private String queryDate;
+    private String whereCondition;
+    private String timeSpan;
 
     public String getStartDate() {
         return startDate;
@@ -50,6 +53,30 @@ public class QueryPara {
         this.password = password;
     }
 
+    public String getQueryDate() {
+        return queryDate;
+    }
+
+    public void setQueryDate(String queryDate) {
+        this.queryDate = queryDate;
+    }
+
+    public String getWhereCondition() {
+        return whereCondition;
+    }
+
+    public void setWhereCondition(String whereCondition) {
+        this.whereCondition = whereCondition;
+    }
+
+    public String getTimeSpan() {
+        return timeSpan;
+    }
+
+    public void setTimeSpan(String timeSpan) {
+        this.timeSpan = timeSpan;
+    }
+
     @Override
     public String toString() {
         return "QueryPara{" +
@@ -58,6 +85,9 @@ public class QueryPara {
                 ", userSource='" + userSource + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", queryDate='" + queryDate + '\'' +
+                ", whereCondition='" + whereCondition + '\'' +
+                ", timeSpan='" + timeSpan + '\'' +
                 '}';
     }
 }

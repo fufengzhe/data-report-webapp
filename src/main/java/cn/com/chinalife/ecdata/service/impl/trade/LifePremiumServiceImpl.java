@@ -8,6 +8,7 @@ import cn.com.chinalife.ecdata.service.trade.LifePremiumService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import cn.com.chinalife.ecdata.utils.CommonUtils;
 import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
+import cn.com.chinalife.ecdata.utils.DateUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Created by xiexiangyu on 2018/3/14.
@@ -28,24 +28,89 @@ public class LifePremiumServiceImpl implements LifePremiumService {
     @Autowired
     LifePremiumDao lifePremiumDao;
 
-    public Premium getLifePremiumOverview() {
+    public List<Premium> getLifePremiumOverview() throws ParseException {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
-        Premium premium = lifePremiumDao.getLifePremiumOverview();
-        premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
-        premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
-        premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), premium.getYearGoal(), 4)));
-        logger.info("service返回结果为 {}", JSON.toJSONString(premium));
-        return premium;
+        // 昨天 当月 当年的保费
+        List<Premium> premiumListOfUpper = lifePremiumDao.getLifePremiumOfUpper();
+        List<Premium> premiumListOfLower = lifePremiumDao.getLifePremiumOfLower();
+        List<Premium> premiumList = this.getPremiumListUsingUpperAndLower(premiumListOfUpper, premiumListOfLower);
+        for (Premium premium : premiumList) {
+            premium.setDayAmount(CommonUtils.convertToTenThousandUnit(premium.getDayAmount()));
+            premium.setLastDayAmount(CommonUtils.convertToTenThousandUnit(premium.getLastDayAmount()));
+            premium.setMonthAmount(CommonUtils.convertToTenThousandUnit(premium.getMonthAmount()));
+            premium.setLastMonthAmount(CommonUtils.convertToTenThousandUnit(premium.getLastMonthAmount()));
+            premium.setYearAmount(CommonUtils.convertToTenThousandUnit(premium.getYearAmount()));
+        }
+        logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
+        return premiumList;
+    }
+
+    private List<Premium> getPremiumListUsingUpperAndLower(List<Premium> premiumListOfUpper, List<Premium> premiumListOfLower) throws ParseException {
+        List<Premium> premiumList = new ArrayList<Premium>();
+        Map<String, Premium> mapOfUpper = new HashMap<String, Premium>();
+        Map<String, Premium> mapOfLower = new HashMap<String, Premium>();
+        for (Premium premium : premiumListOfUpper) {
+            mapOfUpper.put(premium.getStatDay() + "&" + premium.getTimeSpan() + "&" + premium.getBranchName(), premium);
+        }
+        for (Premium premium : premiumListOfLower) {
+            mapOfLower.put(premium.getStatDay() + "&" + premium.getTimeSpan() + "&" + premium.getBranchName(), premium);
+        }
+        //TODO 计算日环比，月环比，注意按照每个渠道进行循环，各个电销中心，网销，总计
+        String[] statIndex = new String[]{"合肥电销中心", "成都电销中心", "郑州电销中心", "网销", "总计"};
+        for (String index : statIndex) {
+            Premium premium = new Premium();
+            premium.setBranchName(index);
+            premium.setDayAmount(mapOfUpper.get(DateUtils.getYesterday() + "&D&" + index) == null ?
+                    new BigDecimal("0") : mapOfUpper.get(DateUtils.getYesterday() + "&D&" + index).getAccumulatedAmount());
+            premium.setLastDayAmount(mapOfLower.get(DateUtils.getTheDayBeforeYesterday() + "&D&" + index) == null ?
+                    new BigDecimal("0") : mapOfLower.get(DateUtils.getTheDayBeforeYesterday() + "&D&" + index).getAccumulatedAmount());
+            premium.setMonthAmount(mapOfUpper.get(DateUtils.getMonthBeginDateUsingYesterday(DateUtils.getYesterday()) + "&M&" + index) == null ?
+                    new BigDecimal("0") : mapOfUpper.get(DateUtils.getMonthBeginDateUsingYesterday(DateUtils.getYesterday()) + "&M&" + index).getAccumulatedAmount());
+            premium.setLastMonthAmount(mapOfLower.get(DateUtils.getLastMonthBeginDateUsingYesterday(DateUtils.getYesterday()) + "&M&" + index) == null ?
+                    new BigDecimal("0") : mapOfLower.get(DateUtils.getLastMonthBeginDateUsingYesterday(DateUtils.getYesterday()) + "&M&" + index).getAccumulatedAmount());
+            premium.setYearAmount(mapOfUpper.get(DateUtils.getYearBeginDateUsingYesterday(DateUtils.getYesterday()) + "&Y&" + index) == null ?
+                    new BigDecimal("0") : mapOfUpper.get(DateUtils.getYearBeginDateUsingYesterday(DateUtils.getYesterday()) + "&Y&" + index).getAccumulatedAmount());
+            premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
+            premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
+            if ("总计".equals(index)) {
+                premium.setYearGoal(new BigDecimal("280000000"));
+                premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), premium.getYearGoal(), 4)));
+            }
+            premiumList.add(premium);
+        }
+        return premiumList;
     }
 
     public List<Premium> getLifePremiumDetail(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
-        List<Order> agentIDAndPolicyNoList = lifePremiumDao.getPremiumDetailWithOnlyAgentAndPolicyNo(queryPara);
-        String policyNoFilterStr = this.getPolicyNoFilterStrUsingList(agentIDAndPolicyNoList);
-        List<Order> policyNoAndPremiumList = lifePremiumDao.getPremiumDetailWithOnlyPolicyNoAndPremium(policyNoFilterStr);
-        List<Premium> premiumList = this.getPremiumListUsingLists(agentIDAndPolicyNoList, policyNoAndPremiumList);
+        List<Premium> premiumList = lifePremiumDao.getLifePremiumDetail(queryPara);
+        List<Premium> premiumListOfInternet = lifePremiumDao.getLifePremiumDetailOfInternet(queryPara);
+//        List<Premium> premiumListOfAll = lifePremiumDao.getLifePremiumDetailWithoutDistinctBranch(queryPara);
+        premiumList.addAll(premiumListOfInternet);
+        for (Premium premium : premiumList) {
+            premium.setIndexName(CommonConstant.statIndexNameOfLifePremium);
+        }
+        logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
+        return premiumList;
+    }
+
+    public int updateLifePremium(List<Premium> premiumList) {
+        return lifePremiumDao.updateLifePremium(premiumList);
+    }
+
+    public int deleteAllExistedRecord(String indexName) {
+        return lifePremiumDao.deleteAllExistedRecord(indexName);
+    }
+
+    public List<Premium> getLifePremiumDetailFromStatResult(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<Premium> premiumList = lifePremiumDao.getLifePremiumDetailFromStatResult(queryPara);
+        for (Premium premium : premiumList) {
+            premium.setAccumulatedAmount(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount()));
+        }
         logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
         return premiumList;
     }

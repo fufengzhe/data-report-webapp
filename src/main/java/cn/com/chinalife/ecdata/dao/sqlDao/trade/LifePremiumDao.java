@@ -17,4 +17,20 @@ public interface LifePremiumDao {
     List<Order> getPremiumDetailWithOnlyAgentAndPolicyNo(QueryPara queryPara);
 
     List<Order> getPremiumDetailWithOnlyPolicyNoAndPremium(String policyNoFilterStr);
+
+    int deleteAllExistedRecord(String indexName);
+
+    List<Premium> getLifePremiumDetail(QueryPara queryPara);
+
+    int updateLifePremium(List<Premium> premiumList);
+
+    List<Premium> getLifePremiumDetailWithoutDistinctBranch(QueryPara queryPara);
+
+    List<Premium> getLifePremiumDetailOfInternet(QueryPara queryPara);
+
+    List<Premium> getLifePremiumOfUpper();
+
+    List<Premium> getLifePremiumOfLower();
+
+    List<Premium> getLifePremiumDetailFromStatResult(QueryPara queryPara);
 }

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 /**
  * Created by xiexiangyu on 2018/3/2.
  */
@@ -29,8 +31,31 @@ public class RegisterUserController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
         ResponseBean responseBean = new ResponseBean();
         try {
-            RegisterUser registerUser = registerUserService.getRegisterUserNum(queryPara);
-            responseBean.setDetailInfo(registerUser);
+            if (queryPara.getUserSource() != null) {
+                RegisterUser registerUser = registerUserService.getRegisterUserNum(queryPara);
+                responseBean.setDetailInfo(registerUser);
+            } else {
+                List<RegisterUser> registerUserList = registerUserService.getRegisterUserNumOfAllSourcesFromStatResult(queryPara);
+                responseBean.setDetailInfo(registerUserList);
+            }
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
+    @RequestMapping("/numOverview")
+    @ResponseBody
+    public String queryNumOverview() {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            List<RegisterUser> registerUserList = registerUserService.getRegisterNumOverview();
+            responseBean.setDetailInfo(registerUserList);
         } catch (Exception e) {
             logger.error("异常信息为", e);
             responseBean.setRespCode(1);

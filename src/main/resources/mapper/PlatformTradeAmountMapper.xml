@@ -8,7 +8,7 @@
         FROM
 	        DMP_APP.APP_KPI_VALUE2018_D
         WHERE
-	        FIRST_LEVEL = '003'
+	        FIRST_LEVEL = '003' AND STAT_DAY=to_char(SYSDATE-1,'YYYYmmdd')
     </select>
 
     <select id="getPlatformTradeNum" resultType="Premium">

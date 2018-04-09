@@ -8,6 +8,9 @@ public class ActiveUser {
     private String startDate;
     private String endDate;
     private String userSource;
+    private String timeSpan;
+    private String indexName;
+    private String statDate;
 
     public int getActiveUserNum() {
         return activeUserNum;
@@ -41,6 +44,30 @@ public class ActiveUser {
         this.userSource = userSource;
     }
 
+    public String getTimeSpan() {
+        return timeSpan;
+    }
+
+    public void setTimeSpan(String timeSpan) {
+        this.timeSpan = timeSpan;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
+    public String getStatDate() {
+        return statDate;
+    }
+
+    public void setStatDate(String statDate) {
+        this.statDate = statDate;
+    }
+
     @Override
     public String toString() {
         return "ActiveUser{" +
@@ -48,6 +75,9 @@ public class ActiveUser {
                 ", startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
                 ", userSource='" + userSource + '\'' +
+                ", timeSpan='" + timeSpan + '\'' +
+                ", indexName='" + indexName + '\'' +
+                ", statDate='" + statDate + '\'' +
                 '}';
     }
 }

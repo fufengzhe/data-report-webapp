@@ -16,6 +16,9 @@
         http://www.springframework.org/schema/task/spring-task-4.1.xsd">
 
     <context:component-scan base-package="cn.com.chinalife.ecdata"/>
+
+    <task:annotation-driven scheduler="myScheduler"/>
+    <task:scheduler id="myScheduler" pool-size="10"/>
     <!-- 视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <!-- 配置从项目根目录到指定目录一端路径 ,建议指定浅一点的目录-->

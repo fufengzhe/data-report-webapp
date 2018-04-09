@@ -31,8 +31,8 @@ public class LifePremiumController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
         ResponseBean responseBean = new ResponseBean();
         try {
-            Premium premium = lifePremiumService.getLifePremiumOverview();
-            responseBean.setDetailInfo(premium);
+            List<Premium> premiumList = lifePremiumService.getLifePremiumOverview();
+            responseBean.setDetailInfo(premiumList);
         } catch (Exception e) {
             logger.error("异常信息为", e);
             responseBean.setRespCode(1);
@@ -49,7 +49,7 @@ public class LifePremiumController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
         ResponseBean responseBean = new ResponseBean();
         try {
-            List<Premium> premiumList = lifePremiumService.getLifePremiumDetail(queryPara);
+            List<Premium> premiumList = lifePremiumService.getLifePremiumDetailFromStatResult(queryPara);
             responseBean.setDetailInfo(premiumList);
         } catch (Exception e) {
             logger.error("异常信息为", e);

@@ -8,7 +8,7 @@
         FROM
 	        DMP_APP.APP_KPI_VALUE2018_D
         WHERE
-	        FIRST_LEVEL = '001'
+	        FIRST_LEVEL = '001' AND STAT_DAY=to_char(SYSDATE-1,'YYYYmmdd')
     </select>
 
     <select id="getPremiumDetailWithoutReverseAndCorrect" resultType="Order" parameterType="QueryPara">
@@ -35,14 +35,13 @@
         SELECT
         policyno policyNo,chgpremium as premium
         FROM TMS.ITF_CLEC_PMAIN
-        WHERE
+        WHERE BUSINESSSOURCE IN ('6','u','y') AND
         <![CDATA[
-        GREATEST (VALIDDATE, LOADDATE)>=TO_DATE(concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        LOADDATE >= TO_DATE(concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
 		]]>
         AND
         <![CDATA[
-        GREATEST (VALIDDATE, LOADDATE)<=TO_DATE(concat(#{endDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        LOADDATE <= TO_DATE(concat(#{endDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
         ]]>
-        AND BUSINESSSOURCE IN ('6','u','y')
     </select>
 </mapper>

@@ -44,12 +44,12 @@ public class UserLogController {
                 responseBean.setDetailInfo(logUser);
             } else {
                 responseBean.setRespCode(1);
-                responseBean.setRespMsg("未找到该用户");
+                responseBean.setRespMsg("用户名或密码错误!");
             }
         } catch (Exception e) {
             logger.error("异常信息为", e);
             responseBean.setRespCode(1);
-            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+            responseBean.setRespMsg(CommonConstant.logFailureStr);
         } finally {
             logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
             return JSON.toJSONString(responseBean);
