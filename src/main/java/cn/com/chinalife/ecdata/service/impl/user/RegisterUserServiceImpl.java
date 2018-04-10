@@ -76,7 +76,6 @@ public class RegisterUserServiceImpl implements RegisterUserService {
     }
 
     public int updateRegister(List<RegisterUser> registerUserList) {
-        logger.info("开始具体插入注册相关数据，插入时间为 {}", new Date());
         return registerUserDao.updateRegister(registerUserList);
     }
 
