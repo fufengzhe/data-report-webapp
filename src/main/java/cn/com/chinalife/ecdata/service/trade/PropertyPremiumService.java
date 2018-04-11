@@ -9,7 +9,11 @@ import java.util.List;
  * Created by xiexiangyu on 2018/3/14.
  */
 public interface PropertyPremiumService {
-    Premium getPropertyPremiumOverview();
+    List<Premium> getPropertyPremiumOverview();
 
     List<Premium> getPropertyPremiumDetail(QueryPara queryPara);
+
+    int deleteAllExistedRecord(List<String> statIndexNameListOfPropertyPremium);
+
+    int updatePropertyPremium(QueryPara queryPara);
 }

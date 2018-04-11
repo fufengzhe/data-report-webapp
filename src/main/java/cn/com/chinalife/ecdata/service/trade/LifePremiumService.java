@@ -19,4 +19,5 @@ public interface LifePremiumService {
     int deleteAllExistedRecord(String indexName);
 
     List<Premium> getLifePremiumDetailFromStatResult(QueryPara queryPara);
+
 }

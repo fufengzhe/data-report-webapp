@@ -220,7 +220,7 @@
 		]]>
         AND
         <![CDATA[
-        STAT_TIME >= #{endDate}
+        STAT_TIME <= #{endDate}
         ]]>
         GROUP BY INDEX_SOURCE ORDER BY sum(INDEX_VALUE) DESC
     </select>

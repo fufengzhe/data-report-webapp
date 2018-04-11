@@ -34,8 +34,18 @@ public class CommonUtils {
     public static BigDecimal convertToTenThousandUnit(BigDecimal numToConvert) {
         if (numToConvert == BigDecimal.ZERO || numToConvert.doubleValue() == 0) {
             return BigDecimal.ZERO;
-        }else{
-            return divideWithXPrecision(numToConvert,new BigDecimal(10000),2);
+        } else {
+            return divideWithXPrecision(numToConvert, new BigDecimal(10000), 2);
+        }
+    }
+
+    public static void convertPremium(List<Premium> premiumList) {
+        for (Premium premium : premiumList) {
+            premium.setDayAmount(CommonUtils.convertToTenThousandUnit(premium.getDayAmount()));
+            premium.setLastDayAmount(CommonUtils.convertToTenThousandUnit(premium.getLastDayAmount()));
+            premium.setMonthAmount(CommonUtils.convertToTenThousandUnit(premium.getMonthAmount()));
+            premium.setLastMonthAmount(CommonUtils.convertToTenThousandUnit(premium.getLastMonthAmount()));
+            premium.setYearAmount(CommonUtils.convertToTenThousandUnit(premium.getYearAmount()));
         }
     }
 

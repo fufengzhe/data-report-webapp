@@ -1,14 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.trade.PropertyPremiumDao">
-    <select id="getPropertyPremiumOverview" resultType="Premium">
+    <select id="getPropertyPremiumOverview" resultType="Premium" parameterType="java.util.List">
         SELECT
-            STAT_DAY statDay,KPI_VALUE_D dayAmount,KPI_VALUE_LD lastDayAmount,KPI_VALUE_M monthAmount,
-            KPI_VALUE_LM lastMonthAmount,KPI_VALUE_Y yearAmount,GOAL_VALUE yearGoal
-        FROM
-	        DMP_APP.APP_KPI_VALUE2018_D
-        WHERE
-	        FIRST_LEVEL = '001' AND STAT_DAY=to_char(SYSDATE-1,'YYYYmmdd')
+        min(TO_CHAR(SYSDATE-1,'yyyy-mm-dd')) statDay,INDEX_SOURCE branchName,sum(CASE WHEN STAT_TIME=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) dayAmount,
+        sum(CASE WHEN STAT_TIME=TO_CHAR(SYSDATE-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) lastDayAmount,
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy-mm'),'-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) monthAmount,
+        ]]>
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME<=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-31') THEN INDEX_VALUE ELSE 0 END ) lastMonthAmount,
+        ]]>
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy'),'-01-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) yearAmount
+        ]]>
+        FROM DMP_SELECT.STAT_RESULT WHERE
+	    INDEX_NAME IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND STAT_TIME>=LEAST(CONCAT(to_char(add_months(trunc(sysdate),-1),'yyyy-mm'),'-01'),CONCAT(SUBSTR(TO_CHAR(SYSDATE-1,'yyyy'),0,4),'-01-01'))
+        GROUP BY index_source
+        UNION ALL
+        SELECT
+        min(TO_CHAR(SYSDATE-1,'yyyy-mm-dd')) statDay,'总计' branchName,sum(CASE WHEN STAT_TIME=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) dayAmount,
+        sum(CASE WHEN STAT_TIME=TO_CHAR(SYSDATE-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) lastDayAmount,
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy-mm'),'-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) monthAmount,
+        ]]>
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME<=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-31') THEN INDEX_VALUE ELSE 0 END ) lastMonthAmount,
+        ]]>
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy'),'-01-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) yearAmount
+        ]]>
+        FROM DMP_SELECT.STAT_RESULT WHERE
+        INDEX_NAME IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND STAT_TIME>=LEAST(CONCAT(to_char(add_months(trunc(sysdate),-1),'yyyy-mm'),'-01'),CONCAT(SUBSTR(TO_CHAR(SYSDATE-1,'yyyy'),0,4),'-01-01'))
     </select>
 
     <select id="getPremiumDetailWithoutReverseAndCorrect" resultType="Order" parameterType="QueryPara">
@@ -44,4 +75,86 @@
         LOADDATE <= TO_DATE(concat(#{endDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
         ]]>
     </select>
+
+    <delete id="deleteAllExistedRecord" parameterType="java.util.List">
+        DELETE FROM DMP_SELECT.STAT_RESULT WHERE INDEX_NAME IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getPremiumDetailListOfSY" resultType="Premium" parameterType="QueryPara">
+        SELECT
+        SUBSTR(GREATEST ( NVL ( TO_CHAR (A.underwriting_date,'yyyy-mm-dd'),'0000-00-00'),b.start_date),0,10) statDay,c.parent_name  branchName,SUM (f.Sum_Premium) accumulatedAmount,
+        min('propertyPremiumSY') indexName,min(#{timeSpan}) timeSpan
+        FROM TSS.ts_order A,TSS.TS_ORDER_PROPOSAL_MAIN b,tss.ts_trialcalc_scheme f,tss.ts_task G,tss.a_rpt_dept_center c
+        WHERE A.order_id = b.order_id AND A.scheme_id = f.scheme_id AND A.task_id = G.ts_task_id (+)
+        AND DECODE ( SUBSTR (A.depart_no, 0, 4),'2102','2102','3302','3302','3502','3502','3702','3702','4403','4403',SUBSTR (A.depart_no, 0, 2)) = c.dept_no
+        AND A.pay_state = '02' AND G.DATA_SOURCE NOT IN ('07') AND G.ORIGINAL_DATA_SOURCE NOT IN ('07') AND A.SY_POLICY_NO IS NOT NULL
+        GROUP BY SUBSTR(GREATEST ( NVL ( TO_CHAR (A.underwriting_date,'yyyy-mm-dd'),'0000-00-00'),b.start_date),0,10),c.parent_name
+    </select>
+    <select id="getPremiumDetailListOfJQ" resultType="Premium" parameterType="QueryPara">
+        SELECT
+        SUBSTR(GREATEST ( NVL ( TO_CHAR (A.underwriting_date,'yyyy-mm-dd'),'0000-00-00'),b.start_date_bz),0,10) statDay,c.parent_name  branchName,SUM (f.Sum_Premium_bz) accumulatedAmount,
+        min('propertyPremiumJQ') indexName,min(#{timeSpan}) timeSpan
+        FROM TSS.ts_order A,TSS.TS_ORDER_PROPOSAL_MAIN b,tss.ts_trialcalc_scheme f,tss.ts_task G,tss.a_rpt_dept_center c
+        WHERE A.order_id = b.order_id AND A.scheme_id = f.scheme_id AND A.task_id = G.ts_task_id (+)
+        AND DECODE ( SUBSTR (A.depart_no, 0, 4),'2102','2102','3302','3302','3502','3502','3702','3702','4403','4403',SUBSTR (A.depart_no, 0, 2)) = c.dept_no
+        AND A.pay_state = '02' AND G.DATA_SOURCE NOT IN ('07') AND G.ORIGINAL_DATA_SOURCE NOT IN ('07') AND A.JQ_POLICY_NO IS NOT NULL
+        GROUP BY SUBSTR(GREATEST ( NVL ( TO_CHAR (A.underwriting_date,'yyyy-mm-dd'),'0000-00-00'),b.start_date_bz),0,10),c.parent_name
+    </select>
+
+    <select id="getPremiumDetailListOfPTPG" resultType="Premium" parameterType="QueryPara">
+        SELECT
+        TO_CHAR (GREATEST (B.VALIDDATE, B.LOADDATE),'yyyy-mm-dd') statDay,C.PARENT_NAME  branchName,SUM (B.CHGPREMIUM) accumulatedAmount,
+        min('propertyPremiumPTPG') indexName,min(#{timeSpan}) timeSpan
+        FROM TSS.TS_ORDER A INNER JOIN TMS.ITF_CLEC_PMAIN B ON (A .JQ_POLICY_NO = B.POLICYNO OR A .SY_POLICY_NO = B.POLICYNO) AND B.BUSINESSSOURCE IN ('6', 'u', 'y')
+        INNER JOIN TSS.A_RPT_DEPT_CENTER C ON DECODE (SUBSTR (A .depart_no, 0, 4),'2102','2102','3302','3302','3502','3502','3702','3702','4403','4403',SUBSTR (A .depart_no, 0, 2))
+        = C.DEPT_NO
+        GROUP BY TO_CHAR (GREATEST (B.VALIDDATE, B.LOADDATE),'yyyy-mm-dd'),C.PARENT_NAME
+    </select>
+
+    <select id="getPremiumDetailListOfInternet" resultType="Premium" parameterType="QueryPara">
+	    SELECT to_char(to_date(T.INPUTDATE,'yyyymmdd'),'yyyy-mm-dd') statDay,min('网销') branchName,SUM (T .PREM) accumulatedAmount,min('propertyPremium') indexName,
+	    min(#{timeSpan}) timeSpan
+	    FROM DMP_ITG.ITG_NET_D T
+	    WHERE T .IS_DONE = '1' AND T .NET_CLASS_ID = '11'
+	    GROUP BY to_char(to_date(T.INPUTDATE,'yyyymmdd'),'yyyy-mm-dd')
+    </select>
+
+    <select id="getPropertyPremiumDetail" resultType="Premium" parameterType="QueryPara">
+        SELECT
+        INDEX_SOURCE branchName, sum(INDEX_VALUE) accumulatedAmount
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME LIKE 'propertyPremium%' AND STAT_TIME_SPAN='D'
+        AND
+        <![CDATA[
+         STAT_TIME >= #{startDate}
+		]]>
+        AND
+        <![CDATA[
+        STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY INDEX_SOURCE ORDER BY sum(INDEX_VALUE) DESC
+    </select>
+
+
+    <insert id="updatePropertyPremium" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.STAT_RESULT
+        (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, INDEX_VALUE, INDEX_SOURCE, CREATE_TIME,UPDATE_TIME)
+        SELECT t1.startDate,t1.timeSpan,t1.indexName,t1.accumulatedAmount,t1.branchName,t1.createTime,t1.updateTime
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.statDay,jdbcType=VARCHAR} startDate,
+            #{item.timeSpan,jdbcType=VARCHAR} timeSpan,
+            #{item.indexName,jdbcType=VARCHAR} indexName,
+            #{item.accumulatedAmount,jdbcType=NUMERIC} accumulatedAmount,
+            #{item.branchName,jdbcType=VARCHAR} branchName,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
 </mapper>

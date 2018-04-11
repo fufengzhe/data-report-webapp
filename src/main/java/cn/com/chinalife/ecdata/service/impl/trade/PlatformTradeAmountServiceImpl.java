@@ -27,11 +27,7 @@ public class PlatformTradeAmountServiceImpl implements PlatformTradeAmountServic
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         List<Premium> premiumList = platformTradeAmountDao.getPlatformTradeAmount();
-        for (Premium premium : premiumList) {
-            premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
-            premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
-            premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), premium.getYearGoal(), 4)));
-        }
+        this.calRatio(premiumList);
         logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
         return premiumList;
     }
@@ -40,11 +36,7 @@ public class PlatformTradeAmountServiceImpl implements PlatformTradeAmountServic
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         List<Premium> premiumList = platformTradeAmountDao.getPlatformTradeNum();
-        for (Premium premium : premiumList) {
-            premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
-            premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
-            premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), premium.getYearGoal(), 4)));
-        }
+        this.calRatio(premiumList);
         logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
         return premiumList;
     }
@@ -59,4 +51,13 @@ public class PlatformTradeAmountServiceImpl implements PlatformTradeAmountServic
         return premium;
     }
 
+    private void calRatio(List<Premium> premiumList) {
+        for (Premium premium : premiumList) {
+            premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
+            premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
+            if (!"总计".equals(premium.getSecondName())) {
+                premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), premium.getYearGoal(), 4)));
+            }
+        }
+    }
 }

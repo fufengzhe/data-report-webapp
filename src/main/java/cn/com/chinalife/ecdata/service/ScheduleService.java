@@ -12,4 +12,6 @@ public interface ScheduleService {
     int updateActive(QueryPara queryPara);
 
     int updateLifePremium(QueryPara queryPara);
+
+    int updatePropertyPremium(QueryPara queryPara);
 }

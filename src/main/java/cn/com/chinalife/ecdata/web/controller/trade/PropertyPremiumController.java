@@ -31,7 +31,7 @@ public class PropertyPremiumController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
         ResponseBean responseBean = new ResponseBean();
         try {
-            Premium premiumList = propertyPremiumService.getPropertyPremiumOverview();
+            List<Premium> premiumList = propertyPremiumService.getPropertyPremiumOverview();
             responseBean.setDetailInfo(premiumList);
         } catch (Exception e) {
             logger.error("异常信息为", e);

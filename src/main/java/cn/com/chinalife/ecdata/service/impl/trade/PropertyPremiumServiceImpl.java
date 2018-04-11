@@ -9,6 +9,7 @@ import cn.com.chinalife.ecdata.service.trade.PropertyPremiumService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import cn.com.chinalife.ecdata.utils.CommonUtils;
 import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
+import cn.com.chinalife.ecdata.utils.DateUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,29 +28,81 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
     @Autowired
     PropertyPremiumDao propertyPremiumDao;
 
-    public Premium getPropertyPremiumOverview() {
+    public List<Premium> getPropertyPremiumOverview() {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
-        Premium premium = propertyPremiumDao.getPropertyPremiumOverview();
-        premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
-        premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
-        premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), premium.getYearGoal(), 4)));
-        logger.info("service返回结果为 {}", JSON.toJSONString(premium));
-        return premium;
+        List<Premium> premiumList = propertyPremiumDao.getPropertyPremiumOverview(CommonConstant.statIndexNameListOfPropertyPremium);
+        //TODO 计算日环比，月环比，注意按照每个渠道进行循环，各个电销中心，网销，总计
+        String[] statIndex = new String[]{"湖南长沙中心", "肇庆电销中心", "上海电销中心", "网销", "总计"};
+        Map<String, Premium> dateAndPremiumMap = new HashMap<String, Premium>();
+        for (Premium premium : premiumList) {
+            dateAndPremiumMap.put(premium.getStatDay() + "&" + premium.getBranchName(), premium);
+        }
+        List<Premium> premiumListToReturn = new ArrayList<Premium>();
+        for (String index : statIndex) {
+            String yesterday = DateUtils.getYesterday();
+            Premium premium = dateAndPremiumMap.get(yesterday + "&" + index);
+            if (premium == null) {
+                premium.setStatDay(yesterday);
+                premium.setBranchName(index);
+                premium.setDayAmount(new BigDecimal("0.00"));
+                premium.setLastDayAmount(new BigDecimal("0.00"));
+                premium.setMonthAmount(new BigDecimal("0.00"));
+                premium.setLastMonthAmount(new BigDecimal("0.00"));
+                premium.setYearAmount(new BigDecimal("0.00"));
+            }
+            premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
+            premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
+            if ("总计".equals(index)) {
+                premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), new BigDecimal("4000000000"), 4)));
+            }
+            premiumListToReturn.add(premium);
+        }
+        CommonUtils.convertPremium(premiumListToReturn);
+        logger.info("service返回结果为 {}", JSON.toJSONString(premiumListToReturn));
+        return premiumListToReturn;
     }
 
     public List<Premium> getPropertyPremiumDetail(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
-        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
-        //计算批退和批改之前的明细
-        List<Order> orderList = propertyPremiumDao.getPremiumDetailWithoutReverseAndCorrect(queryPara);
-        //获取批退和批改列表
-        List<Order> reverseAndCorrectOrderList = propertyPremiumDao.getReverseAndCorrectOrderList(queryPara);
-        this.handleReverseAndCorrect(orderList, reverseAndCorrectOrderList);
-        List<Branch> branchList = propertyPremiumDao.getBranchList();
-        List<Premium> premiumList = this.groupListByDeptNo(orderList, branchList);
+        List<Premium> premiumList = propertyPremiumDao.getPropertyPremiumDetail(queryPara);
+        for (Premium premium : premiumList) {
+            premium.setAccumulatedAmount(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount()));
+        }
         logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
         return premiumList;
+    }
+
+    public int deleteAllExistedRecord(List<String> statIndexNameListOfPropertyPremium) {
+        return propertyPremiumDao.deleteAllExistedRecord(statIndexNameListOfPropertyPremium);
+    }
+
+    public int updatePropertyPremium(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        int effectedRow = 0;
+        int temp;
+        //计算财险电销商业险
+        List<Premium> premiumListOfSY = propertyPremiumDao.getPremiumDetailListOfSY(queryPara);
+        logger.info("商业险查询结果为 {}", JSON.toJSONString(premiumListOfSY));
+        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfSY);
+        effectedRow += temp;
+        //计算财险电销交强险
+        List<Premium> premiumListOfJQ = propertyPremiumDao.getPremiumDetailListOfJQ(queryPara);
+        logger.info("交强险查询结果为 {}", JSON.toJSONString(premiumListOfJQ));
+        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfJQ);
+        effectedRow += temp;
+        //计算财险电销批退批改
+        List<Premium> premiumListOfPTPG = propertyPremiumDao.getPremiumDetailListOfPTPG(queryPara);
+        logger.info("批退批改查询结果为 {}", JSON.toJSONString(premiumListOfPTPG));
+        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfPTPG);
+        effectedRow += temp;
+        //计算财险网销
+        List<Premium> premiumListOfInternet = propertyPremiumDao.getPremiumDetailListOfInternet(queryPara);
+        logger.info("网销查询结果为 {}", JSON.toJSONString(premiumListOfInternet));
+        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfInternet);
+        effectedRow += temp;
+        return effectedRow;
     }
 
     private void handleReverseAndCorrect(List<Order> orderList, List<Order> reverseAndCorrectOrderList) {

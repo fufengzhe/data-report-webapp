@@ -35,13 +35,7 @@ public class LifePremiumServiceImpl implements LifePremiumService {
         List<Premium> premiumListOfUpper = lifePremiumDao.getLifePremiumOfUpper();
         List<Premium> premiumListOfLower = lifePremiumDao.getLifePremiumOfLower();
         List<Premium> premiumList = this.getPremiumListUsingUpperAndLower(premiumListOfUpper, premiumListOfLower);
-        for (Premium premium : premiumList) {
-            premium.setDayAmount(CommonUtils.convertToTenThousandUnit(premium.getDayAmount()));
-            premium.setLastDayAmount(CommonUtils.convertToTenThousandUnit(premium.getLastDayAmount()));
-            premium.setMonthAmount(CommonUtils.convertToTenThousandUnit(premium.getMonthAmount()));
-            premium.setLastMonthAmount(CommonUtils.convertToTenThousandUnit(premium.getLastMonthAmount()));
-            premium.setYearAmount(CommonUtils.convertToTenThousandUnit(premium.getYearAmount()));
-        }
+        CommonUtils.convertPremium(premiumList);
         logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
         return premiumList;
     }

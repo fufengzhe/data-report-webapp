@@ -13,11 +13,25 @@ import java.util.List;
  */
 @Repository
 public interface PropertyPremiumDao {
-    Premium getPropertyPremiumOverview();
+    List<Premium> getPropertyPremiumOverview(List<String> statIndexNameListOfPropertyPremium);
 
     List<Order> getPremiumDetailWithoutReverseAndCorrect(QueryPara queryPara);
 
     List<Branch> getBranchList();
 
     List<Order> getReverseAndCorrectOrderList(QueryPara queryPara);
+
+    int deleteAllExistedRecord(List<String> statIndexNameListOfPropertyPremium);
+
+    List<Premium> getPremiumDetailListOfSY(QueryPara queryPara);
+
+    List<Premium> getPremiumDetailListOfJQ(QueryPara queryPara);
+
+    List<Premium> getPremiumDetailListOfPTPG(QueryPara queryPara);
+
+    List<Premium> getPremiumDetailListOfInternet(QueryPara queryPara);
+
+    int updatePropertyPremium(List<Premium> premiumList);
+
+    List<Premium> getPropertyPremiumDetail(QueryPara queryPara);
 }

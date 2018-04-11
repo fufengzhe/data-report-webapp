@@ -6,6 +6,7 @@ import cn.com.chinalife.ecdata.entity.user.ActiveUser;
 import cn.com.chinalife.ecdata.entity.user.RegisterUser;
 import cn.com.chinalife.ecdata.service.ScheduleService;
 import cn.com.chinalife.ecdata.service.trade.LifePremiumService;
+import cn.com.chinalife.ecdata.service.trade.PropertyPremiumService;
 import cn.com.chinalife.ecdata.service.user.ActiveUserService;
 import cn.com.chinalife.ecdata.service.user.RegisterUserService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
@@ -34,6 +35,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     LifePremiumService lifePremiumService;
 
+    @Autowired
+    PropertyPremiumService propertyPremiumService;
+
     @Scheduled(cron = "0 0 3 * * ?")
     private void scheduledEntry() throws InterruptedException {
         // 默认更新昨天所有渠道的数据
@@ -58,6 +62,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         logger.info("开始更新寿险保费相关数据");
         effectedRowNum = this.updateLifePremium(queryPara);
         logger.info("结束更新寿险保费相关数据，受影响的条数为 {}", effectedRowNum);
+
+        logger.info("开始更新财险保费相关数据");
+        effectedRowNum = this.updatePropertyPremium(queryPara);
+        logger.info("结束更新财险保费相关数据，受影响的条数为 {}", effectedRowNum);
     }
 
     private QueryPara prepareQueryPara() {
@@ -107,6 +115,23 @@ public class ScheduleServiceImpl implements ScheduleService {
         temp = lifePremiumService.updateLifePremium(premiumList);
         effectedRowNum += temp;
         logger.info("结束插入年维度寿险保费相关数据");
+        return effectedRowNum;
+    }
+
+    public int updatePropertyPremium(QueryPara queryPara) {
+        int effectedRowNum = 0;
+
+        logger.info("开始删除历史所有财险保费相关数据");
+        int temp = propertyPremiumService.deleteAllExistedRecord(CommonConstant.statIndexNameListOfPropertyPremium);
+        logger.info("结束删除历史所有财险保费相关数据");
+        effectedRowNum += temp;
+
+        logger.info("开始插入天维度财险保费相关数据");
+        queryPara.setTimeSpan(CommonConstant.statTimeSpanOfDate);
+        temp = propertyPremiumService.updatePropertyPremium(queryPara);
+        effectedRowNum += temp;
+        logger.info("结束插入天维度财险保费相关数据");
+
         return effectedRowNum;
     }
 

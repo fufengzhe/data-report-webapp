@@ -9,6 +9,14 @@
 	        DMP_APP.APP_KPI_VALUE2018_D
         WHERE
 	        FIRST_LEVEL = '003' AND STAT_DAY=to_char(SYSDATE-1,'YYYYmmdd')
+	    UNION ALL
+	    SELECT
+            max(STAT_DAY) statDay,max('总计') secondName,sum(KPI_VALUE_D) dayAmount,sum(KPI_VALUE_LD) lastDayAmount,sum(KPI_VALUE_M) monthAmount,
+            sum(KPI_VALUE_LM) lastMonthAmount,sum(KPI_VALUE_Y) yearAmount,0 yearGoal
+        FROM
+	        DMP_APP.APP_KPI_VALUE2018_D
+        WHERE
+	        FIRST_LEVEL = '003' AND STAT_DAY=to_char(SYSDATE-1,'YYYYmmdd')
     </select>
 
     <select id="getPlatformTradeNum" resultType="Premium">
@@ -18,7 +26,15 @@
         FROM
         DMP_APP.APP_KPI_VALUE2018_D
         WHERE
-        FIRST_LEVEL = '006'
+        FIRST_LEVEL = '006' AND STAT_DAY=to_char(SYSDATE-1,'YYYYmmdd')
+        UNION ALL
+        SELECT
+        max(STAT_DAY) statDay,max('总计') secondName,sum(KPI_VALUE_D) dayAmount,sum(KPI_VALUE_LD) lastDayAmount,sum(KPI_VALUE_M) monthAmount,
+            sum(KPI_VALUE_LM) lastMonthAmount,sum(KPI_VALUE_Y) yearAmount,0 yearGoal
+        FROM
+        DMP_APP.APP_KPI_VALUE2018_D
+        WHERE
+        FIRST_LEVEL = '006' AND STAT_DAY=to_char(SYSDATE-1,'YYYYmmdd')
     </select>
 
     <select id="getPlatformSignRatio" resultType="Premium">
