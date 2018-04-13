@@ -17,7 +17,7 @@
 
     <select id="getRegisterNumOverview" resultType="RegisterUser" parameterType="QueryPara">
         SELECT min(TO_CHAR(SYSDATE-1,'YYYY-MM-DD')) statDay,
-        CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购') THEN '创新' WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通') THEN '网销'
+        CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','国寿通') THEN '创新' WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通') THEN '网销'
         ELSE '未知渠道' END indexSource,
         SUM (CASE WHEN STAT_TIME = TO_CHAR(SYSDATE-1,'YYYY-MM-DD') THEN INDEX_VALUE ELSE 0 END ) dayNum,
         SUM (CASE WHEN STAT_TIME = TO_CHAR(SYSDATE-2,'YYYY-MM-DD') THEN INDEX_VALUE ELSE 0 END ) lastDayNum,
@@ -36,11 +36,11 @@
                     and STAT_TIME <= TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
         ]]>
         THEN INDEX_VALUE ELSE 0 END ) yearNum,
-        min(CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购') THEN 1000000 WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通') THEN 1530000
+        min(CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','国寿通') THEN 1000000 WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通') THEN 1530000
         ELSE 0 END) yearGoal
         FROM DMP_SELECT.STAT_RESULT
         WHERE INDEX_NAME = 'registerNum' AND STAT_TIME_SPAN = 'D' AND INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通')
-        GROUP BY  CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购') THEN '创新' WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通') THEN '网销'
+        GROUP BY  CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','国寿通') THEN '创新' WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通') THEN '网销'
         ELSE '未知渠道' END
         UNION ALL
         select TO_CHAR(SYSDATE-1,'YYYY-MM-DD') statDay,'总计' indexSource,
