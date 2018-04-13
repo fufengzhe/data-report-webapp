@@ -18,4 +18,8 @@ public interface ActiveUserService {
     int updateActive(List<ActiveUser> activeUserList);
 
     List<ActiveUser> getActiveUserNumOfAllSourcesFromStatResult(QueryPara queryPara);
+
+    List<List<ActiveUser>> queryOfficialSiteActiveNum(QueryPara queryPara);
+
+    String[][] getTableContent(List<ActiveUser> activeUsers, String[] strings);
 }

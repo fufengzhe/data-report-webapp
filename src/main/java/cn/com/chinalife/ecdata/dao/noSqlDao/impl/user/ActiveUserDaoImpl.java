@@ -32,7 +32,7 @@ public class ActiveUserDaoImpl implements ActiveUserDao {
         BasicDBObject timeFilterCon = new BasicDBObject();
         timeFilterCon.put("$and", timeFilterArray);
         BasicDBObject matchTime = new BasicDBObject("$match", timeFilterCon);
-        BasicDBObject matchUsersource = new BasicDBObject("$match", new BasicDBObject("clientSender", queryPara.getUserSource()));
+        BasicDBObject matchUserSource = new BasicDBObject("$match", new BasicDBObject("clientSender", queryPara.getUserSource()));
         //group stage one
         BasicDBObject groupFieldOne = new BasicDBObject("_id", new BasicDBObject("clientSender", "$clientSender").append("oldUserId", "$oldUserId"));
         BasicDBObject groupOne = new BasicDBObject("$group", groupFieldOne);
@@ -42,7 +42,7 @@ public class ActiveUserDaoImpl implements ActiveUserDao {
         BasicDBObject groupTwo = new BasicDBObject("$group", groupFieldTwo);
         List<DBObject> stageList = new ArrayList<DBObject>();
         stageList.add(matchTime);
-        stageList.add(matchUsersource);
+        stageList.add(matchUserSource);
         stageList.add(groupOne);
         stageList.add(groupTwo);
         Cursor cursor = dbCollection.aggregate(stageList, AggregationOptions.builder().allowDiskUse(true).build());
@@ -122,5 +122,57 @@ public class ActiveUserDaoImpl implements ActiveUserDao {
                 append("$lte", queryPara.getQueryDate() + CommonConstant.endAppendTime));
         List<String> oldUserIds = dbCollection.distinct("oldUserId", queryCondition);
         return oldUserIds;
+    }
+
+    public List<List<ActiveUser>> queryOfficialSiteActiveNum(QueryPara queryPara) {
+        List<List<ActiveUser>> activeUserList = new ArrayList<List<ActiveUser>>();
+        List<ActiveUser> dayList = getActiveListForSpecificTimeLength(queryPara, 10);
+        activeUserList.add(dayList);
+        List<ActiveUser> hourList = getActiveListForSpecificTimeLength(queryPara, 13);
+        activeUserList.add(hourList);
+        return activeUserList;
+    }
+
+    private List<ActiveUser> getActiveListForSpecificTimeLength(QueryPara queryPara, int length) {
+        DBCollection dbCollection = mongoTemplate.getCollection("UserActionCollection");
+        // aggregate 实现方法
+        // 过滤时间和渠道
+        BasicDBObject[] timeFilterArray = {new BasicDBObject("actionTime", new BasicDBObject("$gte", (10 == length ? queryPara.getStartDate() : queryPara.getQueryDate()) + CommonConstant.beginAppendTime)),
+                new BasicDBObject("actionTime", new BasicDBObject("$lte", (10 == length ? queryPara.getEndDate() : queryPara.getQueryDate()) + CommonConstant.endAppendTime))};
+        BasicDBObject timeFilterCon = new BasicDBObject();
+        timeFilterCon.put("$and", timeFilterArray);
+        BasicDBObject matchTime = new BasicDBObject("$match", timeFilterCon);
+        BasicDBObject matchUserSource = new BasicDBObject("$match", new BasicDBObject("clientSender", queryPara.getUserSource()));
+        //group stage one
+        BasicDBObject temp1 = new BasicDBObject("clientSender", "$clientSender").append("oldUserId", "$oldUserId");
+        temp1.append("actionDate", new BasicDBObject(new BasicDBObject("$substr", Arrays.asList("$actionTime", 0, length))));
+        BasicDBObject groupFieldOne = new BasicDBObject("_id", temp1);
+        BasicDBObject groupOne = new BasicDBObject("$group", groupFieldOne);
+        // group stage two
+        BasicDBObject temp2 = new BasicDBObject(new BasicDBObject("$concat", Arrays.asList("$_id.clientSender", "_", "$_id.actionDate")));
+        BasicDBObject groupFieldTwo = new BasicDBObject("_id", temp2);
+        groupFieldTwo.put("activeUserNum", new BasicDBObject("$sum", 1));
+        BasicDBObject groupTwo = new BasicDBObject("$group", groupFieldTwo);
+        BasicDBObject sort = new BasicDBObject("$sort", new BasicDBObject("_id", 1));
+        List<DBObject> stageList = new ArrayList<DBObject>();
+        stageList.add(matchTime);
+        stageList.add(matchUserSource);
+        stageList.add(groupOne);
+        stageList.add(groupTwo);
+        stageList.add(sort);
+        Cursor cursor = dbCollection.aggregate(stageList, AggregationOptions.builder().allowDiskUse(true).build());
+        List<ActiveUser> activeUserList = new ArrayList<ActiveUser>();
+        while (cursor.hasNext()) {
+            ActiveUser activeUser = new ActiveUser();
+            DBObject dbObject = cursor.next();
+            if (10 == length) {
+                activeUser.setStartDate(dbObject.get("_id").toString().substring(13));
+            } else {
+                activeUser.setStartDate(dbObject.get("_id").toString().substring(24, 26));
+            }
+            activeUser.setActiveUserNum(Integer.parseInt(dbObject.get("activeUserNum").toString()));
+            activeUserList.add(activeUser);
+        }
+        return activeUserList;
     }
 }

@@ -78,12 +78,28 @@ public class ActiveUserServiceImpl implements ActiveUserService {
     public List<ActiveUser> getActiveUserNumOfAllSourcesFromStatResult(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<ActiveUser> activeUserList;
-        if (!CommonConstant.statTimeSpanOfMonth.equals(queryPara.getTimeSpan()) ) {
+        if (!CommonConstant.statTimeSpanOfMonth.equals(queryPara.getTimeSpan())) {
             activeUserList = activeUserSQLDao.getDateActiveUserNumOfAllSourcesFromStatResult(queryPara);
-        }else{
+        } else {
             activeUserList = activeUserSQLDao.getMonthActiveUserNumOfAllSourcesFromStatResult(queryPara);
         }
         logger.info("service返回结果为 {}", JSON.toJSONString(activeUserList));
         return activeUserList;
+    }
+
+    public List<List<ActiveUser>> queryOfficialSiteActiveNum(QueryPara queryPara) {
+        return activeUserDao.queryOfficialSiteActiveNum(queryPara);
+    }
+
+    public String[][] getTableContent(List<ActiveUser> activeUserList, String[] title) {
+        String[][] tableContent = new String[activeUserList.size() + 1][title.length];
+        for (int i = 0; i < title.length; i++) {
+            tableContent[0][i] = title[i];
+        }
+        for (int i = 0; i < activeUserList.size(); i++) {
+            tableContent[i+1][0] = activeUserList.get(i).getStartDate();
+            tableContent[i+1][1] = activeUserList.get(i).getActiveUserNum() + "";
+        }
+        return tableContent;
     }
 }

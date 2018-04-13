@@ -66,7 +66,11 @@
         FROM TSS_SX.TS_ORDER_BASE T INNER JOIN TSS_SX.TS_ORDER_DELIVER TOD ON T .ORDER_ID = TOD.ORDER_ID
         INNER JOIN ( SELECT DISTINCT CNTR_NO FROM TSS_SX.FTP_DLFILEDATA WHERE BIZ_TYPE = '6' AND CNTR_NO NOT IN ( SELECT CNTR_NO FROM TSS_SX.FTP_DLFILEDATA WHERE BIZ_TYPE = '8'
 		AND SUB_BIZ_TYPE = '3')) FD ON TOD.PLC_NO = FD.CNTR_NO
-		WHERE T .CHECK_PASS_TIME IS NOT NULL GROUP BY DECODE(SUBSTR (T .AGENT_ID, 1, 1),'H','合肥电销中心','C','成都电销中心','Z','郑州电销中心','未知'),
+		WHERE T .CHECK_PASS_TIME IS NOT NULL
+        <![CDATA[
+        AND TOD.ELIMI_TIME <= concat(TO_CHAR(SYSDATE-1,'yyyy-mm-dd'),' 23:59:59')
+        ]]>
+        GROUP BY DECODE(SUBSTR (T .AGENT_ID, 1, 1),'H','合肥电销中心','C','成都电销中心','Z','郑州电销中心','未知'),
         <if test='timeSpan == "D"'>
             SUBSTR (TOD.ELIMI_TIME, 1, 10)
         </if>
@@ -99,7 +103,11 @@
         M .businessarea = '2'
         AND M .status IN ('05', '08', '10', '15')
         AND P .partyflag = '1'
-        AND o.paytime IS NOT NULL GROUP BY
+        AND o.paytime IS NOT NULL
+        <![CDATA[
+        AND o.paytime <= TO_DATE(concat(TO_CHAR(SYSDATE-1,'yyyy-mm-dd'),' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+        GROUP BY
         <if test='timeSpan == "D"'>
             TO_CHAR (o.paytime, 'YYYY-MM-DD')
         </if>

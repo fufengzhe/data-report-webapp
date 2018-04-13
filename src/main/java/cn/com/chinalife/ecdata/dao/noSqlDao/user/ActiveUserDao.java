@@ -15,4 +15,5 @@ public interface ActiveUserDao {
 
     List<String> getActiveUserDetail(QueryPara queryPara);
 
+    List<List<ActiveUser>> queryOfficialSiteActiveNum(QueryPara queryPara);
 }

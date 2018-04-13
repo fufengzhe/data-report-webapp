@@ -9,18 +9,23 @@ import java.util.Date;
  * Created by xiexiangyu on 2018/3/30.
  */
 public class DateUtils {
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static String getYesterday() {
         Calendar current = Calendar.getInstance();
         current.add(Calendar.DATE, -1);
-        return simpleDateFormat.format(current.getTime());
+        return new SimpleDateFormat("yyyy-MM-dd").format(current.getTime());
+    }
+
+    public static String getBeforeXDay(int num) {
+        Calendar current = Calendar.getInstance();
+        current.add(Calendar.DATE, -num);
+        return new SimpleDateFormat("yyyy-MM-dd").format(current.getTime());
     }
 
     public static String getTheDayBeforeYesterday() {
         Calendar current = Calendar.getInstance();
         current.add(Calendar.DATE, -2);
-        return simpleDateFormat.format(current.getTime());
+        return new SimpleDateFormat("yyyy-MM-dd").format(current.getTime());
     }
 
     public static String getMonthBeginDateUsingYesterday(String yesterday) {
@@ -43,7 +48,8 @@ public class DateUtils {
     }
 
     public static void main(String[] args) throws ParseException {
-        System.out.println(getYearBeginDateUsingYesterday(getYesterday()));
+        System.out.println(getBeforeXDay(1));
+        System.out.println(getBeforeXDay(7));
     }
 
 }
