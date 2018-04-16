@@ -26,7 +26,7 @@ public class SalesmanRelatedController {
     ActiveUserService activeUserService;
 
     @RequestMapping("/bankAndMobile")
-    public String bankAndMobile(QueryPara queryPara) {
+    public String bankAndMobile() {
         return "salesman/upload";
     }
 

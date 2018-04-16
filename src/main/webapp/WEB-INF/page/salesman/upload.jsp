@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Spring MVC + Bootstrap</title>
 
-    <link href="../static/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
 
 </head>
 
@@ -52,8 +52,8 @@
         <p>© ThinkingInGIS 2016</p>
     </footer>
 </div>
-<script type="text/javascript" src="static/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="static/js/bootstrap.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
 
 
 </body>

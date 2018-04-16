@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -53,6 +54,18 @@ public class PlatformTradeAmountServiceImpl implements PlatformTradeAmountServic
 
     private void calRatio(List<Premium> premiumList) {
         for (Premium premium : premiumList) {
+            if (premium.getDayAmount() == null) {
+                premium.setDayAmount(new BigDecimal("0"));
+            }
+            if (premium.getLastDayAmount() == null) {
+                premium.setLastDayAmount(new BigDecimal("0"));
+            }
+            if (premium.getMonthAmount() == null) {
+                premium.setMonthAmount(new BigDecimal("0"));
+            }
+            if (premium.getLastMonthAmount() == null) {
+                premium.setLastMonthAmount(new BigDecimal("0"));
+            }
             premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
             premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
             if (!"总计".equals(premium.getSecondName())) {
