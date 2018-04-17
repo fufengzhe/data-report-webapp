@@ -18,6 +18,7 @@
     <select id="getRegisterNumOverview" resultType="RegisterUser" parameterType="QueryPara">
         SELECT min(TO_CHAR(SYSDATE-1,'YYYY-MM-DD')) statDay,
         CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','国寿通') THEN '创新' WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通') THEN '网销'
+        WHEN INDEX_SOURCE IN ('e宝APP','e宝微信','e宝柜面') THEN '国寿e宝'
         ELSE '未知渠道' END indexSource,
         SUM (CASE WHEN STAT_TIME = TO_CHAR(SYSDATE-1,'YYYY-MM-DD') THEN INDEX_VALUE ELSE 0 END ) dayNum,
         SUM (CASE WHEN STAT_TIME = TO_CHAR(SYSDATE-2,'YYYY-MM-DD') THEN INDEX_VALUE ELSE 0 END ) lastDayNum,
@@ -39,8 +40,10 @@
         min(CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','国寿通') THEN 1000000 WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通') THEN 1530000
         ELSE 0 END) yearGoal
         FROM DMP_SELECT.STAT_RESULT
-        WHERE INDEX_NAME = 'registerNum' AND STAT_TIME_SPAN = 'D' AND INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通')
+        WHERE INDEX_NAME = 'registerNum' AND STAT_TIME_SPAN = 'D' AND INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通',
+        'e宝APP','e宝微信','e宝柜面')
         GROUP BY  CASE WHEN INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','国寿通') THEN '创新' WHEN INDEX_SOURCE IN ('掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通') THEN '网销'
+        WHEN INDEX_SOURCE IN ('e宝APP','e宝微信','e宝柜面') THEN '国寿e宝'
         ELSE '未知渠道' END
         UNION ALL
         select TO_CHAR(SYSDATE-1,'YYYY-MM-DD') statDay,'总计' indexSource,
@@ -61,9 +64,10 @@
                     and STAT_TIME <= TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
         ]]>
         THEN INDEX_VALUE ELSE 0 END ) yearNum,
-        1000000+1530000 yearGoal
+        0 yearGoal
         FROM DMP_SELECT.STAT_RESULT
-        WHERE INDEX_NAME = 'registerNum' AND STAT_TIME_SPAN = 'D' AND INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通')
+        WHERE INDEX_NAME = 'registerNum' AND STAT_TIME_SPAN = 'D' AND INDEX_SOURCE IN ('国寿i动','国寿i车','国寿i购','掌上国寿','官方网站','官网养老','手机M站','官方微信','国寿一账通','国寿通',
+        'e宝APP','e宝微信','e宝柜面')
     </select>
 
     <select id="getRegisterUserNumOfAllSources" resultType="RegisterUser" parameterType="QueryPara">
@@ -77,13 +81,15 @@
         <![CDATA[
                     and makedate <= TO_DATE(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
         ]]>
+        AND (MOBLIEPHONE IS NOT NULL OR EMAIL IS NOT NULL)
         GROUP BY USERSOURCE,TO_CHAR (makedate, 'yyyy-MM-dd')
     </select>
 
     <insert id="updateRegister" parameterType="java.util.List">
         INSERT INTO DMP_SELECT.STAT_RESULT
         (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, INDEX_VALUE, INDEX_SOURCE, CREATE_TIME,UPDATE_TIME)
-        SELECT t1.registerDate,t1.timeSpan,t1.indexName,t1.registerUserNum,t1.userSource,t1.createTime,t1.updateTime FROM (
+        SELECT t1.registerDate,t1.timeSpan,t1.indexName,t1.registerUserNum,t1.userSource,t1.createTime,t1.updateTime
+        FROM (
         <foreach collection="list" item="item" index="index" separator="UNION ALL">
             SELECT
             #{item.registerDate,jdbcType=VARCHAR} registerDate,
@@ -100,7 +106,7 @@
 
     <select id="getRegisterUserNumOfAllSourcesFromStatResult" resultType="RegisterUser" parameterType="QueryPara">
         SELECT
-        INDEX_SOURCE userSource,#{startDate} startDate,#{endDate} endDate,sum(INDEX_VALUE) registerUserNum
+        replace(INDEX_SOURCE,'e宝','国寿e宝') userSource,#{startDate} startDate,#{endDate} endDate,sum(INDEX_VALUE) registerUserNum
         FROM DMP_SELECT.STAT_RESULT
         WHERE INDEX_NAME = 'registerNum' AND
         <![CDATA[
@@ -109,6 +115,6 @@
         <![CDATA[
                     and STAT_TIME <= #{endDate}
         ]]>
-        GROUP BY INDEX_SOURCE ORDER BY registerUserNum DESC
+        GROUP BY replace(INDEX_SOURCE,'e宝','国寿e宝') ORDER BY registerUserNum DESC
     </select>
 </mapper>

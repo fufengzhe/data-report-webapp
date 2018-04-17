@@ -86,8 +86,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     public int updateActive(QueryPara queryPara) {
-        List<ActiveUser> activeUserList = activeUserService.getActiveUserNumOfAllSources(queryPara);
-        return activeUserService.updateActive(activeUserList);
+        int effectedRowNum = 0;
+        int temp;
+        List<ActiveUser> activeUserList;
+        //电商自有渠道
+        activeUserList = activeUserService.getActiveUserNumOfAllSources(queryPara);
+        temp = activeUserService.updateActive(activeUserList);
+        effectedRowNum += temp;
+        //e宝渠道
+        activeUserList = activeUserService.getActiveUserNumOfEBaoZhang(queryPara);
+        temp = activeUserService.updateActive(activeUserList);
+        effectedRowNum += temp;
+        return effectedRowNum;
     }
 
     public int updateLifePremium(QueryPara queryPara) {

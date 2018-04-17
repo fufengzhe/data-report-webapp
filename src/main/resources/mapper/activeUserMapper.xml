@@ -61,4 +61,31 @@
 		AND stat_time_span = 'M'
 	    ) ORDER BY T1.INDEX_VALUE DESC
     </select>
+
+    <select id="getActiveUserNumOfEBaoZhang" resultType="ActiveUser" parameterType="QueryPara">
+        SELECT
+        <if test='timeSpan == "D"'>
+            TO_CHAR (CALLTIME, 'YYYY-MM-DD')
+        </if>
+        <if test='timeSpan == "M"'>
+            concat(TO_CHAR (CALLTIME, 'YYYY-MM'),'-01')
+        </if>
+        startDate,'国寿e宝' userSource,COUNT (DISTINCT USERID) activeUserNum,#{timeSpan} timeSpan,'activeNum' indexName
+        FROM DMP_ITG.EBAOZHANG_LOGIN
+        WHERE
+        <![CDATA[
+			        CALLTIME >= TO_DATE (concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+        <![CDATA[
+                    and CALLTIME <= TO_DATE (concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+        GROUP BY
+        <if test='timeSpan == "D"'>
+            TO_CHAR (CALLTIME, 'YYYY-MM-DD')
+        </if>
+        <if test='timeSpan == "M"'>
+            TO_CHAR (CALLTIME, 'YYYY-MM')
+        </if>
+    </select>
+
 </mapper>

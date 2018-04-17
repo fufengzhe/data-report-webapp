@@ -97,9 +97,16 @@ public class ActiveUserServiceImpl implements ActiveUserService {
             tableContent[0][i] = title[i];
         }
         for (int i = 0; i < activeUserList.size(); i++) {
-            tableContent[i+1][0] = activeUserList.get(i).getStartDate();
-            tableContent[i+1][1] = activeUserList.get(i).getActiveUserNum() + "";
+            tableContent[i + 1][0] = activeUserList.get(i).getStartDate();
+            tableContent[i + 1][1] = activeUserList.get(i).getActiveUserNum() + "";
         }
         return tableContent;
+    }
+
+    public List<ActiveUser> getActiveUserNumOfEBaoZhang(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        List<ActiveUser> activeUserList = activeUserSQLDao.getActiveUserNumOfEBaoZhang(queryPara);
+        logger.info("service返回结果为 {}", JSON.toJSONString(activeUserList));
+        return activeUserList;
     }
 }

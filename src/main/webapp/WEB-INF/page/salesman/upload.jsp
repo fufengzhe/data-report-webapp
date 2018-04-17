@@ -1,60 +1,28 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Spring MVC + Bootstrap</title>
-
+    <title>业务员银行手机号提取</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/fileinput.css" type="text/css">
 </head>
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Spring MVC + Bootstrap</a>
-        </div>
-    </div>
-</nav>
+<body>
+<br/><br/><br/><br/><br/><br/><br/><br/>
+<div class="container-fluid text-center">
 
-
-
-<div class="container">
-
-    <div class="row">
-        <div class="col-md-4">
-            <h2>Maps</h2>
-            <p>maps</p>
-            <p>
-                <a class="btn btn-default" href="#" role="button">Maps</a>
-            </p>
-        </div>
-        <div class="col-md-4">
-            <h2>can</h2>
-            <p>can</p>
-            <p>
-                <a class="btn btn-default" href="#" role="button">can</a>
-            </p>
-        </div>
-        <div class="col-md-4">
-            <h2>Talk</h2>
-            <p>Talk</p>
-            <p>
-                <a class="btn btn-default" href="#" role="button">Talk</a>
-            </p>
-        </div>
-    </div>
-
-    <hr>
-    <footer>
-        <p>© ThinkingInGIS 2016</p>
+    <input id="f_upload" type="file" class="file" />
+    <footer class="footer">
+        <p>Powered by Information Technology Department</p>
     </footer>
 </div>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/fileinput.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/zh.js"></script>
 
 </body>
 </html>

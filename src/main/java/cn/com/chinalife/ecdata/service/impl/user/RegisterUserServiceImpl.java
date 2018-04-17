@@ -61,10 +61,13 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         for (UserSource userSource : userSourceList) {
             userSourceCodeAndNameMap.put(userSource.getUserSource(), userSource.getUserSourceName());
         }
+        userSourceCodeAndNameMap.put("21", "e宝APP");
+        userSourceCodeAndNameMap.put("22", "e宝微信");
+        userSourceCodeAndNameMap.put("23", "e宝柜面");
         for (RegisterUser registerUser : registerUserList) {
             registerUser.setTimeSpan(CommonConstant.statTimeSpanOfDate);
             registerUser.setIndexName(CommonConstant.statIndexNameOfRegister);
-            registerUser.setUserSource(userSourceCodeAndNameMap.get(registerUser.getUserSource()) == null ? "未知" : userSourceCodeAndNameMap.get(registerUser.getUserSource()));
+            registerUser.setUserSource(userSourceCodeAndNameMap.get(registerUser.getUserSource()) == null ? "未知" : userSourceCodeAndNameMap.get(registerUser.getUserSource().trim()));
         }
         Collections.sort(registerUserList, new Comparator<RegisterUser>() {
             public int compare(RegisterUser o1, RegisterUser o2) {
@@ -93,7 +96,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
             for (int i = 0; i < userSourceList.size() - 1; i++) {
                 userSourceCondition.append("'").append(userSourceList.get(i).getUserSource()).append("',");
             }
-            userSourceCondition.append("'").append(userSourceList.get(userSourceList.size() - 1).getUserSource()).append("') AND ");
+            userSourceCondition.append("'").append(userSourceList.get(userSourceList.size() - 1).getUserSource()).append("','21','22','23') AND ");
         }
         return userSourceCondition.toString();
     }

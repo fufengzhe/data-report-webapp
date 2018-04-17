@@ -22,4 +22,6 @@ public interface ActiveUserService {
     List<List<ActiveUser>> queryOfficialSiteActiveNum(QueryPara queryPara);
 
     String[][] getTableContent(List<ActiveUser> activeUsers, String[] strings);
+
+    List<ActiveUser> getActiveUserNumOfEBaoZhang(QueryPara queryPara);
 }
