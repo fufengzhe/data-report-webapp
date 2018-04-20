@@ -34,8 +34,7 @@ public class MailUtils {
         mailSender.send(mimeMessage);
     }
 
-    public static void main(String[] args) throws MessagingException {
-//        System.setProperty("java.net.preferIPv4Stack", "true");
+    public static void sendMailTest() throws MessagingException {
         StringBuilder htmlContent = new StringBuilder()
                 .append("<html>")
                 .append("<head>")
@@ -48,5 +47,10 @@ public class MailUtils {
                 .append("</body>")
                 .append("</html>");
         sendHtmlMail("348452440@qq.com", new String[]{"348452440@qq.com", "348452440@qq.com"}, "348452440@qq.com", "348452440@qq.com", "test", htmlContent.toString());
+    }
+
+    public static void main(String[] args) throws MessagingException {
+//        System.setProperty("java.net.preferIPv4Stack", "true");
+        sendMailTest();
     }
 }

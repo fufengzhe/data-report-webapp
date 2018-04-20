@@ -12,6 +12,7 @@ public class CommonConstant {
     public static String queryFailureStr = "查询失败!";
     public static String updateFailureStr = "更新失败!";
     public static String logFailureStr = "登录失败!";
+    public static String downFailureStr = "下载失败!";
     public static String userAuthDataSource = "userAuthDataSource";
     public static String businessDataSource = "businessDataSource";
     public static String notLoggedIn = "notLoggedIn";

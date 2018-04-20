@@ -6,7 +6,7 @@
 
     <!-- Spring JavaMailSender -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="smtp.qq.com"></property>
+        <property name="host" value="127.0.0.1"></property>
         <!-- 或许你可以用465端口，默认的25不适合 -->
         <property name="port" value="587"/>
         <property name="protocol" value="smtp"/>
@@ -22,4 +22,24 @@
             </props>
         </property>
     </bean>
+
+
+    <!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">-->
+        <!--<property name="host" value="10.20.102.13"></property>-->
+        <!--<property name="port" value="25"/>-->
+        <!--&lt;!&ndash;<property name="protocol" value="smtp"/>&ndash;&gt;-->
+        <!--<property name="username" value="webservice@chinalife.com.cn"></property>-->
+        <!--&lt;!&ndash; 这里的是你在QQ邮箱发送开通SMTP短信后，获取的授权码 &ndash;&gt;-->
+        <!--<property name="password" value="web123"></property>-->
+        <!--<property name="defaultEncoding" value="UTF-8"/>-->
+        <!--<property name="javaMailProperties">-->
+            <!--<props>-->
+                <!--<prop key="mail.smtp.auth">true</prop>-->
+                <!--<prop key="mail.smtp.timeout">25000</prop>-->
+                <!--<prop key="mail.debug">false</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+
 </beans>

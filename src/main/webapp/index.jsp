@@ -13,10 +13,11 @@
 <br/>
 <h1 align="center">Hello!Welcome To Data Server!</h1>
 <h4 align="center">May Your Work Be Driven By Data!</h4>
+<h6 align="center">Powered By Information Technology Department Of CLEC!</h6>
 
 <div class="container">
 
-    <h2><span class="label label-success glyphicon glyphicon-ok"> 已有功能（所有指标秒级相应）:</span></h2>
+    <h2><span class="label label-success glyphicon glyphicon-ok"> 已有功能（所有指标秒级响应）:</span></h2>
     <br/>
     <ul class="list-group">
         <li class="list-group-item">1、注册用户数查询</li>
@@ -26,6 +27,8 @@
         <li class="list-group-item">5、平台交易规模查询</li>
         <li class="list-group-item">6、成交客户数查询</li>
         <li class="list-group-item">7、官网活跃邮件定时发送</li>
+        <li class="list-group-item">8、业务员工号获取对应一账通绑定信息<a href="/ecdata/salesman/bankAndMobile" class="btn btn-success btn-xs" >点击使用</a>
+        </li>
     </ul>
 </div>
 

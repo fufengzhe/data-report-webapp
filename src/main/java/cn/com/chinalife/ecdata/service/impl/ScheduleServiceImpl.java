@@ -148,20 +148,19 @@ public class ScheduleServiceImpl implements ScheduleService {
         return effectedRowNum;
     }
 
-    //因服务器无法发送邮件，定时执行的口关闭，可通过浏览器进行调用处理，防止服务器端执行无效的操作
-//    @Scheduled(cron = "0 1 0 ? * MON")
-//    private void scheduledEntryForOfficialSiteQuery() throws InterruptedException, MessagingException {
-//        // 周一默认查询过去一周的数据
-//        QueryPara queryPara = new QueryPara();
-//        queryPara.setStartDate(DateUtils.getBeforeXDay(7));
-//        queryPara.setEndDate(DateUtils.getBeforeXDay(1));
-//        queryPara.setQueryDate(DateUtils.getBeforeXDay(5)); //周三
-//        queryPara.setUserSource("009002000000");
-//        logger.info("开始查询官网过去一周天维度及周三小时维度活跃数据");
-//        List<List<ActiveUser>> activeUserList = this.queryOfficialSiteActiveNum(queryPara);
-//        logger.info("结束查询官网过去一周天维度及周三小时维度活跃数据,查询结果为 {}", activeUserList);
-//        this.sendOfficialSiteActiveNum(queryPara, activeUserList);
-//    }
+    @Scheduled(cron = "0 1 0 ? * MON")
+    private void scheduledEntryForOfficialSiteQuery() throws InterruptedException, MessagingException {
+        // 周一默认查询过去一周的数据
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getBeforeXDay(7));
+        queryPara.setEndDate(DateUtils.getBeforeXDay(1));
+        queryPara.setQueryDate(DateUtils.getBeforeXDay(5)); //周三
+        queryPara.setUserSource("009002000000");
+        logger.info("开始查询官网过去一周天维度及周三小时维度活跃数据");
+        List<List<ActiveUser>> activeUserList = this.queryOfficialSiteActiveNum(queryPara);
+        logger.info("结束查询官网过去一周天维度及周三小时维度活跃数据,查询结果为 {}", activeUserList);
+        this.sendOfficialSiteActiveNum(queryPara, activeUserList);
+    }
 
     public void sendOfficialSiteActiveNum(QueryPara queryPara, List<List<ActiveUser>> activeUserList) throws MessagingException {
         String[][] tableOfDate = activeUserService.getTableContent(activeUserList.get(0), new String[]{"日期", "活跃数"});
