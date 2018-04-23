@@ -19,7 +19,8 @@ public class AuthUtils {
     public static void init() {
         String[] usernames = {"admin", "cuiyong", "xuningdi", "zhuhongling", "liufengquan", "guoyuefeng", "xuli", "shiyong", "laijingsi", "caohui", "zhouerwei", "baoyingdong", "wangxinqing", "wangke",
                 "zhaodepeng", "gaoxuxiang", "dingyuewu", "zhangguolong", "sunweidong", "yaohua", "wanjing", "guojie", "xusanming", "xiaojuping", "ouyangsijin", "wangli", "pengjinsheng", "wentao",
-                "zhangling", "weizhenling", "malingling", "beibei", "longbo", "bazhaoyu", "fanyan", "guojia", "wangxuguang", "lihongxiang", "liuyingjiu", "baohonggang", "xuchaoqun", "songshunli", "gukan"};
+                "zhangling", "weizhenling", "malingling", "beibei", "longbo", "bazhaoyu", "fanyan", "guojia", "wangxuguang", "lihongxiang", "liuyingjiu", "baohonggang", "xuchaoqun", "songshunli", "gukan",
+        "zhanghaifeng"};
         AuthUtils.existedAuthLogUserList = new ArrayList<LogUser>();
         for (String username : usernames) {
             LogUser logUser = new LogUser();

@@ -72,7 +72,11 @@ public class ActiveUserServiceImpl implements ActiveUserService {
     }
 
     public int updateActive(List<ActiveUser> activeUserList) {
-        return activeUserSQLDao.updateActive(activeUserList);
+        if (activeUserList != null && activeUserList.size() > 0) {
+            return activeUserSQLDao.updateActive(activeUserList);
+        } else {
+            return 0;
+        }
     }
 
     public List<ActiveUser> getActiveUserNumOfAllSourcesFromStatResult(QueryPara queryPara) {
@@ -108,5 +112,12 @@ public class ActiveUserServiceImpl implements ActiveUserService {
         List<ActiveUser> activeUserList = activeUserSQLDao.getActiveUserNumOfEBaoZhang(queryPara);
         logger.info("service返回结果为 {}", JSON.toJSONString(activeUserList));
         return activeUserList;
+    }
+
+    public List<String> getLatestDateOfEBaoZhang() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        List<String> latestDateList = activeUserSQLDao.getLatestDateOfEBaoZhang();
+        logger.info("service返回结果为 {}", JSON.toJSONString(latestDateList));
+        return latestDateList;
     }
 }

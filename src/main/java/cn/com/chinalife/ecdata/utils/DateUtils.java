@@ -47,9 +47,18 @@ public class DateUtils {
         return month + "-01-01";
     }
 
+    public static String addXDateBasedGivenDate(String givenDate, int span) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(format.parse(givenDate));
+        calendar.add(Calendar.DATE, span);
+        return format.format(calendar.getTime());
+    }
+
     public static void main(String[] args) throws ParseException {
         System.out.println(getBeforeXDay(1));
         System.out.println(getBeforeXDay(7));
+        System.out.println(addXDateBasedGivenDate("2018-04-30", 2));
     }
 
 }

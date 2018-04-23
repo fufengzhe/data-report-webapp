@@ -88,4 +88,9 @@
         </if>
     </select>
 
+    <select id="getLatestDateOfEBaoZhang" resultType="java.lang.String" parameterType="QueryPara">
+        SELECT MAX (STAT_TIME) FROM DMP_SELECT.STAT_RESULT
+        WHERE index_name = 'activeNum' AND INDEX_SOURCE = '国寿e宝'
+    </select>
+
 </mapper>

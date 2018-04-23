@@ -19,4 +19,6 @@ public interface ActiveUserSQLDao {
     List<ActiveUser> getMonthActiveUserNumOfAllSourcesFromStatResult(QueryPara queryPara);
 
     List<ActiveUser> getActiveUserNumOfEBaoZhang(QueryPara queryPara);
+
+    List<String> getLatestDateOfEBaoZhang();
 }

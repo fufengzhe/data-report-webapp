@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     PropertyPremiumService propertyPremiumService;
 
     @Scheduled(cron = "0 50 2 * * ?")
-    private void scheduledEntryForUpdate() throws InterruptedException {
+    private void scheduledEntryForUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = prepareQueryPara();
         int effectedRowNum;
@@ -85,7 +86,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return registerUserService.updateRegister(registerUserList);
     }
 
-    public int updateActive(QueryPara queryPara) {
+    public int updateActive(QueryPara queryPara) throws ParseException {
         int effectedRowNum = 0;
         int temp;
         List<ActiveUser> activeUserList;
@@ -93,7 +94,11 @@ public class ScheduleServiceImpl implements ScheduleService {
         activeUserList = activeUserService.getActiveUserNumOfAllSources(queryPara);
         temp = activeUserService.updateActive(activeUserList);
         effectedRowNum += temp;
-        //e宝渠道
+        //e宝渠道,因为e宝的oracle表格不是隔天更新的，所以要拿到截止到目前指标表中最晚的e宝活跃日期，在此基础上+1
+        List<String> latestDateOfEBaoZhang = activeUserService.getLatestDateOfEBaoZhang();
+        if (latestDateOfEBaoZhang.size() > 0) {
+            queryPara.setStartDate(DateUtils.addXDateBasedGivenDate(latestDateOfEBaoZhang.get(0), 1));
+        }
         activeUserList = activeUserService.getActiveUserNumOfEBaoZhang(queryPara);
         temp = activeUserService.updateActive(activeUserList);
         effectedRowNum += temp;

@@ -4,6 +4,7 @@ import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.user.ActiveUser;
 
 import javax.mail.MessagingException;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public interface ScheduleService {
 
     int updateRegister(QueryPara queryPara);
 
-    int updateActive(QueryPara queryPara);
+    int updateActive(QueryPara queryPara) throws ParseException;
 
     int updateLifePremium(QueryPara queryPara);
 

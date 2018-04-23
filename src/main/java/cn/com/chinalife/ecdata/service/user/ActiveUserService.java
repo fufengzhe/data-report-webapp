@@ -24,4 +24,6 @@ public interface ActiveUserService {
     String[][] getTableContent(List<ActiveUser> activeUsers, String[] strings);
 
     List<ActiveUser> getActiveUserNumOfEBaoZhang(QueryPara queryPara);
+
+    List<String> getLatestDateOfEBaoZhang();
 }
