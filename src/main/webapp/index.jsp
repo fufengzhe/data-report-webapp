@@ -37,7 +37,7 @@
     <h2><span class="label label-success glyphicon glyphicon-list-alt"> 数据展示:</span></h2>
     <br/>
     <ul class="list-group">
-        <li class="list-group-item">目前提供安卓APP客户端查询，下载地址：https://www.pgyer.com/8Vkb</li>
+        <li class="list-group-item">目前提供安卓APP客户端查询，下载地址：<a target="_blank" href="https://www.pgyer.com/8Vkb"> 安卓APP下载</a></li>
     </ul>
 </div>
 
