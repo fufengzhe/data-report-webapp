@@ -33,6 +33,10 @@ public class DateUtils {
         return month + "-01";
     }
 
+    public static String getMonthUsingYesteray(String yesterday) {
+        return yesterday.substring(0, 7);
+    }
+
     public static String getLastMonthBeginDateUsingYesterday(String yesterday) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = format.parse(yesterday);

@@ -26,4 +26,6 @@ public interface ActiveUserService {
     List<ActiveUser> getActiveUserNumOfEBaoZhang(QueryPara queryPara);
 
     List<String> getLatestDateOfEBaoZhang();
+
+    List<List<ActiveUser>> getActiveUserSummaryList();
 }

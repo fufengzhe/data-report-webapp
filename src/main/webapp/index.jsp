@@ -21,7 +21,8 @@
     <br/>
     <ul class="list-group">
         <li class="list-group-item">1、注册用户数查询</li>
-        <li class="list-group-item">2、活跃用户数及明细查询</li>
+        <li class="list-group-item">2、活跃用户数及明细查询<a href="/ecdata/activeUser/summary" class="btn btn-success btn-xs" >活跃用户数概览</a>
+        </li>
         <li class="list-group-item">3、寿险保费查询</li>
         <li class="list-group-item">4、财险保费查询</li>
         <li class="list-group-item">5、平台交易规模查询</li>

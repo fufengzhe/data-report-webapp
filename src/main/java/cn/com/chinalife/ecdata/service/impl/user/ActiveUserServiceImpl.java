@@ -8,6 +8,7 @@ import cn.com.chinalife.ecdata.entity.user.ActiveUser;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
 import cn.com.chinalife.ecdata.service.user.ActiveUserService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
+import cn.com.chinalife.ecdata.utils.DateUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,14 @@ public class ActiveUserServiceImpl implements ActiveUserService {
         if (!CommonConstant.statTimeSpanOfMonth.equals(queryPara.getTimeSpan())) {
             activeUserList = activeUserSQLDao.getDateActiveUserNumOfAllSourcesFromStatResult(queryPara);
         } else {
-            activeUserList = activeUserSQLDao.getMonthActiveUserNumOfAllSourcesFromStatResult(queryPara);
+            activeUserList = activeUserSQLDao.getMonthActiveUserNumOfAllSourcesFromStatResultWithoutEBaoZhang(queryPara);
+            List<ActiveUser> eBaoZhangList = activeUserSQLDao.getMonthActiveUserNumOfAllSourcesFromStatResultForEBaoZhang(queryPara);
+            activeUserList.addAll(eBaoZhangList);
+            Collections.sort(activeUserList, new Comparator<ActiveUser>() {
+                public int compare(ActiveUser o1, ActiveUser o2) {
+                    return o2.getActiveUserNum() - o1.getActiveUserNum();
+                }
+            });
         }
         logger.info("service返回结果为 {}", JSON.toJSONString(activeUserList));
         return activeUserList;
@@ -119,5 +127,22 @@ public class ActiveUserServiceImpl implements ActiveUserService {
         List<String> latestDateList = activeUserSQLDao.getLatestDateOfEBaoZhang();
         logger.info("service返回结果为 {}", JSON.toJSONString(latestDateList));
         return latestDateList;
+    }
+
+    public List<List<ActiveUser>> getActiveUserSummaryList() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        List<List<ActiveUser>> lists = new ArrayList<List<ActiveUser>>();
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        queryPara.setTimeSpan(CommonConstant.statTimeSpanOfDate);
+        List<ActiveUser> activeUserListOfDate = this.getActiveUserNumOfAllSourcesFromStatResult(queryPara);
+        lists.add(activeUserListOfDate);
+        queryPara.setStartDate(DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
+        queryPara.setTimeSpan(CommonConstant.statTimeSpanOfMonth);
+        List<ActiveUser> activeUserListOfMonth = this.getActiveUserNumOfAllSourcesFromStatResult(queryPara);
+        lists.add(activeUserListOfMonth);
+        logger.info("service返回结果为 {}", JSON.toJSONString(lists));
+        return lists;
     }
 }

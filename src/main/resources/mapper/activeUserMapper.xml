@@ -34,7 +34,8 @@
         ORDER BY INDEX_VALUE DESC,INDEX_SOURCE,STAT_TIME
     </select>
 
-    <select id="getMonthActiveUserNumOfAllSourcesFromStatResult" resultType="ActiveUser" parameterType="QueryPara">
+    <select id="getMonthActiveUserNumOfAllSourcesFromStatResultWithoutEBaoZhang" resultType="ActiveUser"
+            parameterType="QueryPara">
         SELECT
         T1.STATDATE statDate,T1.INDEX_SOURCE userSource,T1.INDEX_VALUE activeUserNum
         FROM ( SELECT SUBSTR (STAT_TIME, 0, 7) AS statDate,INDEX_SOURCE,INDEX_VALUE
@@ -43,7 +44,7 @@
 		WHERE
 			INDEX_NAME = 'activeNum'
 		AND STAT_TIME = CONCAT (#{startDate}, '-01')
-		AND STAT_TIME_SPAN = 'M'
+		AND STAT_TIME_SPAN = 'M' AND INDEX_SOURCE != '国寿e宝'
 		ORDER BY
 			CREATE_TIME DESC
 	    ) T1 WHERE ROWNUM
@@ -58,8 +59,27 @@
 		WHERE
 			index_name = 'activeNum'
 		AND stat_time = CONCAT (#{startDate}, '-01')
-		AND stat_time_span = 'M'
+		AND stat_time_span = 'M' AND INDEX_SOURCE != '国寿e宝'
 	    ) ORDER BY T1.INDEX_VALUE DESC
+    </select>
+
+    <select id="getMonthActiveUserNumOfAllSourcesFromStatResultForEBaoZhang" resultType="ActiveUser"
+            parameterType="QueryPara">
+        SELECT
+        T1.STATDATE statDate,T1.INDEX_SOURCE userSource,T1.INDEX_VALUE activeUserNum
+        FROM ( SELECT SUBSTR (STAT_TIME, 0, 7) AS statDate,INDEX_SOURCE,INDEX_VALUE
+        FROM
+        DMP_SELECT.STAT_RESULT
+        WHERE
+        INDEX_NAME = 'activeNum'
+        AND STAT_TIME = CONCAT (#{startDate}, '-01')
+        AND STAT_TIME_SPAN = 'M' AND INDEX_SOURCE = '国寿e宝'
+        ORDER BY
+        CREATE_TIME DESC
+        ) T1 WHERE ROWNUM
+        <![CDATA[
+                    <=1
+        ]]>
     </select>
 
     <select id="getActiveUserNumOfEBaoZhang" resultType="ActiveUser" parameterType="QueryPara">
