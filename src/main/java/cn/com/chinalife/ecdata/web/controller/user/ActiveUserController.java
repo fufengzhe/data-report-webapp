@@ -5,6 +5,7 @@ import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.user.ActiveUser;
 import cn.com.chinalife.ecdata.service.user.ActiveUserService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
+import cn.com.chinalife.ecdata.utils.DateUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +78,8 @@ public class ActiveUserController {
         try {
             List<List<ActiveUser>> activeUserSummaryList = activeUserService.getActiveUserSummaryList();
             model.addAttribute("activeUserSummaryList", JSON.toJSONString(activeUserSummaryList));
+            List<String> dateList = DateUtils.getDateList(DateUtils.getBeforeXDay(7), DateUtils.getBeforeXDay(1));
+            model.addAttribute("dates", JSON.toJSONString(dateList));
             responseBean.setDetailInfo(model);
         } catch (Exception e) {
             logger.error("异常信息为", e);

@@ -132,16 +132,24 @@ public class ActiveUserServiceImpl implements ActiveUserService {
     public List<List<ActiveUser>> getActiveUserSummaryList() {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         List<List<ActiveUser>> lists = new ArrayList<List<ActiveUser>>();
+
         QueryPara queryPara = new QueryPara();
         queryPara.setStartDate(DateUtils.getYesterday());
         queryPara.setEndDate(DateUtils.getYesterday());
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfDate);
         List<ActiveUser> activeUserListOfDate = this.getActiveUserNumOfAllSourcesFromStatResult(queryPara);
         lists.add(activeUserListOfDate);
+
         queryPara.setStartDate(DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfMonth);
         List<ActiveUser> activeUserListOfMonth = this.getActiveUserNumOfAllSourcesFromStatResult(queryPara);
         lists.add(activeUserListOfMonth);
+
+        queryPara.setStartDate(DateUtils.getBeforeXDay(7));
+        queryPara.setEndDate(DateUtils.getBeforeXDay(1));
+        queryPara.setTimeSpan(CommonConstant.statTimeSpanOfDate);
+        List<ActiveUser> activeUserListForTrendOfDate = activeUserSQLDao.getActiveUserNumOfAllSourcesFromStatResultForTrendOfDate(queryPara);
+        lists.add(activeUserListForTrendOfDate);
         logger.info("service返回结果为 {}", JSON.toJSONString(lists));
         return lists;
     }

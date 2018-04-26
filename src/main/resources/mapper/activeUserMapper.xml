@@ -113,4 +113,24 @@
         WHERE index_name = 'activeNum' AND INDEX_SOURCE = '国寿e宝'
     </select>
 
+    <select id="getActiveUserNumOfAllSourcesFromStatResultForTrendOfDate" resultType="ActiveUser" parameterType="QueryPara">
+        SELECT INDEX_SOURCE userSource,SUM ( CASE WHEN STAT_TIME = to_char(sysdate-7,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf7,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-6,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf6,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-5,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf5,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-4,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf4,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-3,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf3,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf2,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf1
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME = 'activeNum'
+        AND STAT_TIME_SPAN = 'D'
+        <![CDATA[
+			       and STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY INDEX_SOURCE
+    </select>
+
 </mapper>
