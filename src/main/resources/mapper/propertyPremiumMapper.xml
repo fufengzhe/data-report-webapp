@@ -9,7 +9,7 @@
         sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy-mm'),'-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) monthAmount,
         ]]>
         <![CDATA[
-        sum(CASE WHEN STAT_TIME>=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME<=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-31') THEN INDEX_VALUE ELSE 0 END ) lastMonthAmount,
+        sum(CASE WHEN STAT_TIME>=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME<=to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) lastMonthAmount,
         ]]>
         <![CDATA[
         sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy'),'-01-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) yearAmount
@@ -29,7 +29,7 @@
         sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy-mm'),'-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) monthAmount,
         ]]>
         <![CDATA[
-        sum(CASE WHEN STAT_TIME>=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME<=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-31') THEN INDEX_VALUE ELSE 0 END ) lastMonthAmount,
+        sum(CASE WHEN STAT_TIME>=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME<=to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) lastMonthAmount,
         ]]>
         <![CDATA[
         sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy'),'-01-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) yearAmount
