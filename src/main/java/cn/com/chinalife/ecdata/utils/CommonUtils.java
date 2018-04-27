@@ -65,6 +65,13 @@ public class CommonUtils {
         return premiumList;
     }
 
+    public static void setDefaultForPremium(Premium premium) {
+        premium.setDayAmount(new BigDecimal("0.00"));
+        premium.setLastDayAmount(new BigDecimal("0.00"));
+        premium.setMonthAmount(new BigDecimal("0.00"));
+        premium.setLastMonthAmount(new BigDecimal("0.00"));
+        premium.setYearAmount(new BigDecimal("0.00"));
+    }
 
     public static void main(String[] args) {
         System.out.println(convertToTenThousandUnit(new BigDecimal(11565.11)));

@@ -23,7 +23,7 @@ public interface PropertyPremiumDao {
 
     int deleteAllExistedRecord(List<String> statIndexNameListOfPropertyPremium);
 
-    List<Premium> getPremiumDetailListOfSY(QueryPara queryPara);
+    List<Premium> getPremiumDetailListOfDX(QueryPara queryPara);
 
     List<Premium> getPremiumDetailListOfJQ(QueryPara queryPara);
 

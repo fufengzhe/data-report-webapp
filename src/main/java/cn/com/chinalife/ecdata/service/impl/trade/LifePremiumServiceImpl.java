@@ -31,13 +31,32 @@ public class LifePremiumServiceImpl implements LifePremiumService {
     public List<Premium> getLifePremiumOverview() throws ParseException {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
-        // 昨天 当月 当年的保费
-        List<Premium> premiumListOfUpper = lifePremiumDao.getLifePremiumOfUpper();
-        List<Premium> premiumListOfLower = lifePremiumDao.getLifePremiumOfLower();
-        List<Premium> premiumList = this.getPremiumListUsingUpperAndLower(premiumListOfUpper, premiumListOfLower);
-        CommonUtils.convertPremium(premiumList);
-        logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
-        return premiumList;
+        List<Premium> premiumList = lifePremiumDao.getLifePremiumOverview(CommonConstant.statIndexNameOfLifePremium);
+        //TODO 计算日环比，月环比，注意按照每个渠道进行循环，各个电销中心，网销，总计
+        String[] statIndex = new String[]{"郑州电销中心", "合肥电销中心", "成都电销中心", "网销", "总计"};
+        Map<String, Premium> dateAndPremiumMap = new HashMap<String, Premium>();
+        for (Premium premium : premiumList) {
+            dateAndPremiumMap.put(premium.getStatDay() + "&" + premium.getBranchName(), premium);
+        }
+        List<Premium> premiumListToReturn = new ArrayList<Premium>();
+        for (String index : statIndex) {
+            String yesterday = DateUtils.getYesterday();
+            Premium premium = dateAndPremiumMap.get(yesterday + "&" + index);
+            if (premium == null) {
+                premium.setStatDay(yesterday);
+                premium.setBranchName(index);
+                CommonUtils.setDefaultForPremium(premium);
+            }
+            premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
+            premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
+            if ("总计".equals(index)) {
+                premium.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getYearAmount(), new BigDecimal("280000000"), 4)));
+            }
+            premiumListToReturn.add(premium);
+        }
+        CommonUtils.convertPremium(premiumListToReturn);
+        logger.info("service返回结果为 {}", JSON.toJSONString(premiumListToReturn));
+        return premiumListToReturn;
     }
 
     private List<Premium> getPremiumListUsingUpperAndLower(List<Premium> premiumListOfUpper, List<Premium> premiumListOfLower) throws ParseException {

@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Repository
 public interface LifePremiumDao {
-    Premium getLifePremiumOverview();
+    List<Premium> getLifePremiumOverview(String indexName);
 
     List<Order> getPremiumDetailWithOnlyAgentAndPolicyNo(QueryPara queryPara);
 

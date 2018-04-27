@@ -42,7 +42,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     PropertyPremiumService propertyPremiumService;
 
-    @Scheduled(cron = "0 50 2 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?")
     private void scheduledEntryForUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = prepareQueryPara();
@@ -66,11 +66,20 @@ public class ScheduleServiceImpl implements ScheduleService {
         logger.info("开始更新寿险保费相关数据");
         effectedRowNum = this.updateLifePremium(queryPara);
         logger.info("结束更新寿险保费相关数据，受影响的条数为 {}", effectedRowNum);
+    }
+
+    // 因为财险保费不是直接依赖镜像库，依赖另一个中间表（文广开发商），所以单独拎出来并把任务开始时间往后挪
+    @Scheduled(cron = "0 0 4 * * ?")
+    private void scheduledEntryForPropertyPremiumUpdate() throws InterruptedException, ParseException {
+        // 默认更新昨天所有渠道的数据
+        QueryPara queryPara = prepareQueryPara();
+        int effectedRowNum;
 
         logger.info("开始更新财险保费相关数据");
         effectedRowNum = this.updatePropertyPremium(queryPara);
         logger.info("结束更新财险保费相关数据，受影响的条数为 {}", effectedRowNum);
     }
+
 
     private QueryPara prepareQueryPara() {
         QueryPara queryPara = new QueryPara();
@@ -95,7 +104,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         temp = activeUserService.updateActive(activeUserList);
         effectedRowNum += temp;
         //e宝渠道,因为e宝的oracle表格不是隔天更新的，所以要拿到截止到目前指标表中最晚的e宝活跃日期，在此基础上+1
-        if(CommonConstant.statTimeSpanOfDate.equals(queryPara.getTimeSpan())){
+        if (CommonConstant.statTimeSpanOfDate.equals(queryPara.getTimeSpan())) {
             List<String> latestDateOfEBaoZhang = activeUserService.getLatestDateOfEBaoZhang();
             if (latestDateOfEBaoZhang.size() > 0) {
                 queryPara.setStartDate(DateUtils.addXDateBasedGivenDate(latestDateOfEBaoZhang.get(0), 1));
@@ -122,19 +131,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         effectedRowNum += temp;
         logger.info("结束插入天维度寿险保费相关数据");
 
-        logger.info("开始插入月维度寿险保费相关数据");
-        queryPara.setTimeSpan(CommonConstant.statTimeSpanOfMonth);
-        premiumList = lifePremiumService.getLifePremiumDetail(queryPara);
-        temp = lifePremiumService.updateLifePremium(premiumList);
-        effectedRowNum += temp;
-        logger.info("结束插入月维度寿险保费相关数据");
-
-        logger.info("开始插入年维度寿险保费相关数据");
-        queryPara.setTimeSpan(CommonConstant.statTimeSpanOfYear);
-        premiumList = lifePremiumService.getLifePremiumDetail(queryPara);
-        temp = lifePremiumService.updateLifePremium(premiumList);
-        effectedRowNum += temp;
-        logger.info("结束插入年维度寿险保费相关数据");
         return effectedRowNum;
     }
 

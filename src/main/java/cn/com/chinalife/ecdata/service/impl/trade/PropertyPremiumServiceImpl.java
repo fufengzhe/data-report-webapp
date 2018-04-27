@@ -32,8 +32,7 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         List<Premium> premiumList = propertyPremiumDao.getPropertyPremiumOverview(CommonConstant.statIndexNameListOfPropertyPremium);
-        //TODO 计算日环比，月环比，注意按照每个渠道进行循环，各个电销中心，网销，总计
-        String[] statIndex = new String[]{"湖南长沙中心", "肇庆电销中心", "上海电销中心", "网销", "总计"};
+        String[] statIndex = new String[]{"长沙区域分公司", "上海区域分公司", "肇庆区域分公司", "网销", "总计"};
         Map<String, Premium> dateAndPremiumMap = new HashMap<String, Premium>();
         for (Premium premium : premiumList) {
             dateAndPremiumMap.put(premium.getStatDay() + "&" + premium.getBranchName(), premium);
@@ -45,11 +44,7 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
             if (premium == null) {
                 premium.setStatDay(yesterday);
                 premium.setBranchName(index);
-                premium.setDayAmount(new BigDecimal("0.00"));
-                premium.setLastDayAmount(new BigDecimal("0.00"));
-                premium.setMonthAmount(new BigDecimal("0.00"));
-                premium.setLastMonthAmount(new BigDecimal("0.00"));
-                premium.setYearAmount(new BigDecimal("0.00"));
+                CommonUtils.setDefaultForPremium(premium);
             }
             premium.setDayRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getDayAmount().subtract(premium.getLastDayAmount()), premium.getLastDayAmount(), 4)));
             premium.setMonthRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premium.getMonthAmount().subtract(premium.getLastMonthAmount()), premium.getLastMonthAmount(), 4)));
@@ -82,15 +77,10 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         int effectedRow = 0;
         int temp;
-        //计算财险电销商业险
-        List<Premium> premiumListOfSY = propertyPremiumDao.getPremiumDetailListOfSY(queryPara);
-        logger.info("商业险查询结果为 {}", JSON.toJSONString(premiumListOfSY));
-        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfSY);
-        effectedRow += temp;
-        //计算财险电销交强险
-        List<Premium> premiumListOfJQ = propertyPremiumDao.getPremiumDetailListOfJQ(queryPara);
-        logger.info("交强险查询结果为 {}", JSON.toJSONString(premiumListOfJQ));
-        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfJQ);
+        //计算财险电销
+        List<Premium> premiumListOfDX = propertyPremiumDao.getPremiumDetailListOfDX(queryPara);
+        logger.info("财险电销查询结果为 {}", JSON.toJSONString(premiumListOfDX));
+        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfDX);
         effectedRow += temp;
         //计算财险电销批退批改
         List<Premium> premiumListOfPTPG = propertyPremiumDao.getPremiumDetailListOfPTPG(queryPara);

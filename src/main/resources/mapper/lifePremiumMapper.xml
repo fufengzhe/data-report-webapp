@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.trade.LifePremiumDao">
-    <select id="getLifePremiumOverview" resultType="Premium">
+    <select id="getLifePremiumOverview" resultType="Premium" parameterType="java.lang.String">
         SELECT
-            STAT_DAY statDay,KPI_VALUE_D dayAmount,KPI_VALUE_LD lastDayAmount,KPI_VALUE_M monthAmount,
-            KPI_VALUE_LM lastMonthAmount,KPI_VALUE_Y yearAmount,GOAL_VALUE yearGoal
-        FROM
-	        DMP_APP.APP_KPI_VALUE2018_D
-        WHERE
-	        FIRST_LEVEL = '002' AND STAT_DAY=to_char(SYSDATE-1,'YYYYmmdd')
+        min(TO_CHAR(SYSDATE-1,'yyyy-mm-dd')) statDay,INDEX_SOURCE branchName,sum(CASE WHEN
+        STAT_TIME=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) dayAmount,
+        sum(CASE WHEN STAT_TIME=TO_CHAR(SYSDATE-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) lastDayAmount,
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy-mm'),'-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) monthAmount,
+        ]]>
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME<=to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) lastMonthAmount,
+        ]]>
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy'),'-01-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) yearAmount
+        ]]>
+        FROM DMP_SELECT.STAT_RESULT WHERE
+        INDEX_NAME=#{_parameter}
+        AND
+        STAT_TIME>=LEAST(CONCAT(to_char(add_months(trunc(sysdate),-1),'yyyy-mm'),'-01'),CONCAT(SUBSTR(TO_CHAR(SYSDATE-1,'yyyy'),0,4),'-01-01'))
+        GROUP BY index_source
+        UNION ALL
+        SELECT
+        min(TO_CHAR(SYSDATE-1,'yyyy-mm-dd')) statDay,'总计' branchName,sum(CASE WHEN
+        STAT_TIME=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) dayAmount,
+        sum(CASE WHEN STAT_TIME=TO_CHAR(SYSDATE-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) lastDayAmount,
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy-mm'),'-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) monthAmount,
+        ]]>
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME<=to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) lastMonthAmount,
+        ]]>
+        <![CDATA[
+        sum(CASE WHEN STAT_TIME>=concat(TO_CHAR(SYSDATE-1,'yyyy'),'-01-01') AND STAT_TIME<=TO_CHAR(SYSDATE-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END ) yearAmount
+        ]]>
+        FROM DMP_SELECT.STAT_RESULT WHERE
+        INDEX_NAME =#{_parameter}
+        AND
+        STAT_TIME>=LEAST(CONCAT(to_char(add_months(trunc(sysdate),-1),'yyyy-mm'),'-01'),CONCAT(SUBSTR(TO_CHAR(SYSDATE-1,'yyyy'),0,4),'-01-01'))
     </select>
 
     <select id="getPremiumDetailWithOnlyAgentAndPolicyNo" resultType="Order" parameterType="QueryPara">
@@ -52,16 +81,7 @@
 
     <select id="getLifePremiumDetail" resultType="Premium" parameterType="QueryPara">
         SELECT
-        <if test='timeSpan == "D"'>
-            SUBSTR (TOD.ELIMI_TIME, 1, 10)
-        </if>
-        <if test='timeSpan == "M"'>
-            CONCAT(SUBSTR (TOD.ELIMI_TIME, 1, 7),'-01')
-        </if>
-        <if test='timeSpan == "Y"'>
-            CONCAT(SUBSTR (TOD.ELIMI_TIME, 1, 4),'-01-01')
-        </if>
-        statDay,#{timeSpan} timeSpan,DECODE(SUBSTR (T .AGENT_ID, 1, 1),'H','合肥电销中心','C','成都电销中心','Z','郑州电销中心','未知') branchName,
+            SUBSTR (TOD.ELIMI_TIME, 1, 10) statDay,#{timeSpan} timeSpan,DECODE(SUBSTR (T .AGENT_ID, 1, 1),'H','合肥电销中心','C','成都电销中心','Z','郑州电销中心','未知') branchName,
                 SUM ( DECODE (T .PAYMENT_TYPE,'W',T .SUM_PREM / 10,'Y',T .SUM_PREM,'H',T .SUM_PREM * 2,'Q',T .SUM_PREM * 4,'M',T .SUM_PREM * 12,0)) accumulatedAmount
         FROM TSS_SX.TS_ORDER_BASE T INNER JOIN TSS_SX.TS_ORDER_DELIVER TOD ON T .ORDER_ID = TOD.ORDER_ID
         INNER JOIN ( SELECT DISTINCT CNTR_NO FROM TSS_SX.FTP_DLFILEDATA WHERE BIZ_TYPE = '6' AND CNTR_NO NOT IN ( SELECT CNTR_NO FROM TSS_SX.FTP_DLFILEDATA WHERE BIZ_TYPE = '8'
@@ -70,30 +90,12 @@
         <![CDATA[
         AND TOD.ELIMI_TIME <= concat(TO_CHAR(SYSDATE-1,'yyyy-mm-dd'),' 23:59:59')
         ]]>
-        GROUP BY DECODE(SUBSTR (T .AGENT_ID, 1, 1),'H','合肥电销中心','C','成都电销中心','Z','郑州电销中心','未知'),
-        <if test='timeSpan == "D"'>
-            SUBSTR (TOD.ELIMI_TIME, 1, 10)
-        </if>
-        <if test='timeSpan == "M"'>
-            SUBSTR (TOD.ELIMI_TIME, 1, 7)
-        </if>
-        <if test='timeSpan == "Y"'>
-            SUBSTR (TOD.ELIMI_TIME, 1, 4)
-        </if>
+        GROUP BY DECODE(SUBSTR (T .AGENT_ID, 1, 1),'H','合肥电销中心','C','成都电销中心','Z','郑州电销中心','未知'),SUBSTR (TOD.ELIMI_TIME, 1, 10)
     </select>
 
     <select id="getLifePremiumDetailOfInternet" resultType="Premium" parameterType="QueryPara">
         SELECT
-        <if test='timeSpan == "D"'>
-            TO_CHAR (o.paytime, 'YYYY-MM-DD')
-        </if>
-        <if test='timeSpan == "M"'>
-            CONCAT(TO_CHAR (o.paytime, 'YYYY-MM'),'-01')
-        </if>
-        <if test='timeSpan == "Y"'>
-            CONCAT(TO_CHAR (o.paytime, 'YYYY'),'-01-01')
-        </if>
-        statDay,#{timeSpan} timeSpan,'网销' branchName,
+            TO_CHAR (o.paytime, 'YYYY-MM-DD') statDay,#{timeSpan} timeSpan,'网销' branchName,
         SUM (M .sumpremium) accumulatedAmount
         FROM chinalifeec.ge_proposal_main M
         INNER JOIN chinalifeec.ge_member_proposal P ON M .proposalsid = P .proposalsid
@@ -107,16 +109,7 @@
         <![CDATA[
         AND o.paytime <= TO_DATE(concat(TO_CHAR(SYSDATE-1,'yyyy-mm-dd'),' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
         ]]>
-        GROUP BY
-        <if test='timeSpan == "D"'>
-            TO_CHAR (o.paytime, 'YYYY-MM-DD')
-        </if>
-        <if test='timeSpan == "M"'>
-            TO_CHAR (o.paytime, 'YYYY-MM')
-        </if>
-        <if test='timeSpan == "Y"'>
-            TO_CHAR (o.paytime, 'YYYY')
-        </if>
+        GROUP BY TO_CHAR (o.paytime, 'YYYY-MM-DD')
     </select>
 
     <select id="getLifePremiumDetailWithoutDistinctBranch" resultType="Premium" parameterType="QueryPara">
@@ -131,9 +124,11 @@
             CONCAT(SUBSTR (TOD.ELIMI_TIME, 1, 4),'-01-01')
         </if>
         statDay,#{timeSpan} timeSpan,#{userSource} branchName,
-        SUM ( DECODE (T .PAYMENT_TYPE,'W',T .SUM_PREM / 10,'Y',T .SUM_PREM,'H',T .SUM_PREM * 2,'Q',T .SUM_PREM * 4,'M',T .SUM_PREM * 12,0)) accumulatedAmount
+        SUM ( DECODE (T .PAYMENT_TYPE,'W',T .SUM_PREM / 10,'Y',T .SUM_PREM,'H',T .SUM_PREM * 2,'Q',T .SUM_PREM * 4,'M',T
+        .SUM_PREM * 12,0)) accumulatedAmount
         FROM TSS_SX.TS_ORDER_BASE T INNER JOIN TSS_SX.TS_ORDER_DELIVER TOD ON T .ORDER_ID = TOD.ORDER_ID
-        INNER JOIN ( SELECT DISTINCT CNTR_NO FROM TSS_SX.FTP_DLFILEDATA WHERE BIZ_TYPE = '6' AND CNTR_NO NOT IN ( SELECT CNTR_NO FROM TSS_SX.FTP_DLFILEDATA WHERE BIZ_TYPE = '8'
+        INNER JOIN ( SELECT DISTINCT CNTR_NO FROM TSS_SX.FTP_DLFILEDATA WHERE BIZ_TYPE = '6' AND CNTR_NO NOT IN ( SELECT
+        CNTR_NO FROM TSS_SX.FTP_DLFILEDATA WHERE BIZ_TYPE = '8'
         AND SUB_BIZ_TYPE = '3')) FD ON TOD.PLC_NO = FD.CNTR_NO
         WHERE T .CHECK_PASS_TIME IS NOT NULL GROUP BY
         <if test='timeSpan == "D"'>
@@ -166,56 +161,6 @@
         ) t1
     </insert>
 
-    <select id="getLifePremiumOfUpper" resultType="Premium">
-        SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-        FROM DMP_SELECT.STAT_RESULT
-        WHERE INDEX_NAME='lifePremium' AND STAT_TIME=TO_CHAR(SYSDATE-1,'YYYY-MM-DD') AND STAT_TIME_SPAN='D'
-        UNION ALL
-        SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-        FROM DMP_SELECT.STAT_RESULT
-        WHERE INDEX_NAME='lifePremium' AND STAT_TIME=CONCAT(TO_CHAR(SYSDATE-1,'YYYY-MM'),'-01') AND STAT_TIME_SPAN='M'
-        UNION ALL
-        SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-        FROM DMP_SELECT.STAT_RESULT
-        WHERE INDEX_NAME='lifePremium' AND STAT_TIME=CONCAT(TO_CHAR(SYSDATE-1,'YYYY'),'-01-01') AND STAT_TIME_SPAN='Y'
-        UNION ALL
-        SELECT statDay,timeSpan,SUM (T.accumulatedAmount) accumulatedAmount,'总计'
-        FROM (
-            SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-            FROM DMP_SELECT.STAT_RESULT
-            WHERE INDEX_NAME='lifePremium' AND STAT_TIME=TO_CHAR(SYSDATE-1,'YYYY-MM-DD') AND STAT_TIME_SPAN='D'
-            UNION ALL
-            SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-            FROM DMP_SELECT.STAT_RESULT
-            WHERE INDEX_NAME='lifePremium' AND STAT_TIME=CONCAT(TO_CHAR(SYSDATE-1,'YYYY-MM'),'-01') AND STAT_TIME_SPAN='M'
-            UNION ALL
-            SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-            FROM DMP_SELECT.STAT_RESULT
-            WHERE INDEX_NAME='lifePremium' AND STAT_TIME=CONCAT(TO_CHAR(SYSDATE-1,'YYYY'),'-01-01') AND STAT_TIME_SPAN='Y'
-        ) T GROUP BY statDay,timeSpan
-    </select>
-
-    <select id="getLifePremiumOfLower" resultType="Premium">
-        SELECT
-            STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-            FROM DMP_SELECT.STAT_RESULT
-            WHERE INDEX_NAME='lifePremium' AND STAT_TIME=TO_CHAR(SYSDATE-2,'YYYY-MM-DD') AND STAT_TIME_SPAN='D'
-            UNION ALL
-            SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-            FROM DMP_SELECT.STAT_RESULT
-            WHERE INDEX_NAME='lifePremium' AND STAT_TIME=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME_SPAN='M'
-        UNION ALL
-        SELECT statDay,timeSpan,SUM (T.accumulatedAmount) accumulatedAmount,'总计'
-        FROM (
-            SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-            FROM DMP_SELECT.STAT_RESULT
-            WHERE INDEX_NAME='lifePremium' AND STAT_TIME=TO_CHAR(SYSDATE-2,'YYYY-MM-DD') AND STAT_TIME_SPAN='D'
-            UNION ALL
-            SELECT STAT_TIME statDay,STAT_TIME_SPAN timeSpan,INDEX_VALUE accumulatedAmount,INDEX_SOURCE branchName
-            FROM DMP_SELECT.STAT_RESULT
-            WHERE INDEX_NAME='lifePremium' AND STAT_TIME=CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01') AND STAT_TIME_SPAN='M'
-        ) T GROUP BY statDay,timeSpan
-    </select>
 
     <select id="getLifePremiumDetailFromStatResult" resultType="Premium" parameterType="QueryPara">
         SELECT

@@ -22,8 +22,6 @@ public class CommonConstant {
     public static String statTimeSpanOfYear = "Y";
     public static String statIndexNameOfRegister = "registerNum";
     public static String statIndexNameOfActive = "activeNum";
-    public static String statIndexNameOfPropertyPremiumSY = "propertyPremiumSY";
-    public static String statIndexNameOfPropertyPremiumJQ = "propertyPremiumJQ";
     public static String statIndexNameOfPropertyPremiumPTPG = "propertyPremiumPTPG";
     public static String statIndexNameOfPropertyPremium = "propertyPremium";
     public static String statIndexNameOfLifePremium = "lifePremium";
@@ -32,8 +30,6 @@ public class CommonConstant {
 
     static {
         statIndexNameListOfPropertyPremium = new ArrayList<String>();
-        statIndexNameListOfPropertyPremium.add(statIndexNameOfPropertyPremiumJQ);
-        statIndexNameListOfPropertyPremium.add(statIndexNameOfPropertyPremiumSY);
         statIndexNameListOfPropertyPremium.add(statIndexNameOfPropertyPremiumPTPG);
         statIndexNameListOfPropertyPremium.add(statIndexNameOfPropertyPremium);
     }

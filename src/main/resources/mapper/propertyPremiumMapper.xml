@@ -83,15 +83,26 @@
         </foreach>
     </delete>
 
-    <select id="getPremiumDetailListOfSY" resultType="Premium" parameterType="QueryPara">
+    <select id="getPremiumDetailListOfDX" resultType="Premium" parameterType="QueryPara">
         SELECT
-        SUBSTR(GREATEST ( NVL ( TO_CHAR (A.underwriting_date,'yyyy-mm-dd'),'0000-00-00'),b.start_date),0,10) statDay,c.parent_name  branchName,SUM (f.Sum_Premium) accumulatedAmount,
-        min('propertyPremiumSY') indexName,min(#{timeSpan}) timeSpan
-        FROM TSS.ts_order A,TSS.TS_ORDER_PROPOSAL_MAIN b,tss.ts_trialcalc_scheme f,tss.ts_task G,tss.a_rpt_dept_center c
-        WHERE A.order_id = b.order_id AND A.scheme_id = f.scheme_id AND A.task_id = G.ts_task_id (+)
-        AND DECODE ( SUBSTR (A.depart_no, 0, 4),'2102','2102','3302','3302','3502','3502','3702','3702','4403','4403',SUBSTR (A.depart_no, 0, 2)) = c.dept_no
-        AND A.pay_state = '02' AND G.DATA_SOURCE NOT IN ('07') AND G.ORIGINAL_DATA_SOURCE NOT IN ('07') AND A.SY_POLICY_NO IS NOT NULL
-        GROUP BY SUBSTR(GREATEST ( NVL ( TO_CHAR (A.underwriting_date,'yyyy-mm-dd'),'0000-00-00'),b.start_date),0,10),c.parent_name
+        TO_CHAR (TO_DATE (A .STARTDATE, 'yyyymmdd'),'yyyy-mm-dd') statDay,B.SALECOM_NAME  branchName,SUM (A .PREM) accumulatedAmount,
+        min('propertyPremium') indexName,min(#{timeSpan}) timeSpan
+        FROM ( SELECT SY_POLICY_NO POLICYNO,STARTDATE STARTDATE,SALECOM_ID,PREM_SY PREM
+               FROM
+			      DMP_ITG.ITG_PROP_D
+		       WHERE
+			      SY_POLICY_NO IS NOT NULL
+		       UNION ALL
+               SELECT
+                   JQ_POLICY_NO POLICYNO,STARTDATE_BZ STARTDATE,SALECOM_ID,PREM_BZ PREM
+               FROM
+                   DMP_ITG.ITG_PROP_D
+               WHERE
+                   JQ_POLICY_NO IS NOT NULL) A,DMP_DIM.D_SALECOM B
+        WHERE
+	    A .SALECOM_ID = B.SALECOM_ID
+        AND A .SALECOM_ID IN ('860201', '860202', '860203') AND A .STARTDATE>='20150101'
+        GROUP BY A .STARTDATE,B.SALECOM_NAME
     </select>
     <select id="getPremiumDetailListOfJQ" resultType="Premium" parameterType="QueryPara">
         SELECT
@@ -106,20 +117,20 @@
 
     <select id="getPremiumDetailListOfPTPG" resultType="Premium" parameterType="QueryPara">
         SELECT
-        TO_CHAR (GREATEST (B.VALIDDATE, B.LOADDATE),'yyyy-mm-dd') statDay,C.PARENT_NAME  branchName,SUM (B.CHGPREMIUM) accumulatedAmount,
+        GREATEST (TO_CHAR (C.VALIDDATE, 'YYYY-MM-DD'),TO_CHAR (C.UNDERWRITEENDDATE,'YYYY-MM-DD')) statDay,B.SALECOM_NAME  branchName,SUM (C.CHGPREMIUM) accumulatedAmount,
         min('propertyPremiumPTPG') indexName,min(#{timeSpan}) timeSpan
-        FROM TSS.TS_ORDER A INNER JOIN TMS.ITF_CLEC_PMAIN B ON (A .JQ_POLICY_NO = B.POLICYNO OR A .SY_POLICY_NO = B.POLICYNO) AND B.BUSINESSSOURCE IN ('6', 'u', 'y')
-        INNER JOIN TSS.A_RPT_DEPT_CENTER C ON DECODE (SUBSTR (A .depart_no, 0, 4),'2102','2102','3302','3302','3502','3502','3702','3702','4403','4403',SUBSTR (A .depart_no, 0, 2))
-        = C.DEPT_NO
-        GROUP BY TO_CHAR (GREATEST (B.VALIDDATE, B.LOADDATE),'yyyy-mm-dd'),C.PARENT_NAME
+        FROM DMP_ITG.ITG_PROP_D A,TMS.ITF_CLEC_PMAIN C,DMP_DIM.D_SALECOM B
+        WHERE( A .SY_POLICY_NO = C.POLICYNO OR A .JQ_POLICY_NO = C.POLICYNO) AND A .SALECOM_ID = B.SALECOM_ID AND C.BUSINESSSOURCE IN ('6', 'U', 'Y')
+        AND A .SALECOM_ID IN ('860201', '860202', '860203')
+        GROUP BY B.SALECOM_NAME,GREATEST (TO_CHAR (C.VALIDDATE, 'YYYY-MM-DD'),TO_CHAR (C.UNDERWRITEENDDATE,'YYYY-MM-DD'))
     </select>
 
     <select id="getPremiumDetailListOfInternet" resultType="Premium" parameterType="QueryPara">
-	    SELECT to_char(to_date(T.INPUTDATE,'yyyymmdd'),'yyyy-mm-dd') statDay,min('网销') branchName,SUM (T .PREM) accumulatedAmount,min('propertyPremium') indexName,
+	    SELECT to_char(to_date(INPUTDATE,'yyyymmdd'),'yyyy-mm-dd') statDay,min('网销') branchName,SUM (PREM) accumulatedAmount,min('propertyPremium') indexName,
 	    min(#{timeSpan}) timeSpan
-	    FROM DMP_ITG.ITG_NET_D T
-	    WHERE T .IS_DONE = '1' AND T .NET_CLASS_ID = '11'
-	    GROUP BY to_char(to_date(T.INPUTDATE,'yyyymmdd'),'yyyy-mm-dd')
+	    FROM DMP_ITG.ITG_NET_D
+	    WHERE IS_DONE = 1 AND NET_CLASS_ID = '11'
+	    GROUP BY to_char(to_date(INPUTDATE,'yyyymmdd'),'yyyy-mm-dd')
     </select>
 
     <select id="getPropertyPremiumDetail" resultType="Premium" parameterType="QueryPara">
