@@ -80,6 +80,7 @@ public class ActiveUserController {
             model.addAttribute("activeUserSummaryList", JSON.toJSONString(activeUserSummaryList));
             List<String> dateList = DateUtils.getDateList(DateUtils.getBeforeXDay(7), DateUtils.getBeforeXDay(1));
             model.addAttribute("dates", JSON.toJSONString(dateList));
+            model.addAttribute("jsVersion", CommonConstant.jsVersion);
             responseBean.setDetailInfo(model);
         } catch (Exception e) {
             logger.error("异常信息为", e);

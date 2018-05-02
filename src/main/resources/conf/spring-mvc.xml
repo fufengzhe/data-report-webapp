@@ -56,6 +56,8 @@
             <mvc:exclude-mapping path="/static/**"/>
             <mvc:exclude-mapping path="/salesman/**"/>
             <mvc:exclude-mapping path="/activeUser/summary"/>
+            <mvc:exclude-mapping path="/registerUser/summary"/>
+            <mvc:exclude-mapping path="/combinationAnalysis/**"/>
             <bean class="cn.com.chinalife.ecdata.web.interceptor.LoginHandlerInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>

@@ -9,6 +9,7 @@ import cn.com.chinalife.ecdata.service.user.RegisterUserService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import cn.com.chinalife.ecdata.utils.CommonUtils;
 import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
+import cn.com.chinalife.ecdata.utils.DateUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +88,28 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         List<RegisterUser> registerUserList = registerUserDao.getRegisterUserNumOfAllSourcesFromStatResult(queryPara);
         logger.info("service返回结果为 {}", JSON.toJSONString(registerUserList));
         return registerUserList;
+    }
+
+    public List<List<RegisterUser>> getRegisterUserSummaryList() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        List<List<RegisterUser>> lists = new ArrayList<List<RegisterUser>>();
+
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        List<RegisterUser> registerUserListOfDate = this.getRegisterUserNumOfAllSourcesFromStatResult(queryPara);
+        lists.add(registerUserListOfDate);
+
+        queryPara.setStartDate(DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
+        List<RegisterUser> registerUserListOfMonth = this.getRegisterUserNumOfAllSourcesFromStatResult(queryPara);
+        lists.add(registerUserListOfMonth);
+
+        queryPara.setStartDate(DateUtils.getBeforeXDay(7));
+        queryPara.setEndDate(DateUtils.getBeforeXDay(1));
+        List<RegisterUser> registerUserListForTrendOfDate = registerUserDao.getRegisterUserNumOfAllSourcesFromStatResultForTrendOfDate(queryPara);
+        lists.add(registerUserListForTrendOfDate);
+        logger.info("service返回结果为 {}", JSON.toJSONString(lists));
+        return lists;
     }
 
     private String getUserSourceConditionUsingList(List<UserSource> userSourceList) {

@@ -20,4 +20,6 @@ public interface RegisterUserDao {
     int updateRegister(List<RegisterUser> registerUserList);
 
     List<RegisterUser> getRegisterUserNumOfAllSourcesFromStatResult(QueryPara queryPara);
+
+    List<RegisterUser> getRegisterUserNumOfAllSourcesFromStatResultForTrendOfDate(QueryPara queryPara);
 }

@@ -117,4 +117,24 @@
         ]]>
         GROUP BY replace(INDEX_SOURCE,'e宝','国寿e宝') ORDER BY registerUserNum DESC
     </select>
+
+    <select id="getRegisterUserNumOfAllSourcesFromStatResultForTrendOfDate" resultType="RegisterUser" parameterType="QueryPara">
+        SELECT replace(INDEX_SOURCE,'e宝','国寿e宝') userSource,SUM ( CASE WHEN STAT_TIME = to_char(sysdate-7,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) registerUserNumOf7,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-6,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) registerUserNumOf6,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-5,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) registerUserNumOf5,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-4,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) registerUserNumOf4,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-3,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) registerUserNumOf3,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) registerUserNumOf2,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) registerUserNumOf1
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME = 'registerNum'
+        AND STAT_TIME_SPAN = 'D'
+        <![CDATA[
+			       and STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY replace(INDEX_SOURCE,'e宝','国寿e宝')
+    </select>
 </mapper>

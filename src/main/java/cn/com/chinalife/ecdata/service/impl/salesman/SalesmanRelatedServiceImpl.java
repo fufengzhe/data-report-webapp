@@ -52,20 +52,22 @@ public class SalesmanRelatedServiceImpl implements SalesmanRelatedService {
                     tempSalesmanNoList.add(salesmanNoList.get(j));
                 }
                 List<String> oldUserIdAndAccountCodeList = salesmanRelatedDao.getOldUserIdListUsingSalesmanNo(tempSalesmanNoList);
-                Map<String, String> oldUserIdAndAccountCodeMap = new HashMap<String, String>();
-                List<String> oldUserIdList = new ArrayList<String>();
-                for (String item : oldUserIdAndAccountCodeList) {
-                    String[] temp = item.split(",");
-                    if (temp.length > 1) {
-                        oldUserIdAndAccountCodeMap.put(temp[0], temp[1]);
-                        oldUserIdList.add(temp[0]);
+                if (oldUserIdAndAccountCodeList != null && oldUserIdAndAccountCodeList.size() > 0) {
+                    Map<String, String> oldUserIdAndAccountCodeMap = new HashMap<String, String>();
+                    List<String> oldUserIdList = new ArrayList<String>();
+                    for (String item : oldUserIdAndAccountCodeList) {
+                        String[] temp = item.split(",");
+                        if (temp.length > 1) {
+                            oldUserIdAndAccountCodeMap.put(temp[0], temp[1]);
+                            oldUserIdList.add(temp[0]);
+                        }
                     }
+                    List<SalesmanRelated> tempSalesmanRelatedList = salesmanRelatedDao.getSalesmanRelatedListUsingOldUserId(oldUserIdList);
+                    for (SalesmanRelated salesmanRelated : tempSalesmanRelatedList) {
+                        salesmanRelated.setAccountCode(oldUserIdAndAccountCodeMap.get(salesmanRelated.getOldUserId()));
+                    }
+                    salesmanRelatedList.addAll(tempSalesmanRelatedList);
                 }
-                List<SalesmanRelated> tempSalesmanRelatedList = salesmanRelatedDao.getSalesmanRelatedListUsingOldUserId(oldUserIdList);
-                for (SalesmanRelated salesmanRelated : tempSalesmanRelatedList) {
-                    salesmanRelated.setAccountCode(oldUserIdAndAccountCodeMap.get(salesmanRelated.getOldUserId()));
-                }
-                salesmanRelatedList.addAll(tempSalesmanRelatedList);
             }
             return salesmanRelatedList;
         }

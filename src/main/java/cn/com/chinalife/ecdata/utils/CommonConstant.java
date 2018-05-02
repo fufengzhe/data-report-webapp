@@ -26,6 +26,7 @@ public class CommonConstant {
     public static String statIndexNameOfPropertyPremium = "propertyPremium";
     public static String statIndexNameOfLifePremium = "lifePremium";
     public static String userSourceOfAll = "总计";
+    public static int jsVersion = 2;
     public static List<String> statIndexNameListOfPropertyPremium;
 
     static {

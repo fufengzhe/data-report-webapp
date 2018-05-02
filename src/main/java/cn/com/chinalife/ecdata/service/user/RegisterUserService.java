@@ -18,4 +18,6 @@ public interface RegisterUserService {
     int updateRegister(List<RegisterUser> registerUserList);
 
     List<RegisterUser> getRegisterUserNumOfAllSourcesFromStatResult(QueryPara queryPara);
+
+    List<List<RegisterUser>> getRegisterUserSummaryList();
 }

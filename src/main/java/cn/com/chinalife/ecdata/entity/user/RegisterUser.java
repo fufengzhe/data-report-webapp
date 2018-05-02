@@ -6,7 +6,7 @@ import java.math.BigDecimal;
  * Created by xiexiangyu on 2018/3/2.
  */
 public class RegisterUser {
-    private int registerUserNum;
+    private Integer registerUserNum;
     private String startDate;
     private String endDate;
     private String userSource;
@@ -26,12 +26,19 @@ public class RegisterUser {
     private String timeSpan;
     private String indexName;
     private String indexSource;
+    private Integer registerUserNumOf7;
+    private Integer registerUserNumOf6;
+    private Integer registerUserNumOf5;
+    private Integer registerUserNumOf4;
+    private Integer registerUserNumOf3;
+    private Integer registerUserNumOf2;
+    private Integer registerUserNumOf1;
 
-    public int getRegisterUserNum() {
+    public Integer getRegisterUserNum() {
         return registerUserNum;
     }
 
-    public void setRegisterUserNum(int registerUserNum) {
+    public void setRegisterUserNum(Integer registerUserNum) {
         this.registerUserNum = registerUserNum;
     }
 
@@ -187,6 +194,62 @@ public class RegisterUser {
         this.indexSource = indexSource;
     }
 
+    public Integer getRegisterUserNumOf7() {
+        return registerUserNumOf7;
+    }
+
+    public void setRegisterUserNumOf7(Integer registerUserNumOf7) {
+        this.registerUserNumOf7 = registerUserNumOf7;
+    }
+
+    public Integer getRegisterUserNumOf6() {
+        return registerUserNumOf6;
+    }
+
+    public void setRegisterUserNumOf6(Integer registerUserNumOf6) {
+        this.registerUserNumOf6 = registerUserNumOf6;
+    }
+
+    public Integer getRegisterUserNumOf5() {
+        return registerUserNumOf5;
+    }
+
+    public void setRegisterUserNumOf5(Integer registerUserNumOf5) {
+        this.registerUserNumOf5 = registerUserNumOf5;
+    }
+
+    public Integer getRegisterUserNumOf4() {
+        return registerUserNumOf4;
+    }
+
+    public void setRegisterUserNumOf4(Integer registerUserNumOf4) {
+        this.registerUserNumOf4 = registerUserNumOf4;
+    }
+
+    public Integer getRegisterUserNumOf3() {
+        return registerUserNumOf3;
+    }
+
+    public void setRegisterUserNumOf3(Integer registerUserNumOf3) {
+        this.registerUserNumOf3 = registerUserNumOf3;
+    }
+
+    public Integer getRegisterUserNumOf2() {
+        return registerUserNumOf2;
+    }
+
+    public void setRegisterUserNumOf2(Integer registerUserNumOf2) {
+        this.registerUserNumOf2 = registerUserNumOf2;
+    }
+
+    public Integer getRegisterUserNumOf1() {
+        return registerUserNumOf1;
+    }
+
+    public void setRegisterUserNumOf1(Integer registerUserNumOf1) {
+        this.registerUserNumOf1 = registerUserNumOf1;
+    }
+
     @Override
     public String toString() {
         return "RegisterUser{" +
@@ -210,6 +273,13 @@ public class RegisterUser {
                 ", timeSpan='" + timeSpan + '\'' +
                 ", indexName='" + indexName + '\'' +
                 ", indexSource='" + indexSource + '\'' +
+                ", registerUserNumOf7=" + registerUserNumOf7 +
+                ", registerUserNumOf6=" + registerUserNumOf6 +
+                ", registerUserNumOf5=" + registerUserNumOf5 +
+                ", registerUserNumOf4=" + registerUserNumOf4 +
+                ", registerUserNumOf3=" + registerUserNumOf3 +
+                ", registerUserNumOf2=" + registerUserNumOf2 +
+                ", registerUserNumOf1=" + registerUserNumOf1 +
                 '}';
     }
 }

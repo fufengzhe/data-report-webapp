@@ -35,14 +35,14 @@ function drawPieChart(divId, chartName, legendData, seriesData) {
     myChart.setOption(option);
 }
 
-function drawTrendChart(divId, chartName, legendData,xData ,seriesData) {
+function drawTrendChart(divId, chartName, legendData, xData, seriesData) {
     var myChart = echarts.init(document.getElementById(divId));
     var option = {
         title: {
             text: chartName,
             x: 'left'
         },
-        tooltip : {
+        tooltip: {
             trigger: 'axis'
         },
         legend: {
@@ -55,20 +55,64 @@ function drawTrendChart(divId, chartName, legendData,xData ,seriesData) {
             bottom: '3%',
             containLabel: true
         },
-        xAxis : [
+        xAxis: [
             {
-                type : 'category',
-                boundaryGap : false,
-                data : xData
+                type: 'category',
+                boundaryGap: false,
+                data: xData
             }
         ],
-        yAxis : [
+        yAxis: [
             {
-                type : 'value'
+                type: 'value'
             }
         ],
-        series : seriesData
+        series: seriesData
     };
     myChart.setOption(option);
 }
 
+
+function drawScatterChart(divId, chartName, legendData, tooltipFormatter, xAxisName, yAxisName, series) {
+    var myChart = echarts.init(document.getElementById(divId));
+    var option = {
+        backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
+            offset: 0,
+            color: '#f7f8fa'
+        }, {
+            offset: 1,
+            color: '#cdd0d5'
+        }]),
+        title: {
+            text: chartName
+        },
+        legend: {
+            right: 30,
+            data: legendData
+        },
+        tooltip: {
+            trigger: 'item',
+            showDelay: 0,
+            formatter: tooltipFormatter
+        },
+        xAxis: {
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            },
+            name: xAxisName
+        },
+        yAxis: {
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            },
+            scale: true,
+            name: yAxisName
+        },
+        series: series
+    };
+    myChart.setOption(option);
+}

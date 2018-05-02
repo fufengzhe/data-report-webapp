@@ -16,6 +16,7 @@
         <typeAlias alias="Order" type="cn.com.chinalife.ecdata.entity.trade.Order" />
         <typeAlias alias="Branch" type="cn.com.chinalife.ecdata.entity.trade.Branch" />
         <typeAlias alias="SalesmanRelated" type="cn.com.chinalife.ecdata.entity.salesman.SalesmanRelated" />
+        <typeAlias alias="AnalysisIndex" type="cn.com.chinalife.ecdata.entity.combine.AnalysisIndex" />
     </typeAliases>
 </configuration>
 

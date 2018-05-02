@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>活跃用户数概览</title>
+    <title>注册用户数概览</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
@@ -16,7 +16,7 @@
 <div class="container-fluid text-center">
     <div class="panel panel-default">
         <div class="panel-heading">
-            各渠道昨日及当月（本月1号截止到昨日）活跃用户数分布
+            各渠道昨日及当月（本月1号截止到昨日）注册用户数分布
         </div>
         <%--<div class="panel-body">--%>
         <%--面板内容--%>
@@ -35,7 +35,7 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            过去七天活跃用户数趋势
+            过去七天注册用户数趋势
         </div>
         <%--<div class="panel-body">--%>
         <%--面板内容--%>
@@ -50,7 +50,7 @@
 </div>
 
 <script type="text/javascript">
-    var list =${activeUserSummaryList};
+    var list =${registerUserList};
     var legendDataOfDate = [];
     var legendDataOfMonth = [];
     var seriesDataOfDate = [];
@@ -59,14 +59,14 @@
     var monthList = list[1];
     for (var i = 0; i < dateList.length; i++) {
         legendDataOfDate.push(dateList[i].userSource);
-        seriesDataOfDate.push({value: dateList[i].activeUserNum, name: dateList[i].userSource});
+        seriesDataOfDate.push({value: dateList[i].registerUserNum, name: dateList[i].userSource});
     }
     for (var i = 0; i < monthList.length; i++) {
         legendDataOfMonth.push(monthList[i].userSource);
-        seriesDataOfMonth.push({value: monthList[i].activeUserNum, name: monthList[i].userSource});
+        seriesDataOfMonth.push({value: monthList[i].registerUserNum, name: monthList[i].userSource});
     }
-    drawPieChart("datePieChart", "昨日各渠道活跃数分布", legendDataOfDate, seriesDataOfDate);
-    drawPieChart("monthPieChart", "当月各渠道活跃数分布", legendDataOfMonth, seriesDataOfMonth);
+    drawPieChart("datePieChart", "昨日各渠道注册数分布", legendDataOfDate, seriesDataOfDate);
+    drawPieChart("monthPieChart", "当月各渠道注册数分布", legendDataOfMonth, seriesDataOfMonth);
 
     dateList = list[2];
     dateStrs =${dates};
@@ -78,14 +78,14 @@
         lengendDataOfDate.push(dateList[i].userSource);
         seriesDataOfDate.push({
             name: dateList[i].userSource, type: 'line', areaStyle: {normal: {}},
-            data: [dateList[i].activeUserNumOf7, dateList[i].activeUserNumOf6, dateList[i].activeUserNumOf5, dateList[i].activeUserNumOf4, dateList[i].activeUserNumOf3,
-                dateList[i].activeUserNumOf2, dateList[i].activeUserNumOf1]
+            data: [dateList[i].registerUserNumOf7, dateList[i].registerUserNumOf6, dateList[i].registerUserNumOf5, dateList[i].registerUserNumOf4, dateList[i].registerUserNumOf3,
+                dateList[i].registerUserNumOf2, dateList[i].registerUserNumOf1]
         });
     }
     for (var i = 0; i < dateStrs.length; i++) {
         xDataOfDate.push(dateStrs[i]);
     }
-    drawTrendChart("dateTrendChart", "过去七天活跃用户数趋势", lengendDataOfDate, xDataOfDate, seriesDataOfDate);
+    drawTrendChart("dateTrendChart", "过去七天注册用户数趋势", lengendDataOfDate, xDataOfDate, seriesDataOfDate);
 </script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>

@@ -4,14 +4,14 @@ package cn.com.chinalife.ecdata.entity.user;
  * Created by xiexiangyu on 2018/3/1.
  */
 public class ActiveUser {
-    private int activeUserNum;
-    private int activeUserNumOf7;
-    private int activeUserNumOf6;
-    private int activeUserNumOf5;
-    private int activeUserNumOf4;
-    private int activeUserNumOf3;
-    private int activeUserNumOf2;
-    private int activeUserNumOf1;
+    private Integer activeUserNum;
+    private Integer activeUserNumOf7;
+    private Integer activeUserNumOf6;
+    private Integer activeUserNumOf5;
+    private Integer activeUserNumOf4;
+    private Integer activeUserNumOf3;
+    private Integer activeUserNumOf2;
+    private Integer activeUserNumOf1;
     private String startDate;
     private String endDate;
     private String userSource;
@@ -19,67 +19,67 @@ public class ActiveUser {
     private String indexName;
     private String statDate;
 
-    public int getActiveUserNum() {
+    public Integer getActiveUserNum() {
         return activeUserNum;
     }
 
-    public void setActiveUserNum(int activeUserNum) {
+    public void setActiveUserNum(Integer activeUserNum) {
         this.activeUserNum = activeUserNum;
     }
 
-    public int getActiveUserNumOf7() {
+    public Integer getActiveUserNumOf7() {
         return activeUserNumOf7;
     }
 
-    public void setActiveUserNumOf7(int activeUserNumOf7) {
+    public void setActiveUserNumOf7(Integer activeUserNumOf7) {
         this.activeUserNumOf7 = activeUserNumOf7;
     }
 
-    public int getActiveUserNumOf6() {
+    public Integer getActiveUserNumOf6() {
         return activeUserNumOf6;
     }
 
-    public void setActiveUserNumOf6(int activeUserNumOf6) {
+    public void setActiveUserNumOf6(Integer activeUserNumOf6) {
         this.activeUserNumOf6 = activeUserNumOf6;
     }
 
-    public int getActiveUserNumOf5() {
+    public Integer getActiveUserNumOf5() {
         return activeUserNumOf5;
     }
 
-    public void setActiveUserNumOf5(int activeUserNumOf5) {
+    public void setActiveUserNumOf5(Integer activeUserNumOf5) {
         this.activeUserNumOf5 = activeUserNumOf5;
     }
 
-    public int getActiveUserNumOf4() {
+    public Integer getActiveUserNumOf4() {
         return activeUserNumOf4;
     }
 
-    public void setActiveUserNumOf4(int activeUserNumOf4) {
+    public void setActiveUserNumOf4(Integer activeUserNumOf4) {
         this.activeUserNumOf4 = activeUserNumOf4;
     }
 
-    public int getActiveUserNumOf3() {
+    public Integer getActiveUserNumOf3() {
         return activeUserNumOf3;
     }
 
-    public void setActiveUserNumOf3(int activeUserNumOf3) {
+    public void setActiveUserNumOf3(Integer activeUserNumOf3) {
         this.activeUserNumOf3 = activeUserNumOf3;
     }
 
-    public int getActiveUserNumOf2() {
+    public Integer getActiveUserNumOf2() {
         return activeUserNumOf2;
     }
 
-    public void setActiveUserNumOf2(int activeUserNumOf2) {
+    public void setActiveUserNumOf2(Integer activeUserNumOf2) {
         this.activeUserNumOf2 = activeUserNumOf2;
     }
 
-    public int getActiveUserNumOf1() {
+    public Integer getActiveUserNumOf1() {
         return activeUserNumOf1;
     }
 
-    public void setActiveUserNumOf1(int activeUserNumOf1) {
+    public void setActiveUserNumOf1(Integer activeUserNumOf1) {
         this.activeUserNumOf1 = activeUserNumOf1;
     }
 
