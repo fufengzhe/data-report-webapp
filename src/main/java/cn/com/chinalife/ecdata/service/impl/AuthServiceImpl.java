@@ -48,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
         if (resource != null) {
             // ""表示所有权限
             if ("".equals(resource)) {
+                logger.info("当前用户为最高权限!");
                 return true;
             } else {
                 String currentPath = httpServletRequest.getServletPath();
@@ -60,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
                     responseBean.setRespCode(1);
                     responseBean.setRespMsg(CommonConstant.unauthorized);
                     httpServletResponse.getWriter().print(JSON.toJSONString(responseBean));
+                    httpServletResponse.sendRedirect("/ecdata/init/unauthorized");
                     return false;
                 }
             }

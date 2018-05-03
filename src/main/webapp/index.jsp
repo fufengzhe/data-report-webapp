@@ -10,13 +10,24 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
 </head>
 <body>
+
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div>
+            <form class="navbar-form navbar-right" role="search" id="logForm">
+                <a class="btn btn-default" href="/ecdata/user/toLogin" role="button" id="log">登录</a>
+            </form>
+            <p class="navbar-text navbar-right" id="logDisplay"></p>
+        </div>
+    </div>
+</nav>
+
 <br/>
 <h1 align="center">Hello!Welcome To Data Server!</h1>
 <h4 align="center">May Your Work Be Driven By Data!</h4>
 <h6 align="center">Powered By Information Technology Department Of CLEC!</h6>
 
 <div class="container">
-
     <h2><span class="label label-success glyphicon glyphicon-ok"> 已有功能（所有指标秒级响应）:</span></h2>
     <br/>
     <ul class="list-group">
@@ -66,6 +77,39 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
+<script>
+    $(document).ready(function () {
+        var username = document.cookie.substr(("username".length + 1));
+        if (username.length == 0) {
+            document.getElementById('log').innerHTML = "登录"
+            document.getElementById('log').href = "/ecdata/user/toLogin";
+        } else {
+            $("#logDisplay").text('欢迎你，' + username);
+            document.getElementById('log').innerHTML = "登出"
+            $("#log").removeAttr("href");
+        }
+    });
 
+    $(function () {
+        $("#log").click(function () {
+            var text = document.getElementById('log').innerHTML;
+            if ("登出" == text) {
+                $.ajax({
+                    url: 'user/logout',
+                    dataType: "json",
+                    success: function (data) {
+                        var respCode = data.respCode;
+                        if (respCode == 0) {
+                            window.history.go(0);
+                        } else {
+                            $('#toLogin').popover('show');
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+</script>
 </body>
 </html>

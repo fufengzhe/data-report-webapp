@@ -47,6 +47,7 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
             responseBean.setRespCode(1);
             responseBean.setRespMsg(CommonConstant.notLoggedIn);
             httpServletResponse.getWriter().print(JSON.toJSONString(responseBean));
+            httpServletResponse.sendRedirect("/ecdata/user/toLogin");
             logger.info("interceptor未检查到cookie信息");
             return false;
         }

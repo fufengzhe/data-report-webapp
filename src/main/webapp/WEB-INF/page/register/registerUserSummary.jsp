@@ -7,8 +7,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>注册用户数概览</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
 </head>
 
 <body>
@@ -24,6 +27,23 @@
     </div>
 
     <div class="row">
+        <div class="row panel-heading">
+            <div class='col-sm-2'></div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class='input-group date text-center'>
+                        <input type='text' class="form-control" id="startDate" placeholder="选择时间"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="query">开始查询</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-2'></div>
+        </div>
         <div class="text-center col-md-6" id="datePieChart" style="height:700px">
 
         </div>
@@ -90,6 +110,8 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 </body>
 </html>
