@@ -27,7 +27,7 @@ public class RegisterUserController {
     @Autowired
     RegisterUserService registerUserService;
 
-    @RequestMapping("/numQuery")
+    @RequestMapping(value = "/numQuery", produces = {"text/html;charset=UTF-8;"})
     @ResponseBody
     public String queryRegisterUserNum(QueryPara queryPara) {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
@@ -67,6 +67,8 @@ public class RegisterUserController {
             return JSON.toJSONString(responseBean);
         }
     }
+
+
 
     @RequestMapping("/summary")
     public String queryRegisterUserSummary(Model model) {

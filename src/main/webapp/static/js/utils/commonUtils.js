@@ -31,3 +31,16 @@ $(function(){
         forceParse:0,
         format:"yyyy-mm-dd"});// 选择时间
 });
+
+
+$(function(){
+    $("#startMonth").datetimepicker({
+        language:"zh-CN",
+        weekStart:1,
+        todayBtn:0,
+        autoclose:1,
+        startView:3,
+        minView:3,
+        forceParse:1,
+        format:"yyyy-mm"});// 选择时间
+});

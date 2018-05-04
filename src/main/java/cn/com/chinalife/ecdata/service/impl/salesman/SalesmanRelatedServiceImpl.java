@@ -46,7 +46,7 @@ public class SalesmanRelatedServiceImpl implements SalesmanRelatedService {
             List<SalesmanRelated> salesmanRelatedList = new ArrayList<SalesmanRelated>();
             for (int i = 1; i <= loopTime; i++) {
                 int innerLoopBegin = (i - 1) * 1000;
-                int innerLoopEnd = i == loopTime ? salesmanNoList.size() : (i - 1) * 1000;
+                int innerLoopEnd = i == loopTime ? salesmanNoList.size() : (i) * 1000;
                 List<String> tempSalesmanNoList = new ArrayList<String>();
                 for (int j = innerLoopBegin; j < innerLoopEnd; j++) {
                     tempSalesmanNoList.add(salesmanNoList.get(j));
