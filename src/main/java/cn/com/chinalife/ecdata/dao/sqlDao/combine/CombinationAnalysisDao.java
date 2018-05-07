@@ -1,6 +1,7 @@
 package cn.com.chinalife.ecdata.dao.sqlDao.combine;
 
 import cn.com.chinalife.ecdata.entity.combine.AnalysisIndex;
+import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,9 +12,9 @@ import java.util.List;
 @Repository
 public interface CombinationAnalysisDao {
 
-    List<AnalysisIndex> getRegisterAndActiveIndexOfDate();
+    List<AnalysisIndex> getRegisterAndActiveIndexOfDate(QueryPara queryPara);
 
-    List<AnalysisIndex> getRegisterListOfMonth();
+    List<AnalysisIndex> getRegisterListOfMonth(QueryPara queryPara);
 
-    List<AnalysisIndex> getActiveListOfMonth();
+    List<AnalysisIndex> getActiveListOfMonth(QueryPara queryPara);
 }

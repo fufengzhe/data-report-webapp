@@ -7,6 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>注册用户&活跃用户</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript"
             src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
@@ -18,26 +20,55 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            昨日注册用户&活跃用户分布
+            日维度注册用户&活跃用户分布
         </div>
-        <%--<div class="panel-body">--%>
-        <%--面板内容--%>
-        <%--</div>--%>
     </div>
-
+    <div class="row">
+        <div class="row panel-heading">
+            <div class='col-sm-5'></div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class='input-group date text-center'>
+                        <input type='text' class="form-control" id="startDate" placeholder="选择时间"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="queryDate">开始查询</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-5'></div>
+        </div>
+    </div>
     <div class="container-fluid text-center" id="dateScatterChart" style="height:700px;">
-
     </div>
     <br/>
     <div class="panel panel-default">
         <div class="panel-heading">
-            当月注册用户&活跃用户分布
+            月维度注册用户&活跃用户分布
         </div>
-        <%--<div class="panel-body">--%>
-        <%--面板内容--%>
-        <%--</div>--%>
     </div>
-
+    <div class="row">
+        <div class="row panel-heading">
+            <div class='col-sm-5'></div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class='input-group date text-center'>
+                        <input type='text' class="form-control" id="startMonth" placeholder="选择时间"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="queryMonth">开始查询</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-5'></div>
+        </div>
+    </div>
     <div class="container-fluid text-center" id="monthScatterChart" style="height:700px;">
 
     </div>
@@ -45,10 +76,23 @@
 
 </div>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
+
+
+
 <script type="text/javascript">
     var list =${analysisIndexList};
-    prepareDataAndDraw('dateScatterChart', '昨日注册&活跃用户分布', list[0])
-    prepareDataAndDraw('monthScatterChart', '当月注册&活跃用户分布', list[1])
+    $("#startDate").val(list[0][0].statDate);
+    prepareDataAndDraw('dateScatterChart', '日维度注册&活跃用户分布', list[0]);
+    $("#startMonth").val(list[1][0].statDate);
+    prepareDataAndDraw('monthScatterChart', '月维度注册&活跃用户分布', list[1]);
     function prepareDataAndDraw(divId, chartName, list) {
         var legendData = [];
         legendData.push('注册&活跃');
@@ -102,10 +146,50 @@
 
         drawScatterChart(divId, chartName, legendData, tooltipFormatter, xAxisName, yAxisName, series)
     }
-</script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
+
+    $(function () {
+        $("#queryDate").click(function () {
+            var startDate = $("#startDate").val();
+            if ("" != startDate.trim()) {
+                setButtonDisabled('queryDate', true);
+                $.ajax({
+                    url: 'dateRegisterAndActive',
+                    data: {"startDate": startDate},
+                    dataType: "json",
+                    success: function (data) {
+                        var respCode = data.respCode;
+                        if (respCode == 0) {
+                            prepareDataAndDraw('dateScatterChart', '日维度注册&活跃用户分布',data.detailInfo);
+                        }
+                        setButtonDisabled('queryDate', false);
+                    }
+                });
+            }
+        });
+    });
+
+    $(function () {
+        $("#queryMonth").click(function () {
+            var startMonth = $("#startMonth").val();
+            if ("" != startMonth.trim()) {
+                setButtonDisabled('queryMonth', true);
+                $.ajax({
+                    url: 'monthRegisterAndActive',
+                    data: {"startDate": startMonth},
+                    dataType: "json",
+                    success: function (data) {
+                        var respCode = data.respCode;
+                        if (respCode == 0) {
+                            prepareDataAndDraw('monthScatterChart', '月维度注册&活跃用户分布',data.detailInfo);
+                        }
+                        setButtonDisabled('queryMonth', false);
+                    }
+                });
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

@@ -1,6 +1,7 @@
 package cn.com.chinalife.ecdata.service.combine;
 
 import cn.com.chinalife.ecdata.entity.combine.AnalysisIndex;
+import cn.com.chinalife.ecdata.entity.query.QueryPara;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  */
 public interface CombinationAnalysisService {
 
-    List<AnalysisIndex> getRegisterAndActiveIndexOfDate();
+    List<AnalysisIndex> getRegisterAndActiveIndexOfDate(QueryPara queryPara);
 
-    List<AnalysisIndex> getRegisterAndActiveIndexOfMonth();
+    List<AnalysisIndex> getRegisterAndActiveIndexOfMonth(QueryPara queryPara);
 }

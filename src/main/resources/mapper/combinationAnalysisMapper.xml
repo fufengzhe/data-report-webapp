@@ -5,9 +5,9 @@
         SELECT
         CASE WHEN INDEX_SOURCE LIKE '%e宝%' THEN '国寿e宝' ELSE INDEX_SOURCE END indexSource,
         SUM (CASE WHEN INDEX_NAME = 'registerNum' THEN INDEX_VALUE ELSE 0 END) registerNum,
-        SUM (CASE WHEN INDEX_NAME = 'activeNum' THEN INDEX_VALUE ELSE 0 END) activeNum
+        SUM (CASE WHEN INDEX_NAME = 'activeNum' THEN INDEX_VALUE ELSE 0 END) activeNum,min(#{startDate}) statDate
         FROM  DMP_SELECT.STAT_RESULT
-        WHERE STAT_TIME=to_char(sysdate-1,'yyyy-mm-dd') AND INDEX_NAME IN ('registerNum', 'activeNum') AND STAT_TIME_SPAN = 'D' AND index_source not like '%e宝%'
+        WHERE STAT_TIME=#{startDate} AND INDEX_NAME IN ('registerNum', 'activeNum') AND STAT_TIME_SPAN = 'D' AND index_source not like '%e宝%'
         GROUP BY CASE WHEN INDEX_SOURCE LIKE '%e宝%' THEN '国寿e宝' ELSE INDEX_SOURCE END
     </select>
 
@@ -15,11 +15,11 @@
     <select id="getRegisterListOfMonth" resultType="AnalysisIndex" parameterType="QueryPara">
         SELECT
         CASE WHEN INDEX_SOURCE LIKE '%e宝%' THEN '国寿e宝' ELSE INDEX_SOURCE END indexSource,
-        SUM (CASE WHEN INDEX_NAME = 'registerNum' THEN INDEX_VALUE ELSE 0 END) registerNum
+        SUM (CASE WHEN INDEX_NAME = 'registerNum' THEN INDEX_VALUE ELSE 0 END) registerNum,min(#{startDate}) statDate
         FROM  DMP_SELECT.STAT_RESULT
-        WHERE STAT_TIME>=concat(substr(to_char(sysdate-1,'yyyy-mm-dd'),0,7),'-01')
+        WHERE STAT_TIME>=concat(#{startDate},'-01')
         <![CDATA[
-              AND STAT_TIME<=to_char(sysdate-1,'yyyy-mm-dd')
+              AND STAT_TIME<=concat(#{startDate},'-31')
         ]]>
         AND INDEX_NAME = 'registerNum' AND STAT_TIME_SPAN = 'D' AND index_source not like '%e宝%'
         GROUP BY CASE WHEN INDEX_SOURCE LIKE '%e宝%' THEN '国寿e宝' ELSE INDEX_SOURCE END
@@ -27,13 +27,13 @@
 
     <select id="getActiveListOfMonth" resultType="AnalysisIndex" parameterType="QueryPara">
         SELECT
-        CASE WHEN T1.INDEX_SOURCE LIKE '%e宝%' THEN '国寿e宝' ELSE T1.INDEX_SOURCE END indexSource,T1.INDEX_VALUE activeNum
+        CASE WHEN T1.INDEX_SOURCE LIKE '%e宝%' THEN '国寿e宝' ELSE T1.INDEX_SOURCE END indexSource,T1.INDEX_VALUE activeNum,#{startDate} statDate
         FROM ( SELECT INDEX_SOURCE,INDEX_VALUE
 		FROM
 			DMP_SELECT.STAT_RESULT
 		WHERE
 			INDEX_NAME = 'activeNum'
-		AND STAT_TIME = concat(substr(to_char(sysdate-1,'yyyy-mm-dd'),0,7),'-01')
+		AND STAT_TIME = concat(#{startDate},'-01')
 		AND STAT_TIME_SPAN = 'M' AND INDEX_SOURCE != '国寿e宝'
 		ORDER BY
 			CREATE_TIME DESC
@@ -48,7 +48,7 @@
 			DMP_SELECT.STAT_RESULT
 		WHERE
 			index_name = 'activeNum'
-		AND stat_time = concat(substr(to_char(sysdate-1,'yyyy-mm-dd'),0,7),'-01')
+		AND stat_time = concat(#{startDate},'-01')
 		AND stat_time_span = 'M' AND INDEX_SOURCE != '国寿e宝'
 	    )
     </select>

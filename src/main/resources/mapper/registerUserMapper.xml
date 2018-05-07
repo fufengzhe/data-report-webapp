@@ -29,7 +29,7 @@
         THEN INDEX_VALUE ELSE 0 END ) monthNum,
         SUM (CASE WHEN STAT_TIME >= CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01')
         <![CDATA[
-                    and STAT_TIME <= CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-31')
+                    and STAT_TIME <= to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm-dd')
         ]]>
         THEN INDEX_VALUE ELSE 0 END ) lastMonthNum,
         SUM (CASE WHEN STAT_TIME >= CONCAT(to_char(sysdate-1,'yyyy'),'-01-01')
@@ -56,7 +56,7 @@
         THEN INDEX_VALUE ELSE 0 END ) monthNum,
         SUM (CASE WHEN STAT_TIME >= CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-01')
         <![CDATA[
-                    and STAT_TIME <= CONCAT(to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm'),'-31')
+                    and STAT_TIME <= to_char(add_months(trunc(sysdate-1),-1),'yyyy-mm-dd')
         ]]>
         THEN INDEX_VALUE ELSE 0 END ) lastMonthNum,
         SUM (CASE WHEN STAT_TIME >= CONCAT(to_char(sysdate-1,'yyyy'),'-01-01')

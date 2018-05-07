@@ -2,9 +2,11 @@ package cn.com.chinalife.ecdata.service.impl.combine;
 
 import cn.com.chinalife.ecdata.dao.sqlDao.combine.CombinationAnalysisDao;
 import cn.com.chinalife.ecdata.entity.combine.AnalysisIndex;
+import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.service.combine.CombinationAnalysisService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
+import cn.com.chinalife.ecdata.utils.DateUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,27 +24,35 @@ public class CombinationAnalysisServiceImpl implements CombinationAnalysisServic
     @Autowired
     CombinationAnalysisDao combinationAnalysisDao;
 
-    public List<AnalysisIndex> getRegisterAndActiveIndexOfDate() {
-        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+    public List<AnalysisIndex> getRegisterAndActiveIndexOfDate(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
-        List<AnalysisIndex> analysisIndexList = combinationAnalysisDao.getRegisterAndActiveIndexOfDate();
+        if (queryPara == null) {
+            queryPara = new QueryPara();
+            queryPara.setStartDate(DateUtils.getYesterday());
+        }
+        List<AnalysisIndex> analysisIndexList = combinationAnalysisDao.getRegisterAndActiveIndexOfDate(queryPara);
         logger.info("service返回结果为 {}", JSON.toJSONString(analysisIndexList));
         return analysisIndexList;
     }
 
-    public List<AnalysisIndex> getRegisterAndActiveIndexOfMonth() {
+    public List<AnalysisIndex> getRegisterAndActiveIndexOfMonth(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        if (queryPara == null) {
+            queryPara = new QueryPara();
+            queryPara.setStartDate(DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
+        }
         List<AnalysisIndex> analysisIndexList = new ArrayList<AnalysisIndex>();
         //因注册和活跃在计算月维度时计算方式不同，活跃月维度之间涉及到去重逻辑，所以要分开计算
-        List<AnalysisIndex> registerListOfMonth = combinationAnalysisDao.getRegisterListOfMonth();
-        List<AnalysisIndex> activeListOfMonth = combinationAnalysisDao.getActiveListOfMonth();
-        analysisIndexList = this.getMergedListUsingDateAndMonth(registerListOfMonth, activeListOfMonth);
+        List<AnalysisIndex> registerListOfMonth = combinationAnalysisDao.getRegisterListOfMonth(queryPara);
+        List<AnalysisIndex> activeListOfMonth = combinationAnalysisDao.getActiveListOfMonth(queryPara);
+        analysisIndexList = this.getMergedListUsingDateAndMonth(registerListOfMonth, activeListOfMonth,queryPara);
         logger.info("service返回结果为 {}", JSON.toJSONString(analysisIndexList));
         return analysisIndexList;
     }
 
-    private List<AnalysisIndex> getMergedListUsingDateAndMonth(List<AnalysisIndex> registerListOfMonth, List<AnalysisIndex> activeListOfMonth) {
+    private List<AnalysisIndex> getMergedListUsingDateAndMonth(List<AnalysisIndex> registerListOfMonth, List<AnalysisIndex> activeListOfMonth,QueryPara queryPara) {
         List<AnalysisIndex> analysisIndexList = new ArrayList<AnalysisIndex>();
         Set<String> sourceSet = new HashSet<String>();
         Map<String, Integer> registerMap = new HashMap<String, Integer>();
@@ -60,6 +70,7 @@ public class CombinationAnalysisServiceImpl implements CombinationAnalysisServic
             analysisIndex.setIndexSource(source);
             analysisIndex.setRegisterNum(registerMap.get(source) == null ? 0 : registerMap.get(source));
             analysisIndex.setActiveNum(activeMap.get(source) == null ? 0 : activeMap.get(source));
+            analysisIndex.setStatDate(queryPara.getStartDate());
             analysisIndexList.add(analysisIndex);
         }
         return analysisIndexList;
