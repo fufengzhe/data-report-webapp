@@ -27,7 +27,7 @@ public class ActiveUserController {
     @Autowired
     ActiveUserService activeUserService;
 
-    @RequestMapping("/numQuery")
+    @RequestMapping(value = "/numQuery", produces = {"text/html;charset=UTF-8;"})
     @ResponseBody
     public String queryActiveUserNum(QueryPara queryPara) {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));

@@ -7,6 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>活跃用户数概览</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
 </head>
@@ -16,7 +18,7 @@
 <div class="container-fluid text-center">
     <div class="panel panel-default">
         <div class="panel-heading">
-            各渠道昨日及当月（本月1号截止到昨日）活跃用户数分布
+            各渠道天维度及月维度活跃用户数分布
         </div>
         <%--<div class="panel-body">--%>
         <%--面板内容--%>
@@ -24,12 +26,42 @@
     </div>
 
     <div class="row">
-        <div class="text-center col-md-6" id="datePieChart" style="height:700px">
+        <div class="row panel-heading">
+            <div class='col-sm-2'></div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class='input-group date text-center'>
+                        <input type='text' class="form-control" id="startDate" placeholder="选择时间"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="queryDate">开始查询</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-2'></div>
 
+            <div class='col-sm-2'></div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class='input-group date text-center'>
+                        <input type='text' class="form-control" id="startMonth" placeholder="选择时间"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="queryMonth">开始查询</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-2'></div>
         </div>
-
+        <div class="text-center col-md-6" id="datePieChart" style="height:700px">
+        </div>
         <div class="text-center col-md-6" id="monthPieChart" style="height:700px">
-
         </div>
     </div>
 
@@ -43,53 +75,96 @@
     </div>
 
     <div class="container-fluid text-center" id="dateTrendChart" style="height:700px;">
-
     </div>
-
-
 </div>
 
-<script type="text/javascript">
-    var list =${activeUserSummaryList};
-    var legendDataOfDate = [];
-    var legendDataOfMonth = [];
-    var seriesDataOfDate = [];
-    var seriesDataOfMonth = [];
-    var dateList = list[0];
-    var monthList = list[1];
-    for (var i = 0; i < dateList.length; i++) {
-        legendDataOfDate.push(dateList[i].userSource);
-        seriesDataOfDate.push({value: dateList[i].activeUserNum, name: dateList[i].userSource});
-    }
-    for (var i = 0; i < monthList.length; i++) {
-        legendDataOfMonth.push(monthList[i].userSource);
-        seriesDataOfMonth.push({value: monthList[i].activeUserNum, name: monthList[i].userSource});
-    }
-    drawPieChart("datePieChart", "昨日各渠道活跃数分布", legendDataOfDate, seriesDataOfDate);
-    drawPieChart("monthPieChart", "当月各渠道活跃数分布", legendDataOfMonth, seriesDataOfMonth);
-
-    dateList = list[2];
-    dateStrs =${dates};
-    lengendDataOfDate = [];
-    xDataOfDate = [];
-    seriesDataOfDate = [];
-
-    for (var i = 0; i < dateList.length; i++) {
-        lengendDataOfDate.push(dateList[i].userSource);
-        seriesDataOfDate.push({
-            name: dateList[i].userSource, type: 'line', areaStyle: {normal: {}},
-            data: [dateList[i].activeUserNumOf7, dateList[i].activeUserNumOf6, dateList[i].activeUserNumOf5, dateList[i].activeUserNumOf4, dateList[i].activeUserNumOf3,
-                dateList[i].activeUserNumOf2, dateList[i].activeUserNumOf1]
-        });
-    }
-    for (var i = 0; i < dateStrs.length; i++) {
-        xDataOfDate.push(dateStrs[i]);
-    }
-    drawTrendChart("dateTrendChart", "过去七天活跃用户数趋势", lengendDataOfDate, xDataOfDate, seriesDataOfDate);
-</script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
+<script>
+    var list =${activeUserSummaryList};
+    $("#startDate").val(list[0][0].statDate);
+    pieChart(list[0], "datePieChart", "天维度各渠道活跃数分布");
+    $("#startMonth").val(list[1][0].statDate);
+    pieChart(list[1], "monthPieChart", "月维度各渠道活跃数分布");
+    function pieChart(data, divId, chartName) {
+        var legendData = [];
+        var seriesData = [];
+        for (var i = 0; i < data.length; i++) {
+            legendData.push(data[i].userSource);
+            seriesData.push({value: data[i].activeUserNum, name: data[i].userSource});
+        }
+        drawPieChart(divId, chartName, legendData, seriesData);
+    }
+    var dateStrs=${dates};
+    trendChart(list[2], dateStrs, "dateTrendChart", "过去七天活跃用户数趋势");
+    function trendChart(data, dateStrs, divId, chartName) {
+        var legendData = [];
+        var xData = [];
+        var seriesData = [];
+        for (var i = 0; i < data.length; i++) {
+            legendData.push(data[i].userSource);
+            seriesData.push({
+                name: data[i].userSource, type: 'line', areaStyle: {normal: {}},
+                data: [data[i].activeUserNumOf7, data[i].activeUserNumOf6, data[i].activeUserNumOf5, data[i].activeUserNumOf4, data[i].activeUserNumOf3,
+                    data[i].activeUserNumOf2, data[i].activeUserNumOf1]
+            });
+        }
+        for (var i = 0; i < dateStrs.length; i++) {
+            xData.push(dateStrs[i]);
+        }
+        drawTrendChart(divId, chartName, legendData, xData, seriesData);
+    }
+
+    $(function () {
+        $("#queryDate").click(function () {
+            var startDate = $("#startDate").val();
+            if ("" != startDate.trim()) {
+                setButtonDisabled('queryDate', true);
+                $.ajax({
+                    url: 'numQuery',
+                    data: {"startDate": startDate, "endDate": startDate},
+                    dataType: "json",
+                    success: function (data) {
+                        var respCode = data.respCode;
+                        if (respCode == 0) {
+                            pieChart(data.detailInfo, "datePieChart", "天维度各渠道活跃数分布");
+                        }
+                        setButtonDisabled('queryDate', false);
+                    }
+                });
+            }
+        });
+    });
+
+    $(function () {
+        $("#queryMonth").click(function () {
+            var startMonth = $("#startMonth").val();
+            if ("" != startMonth.trim()) {
+                setButtonDisabled('queryMonth', true);
+                $.ajax({
+                    url: 'numQuery',
+                    data: {"startDate": startMonth, "timeSpan": 'M'},
+                    dataType: "json",
+                    success: function (data) {
+                        var respCode = data.respCode;
+                        if (respCode == 0) {
+                            pieChart(data.detailInfo, "monthPieChart", "月维度各渠道活跃数分布");
+                        }
+                        setButtonDisabled('queryMonth', false);
+                    }
+                });
+            }
+        });
+    });
+
+</script>
 
 </body>
 </html>
