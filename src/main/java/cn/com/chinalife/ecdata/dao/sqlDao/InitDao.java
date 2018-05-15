@@ -10,7 +10,11 @@ import java.util.List;
  */
 @Repository
 public interface InitDao {
+    // 获取电商公司新渠道code及名字
     List<UserSource> getNewUserSource();
 
     List<UserSource> getOldUserSource();
+
+    // 获取人寿所有渠道code及名字
+    List<UserSource> getOldUserSourceOfAll();
 }

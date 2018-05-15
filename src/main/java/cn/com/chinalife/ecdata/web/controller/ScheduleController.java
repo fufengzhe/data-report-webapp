@@ -113,7 +113,6 @@ public class ScheduleController {
     }
 
     /**
-     * 全量更新历史所有的数据，因为存在批退批改的情况，所以全量更新
      *
      * @param queryPara
      * @return
@@ -131,6 +130,30 @@ public class ScheduleController {
             logger.error("异常信息为", e);
             responseBean.setRespCode(1);
             responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
+    /**
+     * 全量更新历史所有的数据，因为存在批退批改的情况，所以全量更新
+     *
+     * @param queryPara
+     * @return
+     */
+    @RequestMapping("/updateDistribute")
+    @ResponseBody
+    public String updateDistribute(QueryPara queryPara) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            int effectedRowsNum = scheduleService.updateDistribute(queryPara);
+            responseBean.setDetailInfo("更新行数为" + effectedRowsNum);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.updateFailureStr);
         } finally {
             logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
             return JSON.toJSONString(responseBean);

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.location.LocationAnalysisDao">
+    <select id="getRegisterMobileAndSourceList" resultType="AnalysisIndex" parameterType="QueryPara">
+        SELECT
+        to_char(MAKEDATE,'yyyy-mm-dd') statDate,MOBLIEPHONE mobile,USERSOURCE indexSource
+        FROM  CHINALIFEEC.GE_USER_PERSONAL
+        WHERE MOBLIEPHONE IS NOT NULL AND CHECKSTATUS IN ('2','3')
+        AND MAKEDATE>=TO_DATE (concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        <![CDATA[
+              AND MAKEDATE<=TO_DATE (concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+        <if test="userSource != null and userSource != ''">
+            AND USERSOURCE=#{userSource}
+        </if>
+    </select>
+
+    <select id="getRegisterMobileDistributeInfo" resultType="AnalysisIndex" parameterType="QueryPara">
+        SELECT
+        DISTRIBUTE_NAME distributeName,SUM (INDEX_VALUE) indexValue
+        FROM  DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'registerMobile' AND STAT_TIME_SPAN = 'D'
+        AND STAT_TIME>=#{startDate}
+        <![CDATA[
+              AND STAT_TIME<=#{endDate}
+        ]]>
+        AND DISTRIBUTE_TYPE = #{distributeType}
+        <if test="userSource != null and userSource != ''">
+            AND INDEX_SOURCE IN ${userSource}
+        </if>
+        GROUP BY DISTRIBUTE_NAME ORDER BY SUM (INDEX_VALUE) desc
+    </select>
+
+
+    <select id="getUserSourceList" resultType="AnalysisIndex" parameterType="QueryPara">
+        SELECT
+        DISTINCT INDEX_SOURCE AS indexSource
+        FROM
+        DMP_SELECT.DISTRIBUTE_RESULT
+    </select>
+
+    <select id="getActiveIPDistributeInfo" resultType="AnalysisIndex" parameterType="QueryPara">
+        SELECT
+        DISTRIBUTE_NAME distributeName,SUM (INDEX_VALUE) indexValue
+        FROM  DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'activeIP' AND STAT_TIME_SPAN = 'D'
+        AND STAT_TIME>=#{startDate}
+        <![CDATA[
+              AND STAT_TIME<=#{endDate}
+        ]]>
+        AND DISTRIBUTE_TYPE = #{distributeType}
+        <if test="userSource != null and userSource != ''">
+            AND INDEX_SOURCE IN ${userSource}
+        </if>
+        GROUP BY DISTRIBUTE_NAME ORDER BY SUM (INDEX_VALUE) desc
+    </select>
+
+
+    <insert id="updateDistributeInfo" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.DISTRIBUTE_RESULT
+        (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, INDEX_SOURCE, DISTRIBUTE_TYPE, DISTRIBUTE_NAME,INDEX_VALUE,CREATE_TIME,UPDATE_TIME)
+        SELECT t1.statDate,t1.statDateSpan,t1.indexName,t1.indexSource,t1.distributeType,t1.distributeName,t1.indexValue,t1.createTime,t1.updateTime
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.statDate,jdbcType=VARCHAR} statDate,
+            #{item.statDateSpan,jdbcType=VARCHAR} statDateSpan,
+            #{item.indexName,jdbcType=VARCHAR} indexName,
+            #{item.indexSource,jdbcType=VARCHAR} indexSource,
+            #{item.distributeType,jdbcType=VARCHAR} distributeType,
+            #{item.distributeName,jdbcType=VARCHAR} distributeName,
+            #{item.indexValue,jdbcType=NUMERIC} indexValue,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
+</mapper>

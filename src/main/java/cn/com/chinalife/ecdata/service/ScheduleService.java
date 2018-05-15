@@ -23,4 +23,6 @@ public interface ScheduleService {
     List<List<ActiveUser>> queryOfficialSiteActiveNum(QueryPara queryPara);
 
     void sendOfficialSiteActiveNum(QueryPara queryPara, List<List<ActiveUser>> activeUserList) throws MessagingException;
+
+    int updateDistribute(QueryPara queryPara) throws Exception;
 }

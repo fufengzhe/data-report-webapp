@@ -54,7 +54,7 @@ public class ActiveUserServiceImpl implements ActiveUserService {
             }
             activeUser.setTimeSpan(queryPara.getTimeSpan());
             activeUser.setIndexName(CommonConstant.statIndexNameOfActive);
-            activeUser.setUserSource(userSourceCodeAndNameMap.get(activeUser.getUserSource()) == null ? "未知" : userSourceCodeAndNameMap.get(activeUser.getUserSource()));
+            activeUser.setUserSource(userSourceCodeAndNameMap.get(activeUser.getUserSource()) == null ? activeUser.getUserSource(): userSourceCodeAndNameMap.get(activeUser.getUserSource()));
         }
         Collections.sort(activeUserList, new Comparator<ActiveUser>() {
             public int compare(ActiveUser o1, ActiveUser o2) {

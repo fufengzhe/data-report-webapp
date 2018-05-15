@@ -14,4 +14,11 @@
         FROM
         DMP_USRCENTER.T_SYS_SRC WHERE SYS_SRC_CODE LIKE '009%'
     </select>
+
+    <select id="getOldUserSourceOfAll" resultType="UserSource">
+        SELECT
+        OLD_USER_SOURCE userSource,SYS_SRC_NAME userSourceName
+        FROM
+        DMP_USRCENTER.T_SYS_SRC
+    </select>
 </mapper>

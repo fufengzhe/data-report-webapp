@@ -6,8 +6,16 @@ package cn.com.chinalife.ecdata.entity.combine;
 public class AnalysisIndex {
     private int registerNum;
     private int activeNum;
-    private String indexSource;
     private String statDate;
+    private String statDateSpan;
+    private String indexName;
+    private String indexSource;
+    private String distributeType;
+    private String distributeName;
+    private Integer indexValue;
+    private String mobile;
+    private String ip;
+
 
     public int getRegisterNum() {
         return registerNum;
@@ -25,14 +33,6 @@ public class AnalysisIndex {
         this.activeNum = activeNum;
     }
 
-    public String getIndexSource() {
-        return indexSource;
-    }
-
-    public void setIndexSource(String indexSource) {
-        this.indexSource = indexSource;
-    }
-
     public String getStatDate() {
         return statDate;
     }
@@ -41,13 +41,84 @@ public class AnalysisIndex {
         this.statDate = statDate;
     }
 
+    public String getStatDateSpan() {
+        return statDateSpan;
+    }
+
+    public void setStatDateSpan(String statDateSpan) {
+        this.statDateSpan = statDateSpan;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
+    public String getIndexSource() {
+        return indexSource;
+    }
+
+    public void setIndexSource(String indexSource) {
+        this.indexSource = indexSource;
+    }
+
+    public String getDistributeType() {
+        return distributeType;
+    }
+
+    public void setDistributeType(String distributeType) {
+        this.distributeType = distributeType;
+    }
+
+    public String getDistributeName() {
+        return distributeName;
+    }
+
+    public void setDistributeName(String distributeName) {
+        this.distributeName = distributeName;
+    }
+
+    public Integer getIndexValue() {
+        return indexValue;
+    }
+
+    public void setIndexValue(Integer indexValue) {
+        this.indexValue = indexValue;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
     @Override
     public String toString() {
         return "AnalysisIndex{" +
                 "registerNum=" + registerNum +
                 ", activeNum=" + activeNum +
-                ", indexSource='" + indexSource + '\'' +
                 ", statDate='" + statDate + '\'' +
+                ", statDateSpan='" + statDateSpan + '\'' +
+                ", indexName='" + indexName + '\'' +
+                ", indexSource='" + indexSource + '\'' +
+                ", distributeType='" + distributeType + '\'' +
+                ", distributeName='" + distributeName + '\'' +
+                ", indexValue=" + indexValue +
+                ", mobile='" + mobile + '\'' +
+                ", ip='" + ip + '\'' +
                 '}';
     }
 }

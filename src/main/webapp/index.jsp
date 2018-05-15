@@ -29,18 +29,22 @@
     <h2><span class="label label-success glyphicon glyphicon-ok"> 已有功能（所有指标秒级响应）:</span></h2>
     <br/>
     <ul class="list-group">
-        <li class="list-group-item">1、注册用户数查询<a href="/ecdata/registerUser/summary" class="btn btn-success btn-xs">注册用户数概览</a>
+        <li class="list-group-item">1、注册用户数查询 <a href="/ecdata/registerUser/summary" class="btn btn-success btn-xs">点击查看</a>
         </li>
-        <li class="list-group-item">2、活跃用户数及明细查询<a href="/ecdata/activeUser/summary" class="btn btn-success btn-xs">活跃用户数概览</a>
+        <li class="list-group-item">2、注册用户手机号归属地及运营商分布 <a href="/ecdata/locationAnalysis/registerMobile" class="btn btn-success btn-xs">点击查看</a>
         </li>
-        <li class="list-group-item">3、注册&活跃综合分布<a href="/ecdata/combinationAnalysis/registerAndActive"
+        <li class="list-group-item">3、活跃用户数及明细查询 <a href="/ecdata/activeUser/summary" class="btn btn-success btn-xs">点击查看</a>
+        </li>
+        <li class="list-group-item">4、活跃用户IP归属地分布 <a href="/ecdata/locationAnalysis/activeIP" class="btn btn-success btn-xs">点击查看</a>
+        </li>
+        <li class="list-group-item">5、注册&活跃综合分布 <a href="/ecdata/combinationAnalysis/registerAndActive"
                                                   class="btn btn-success btn-xs">点击查看</a></li>
-        <li class="list-group-item">4、寿险保费查询</li>
-        <li class="list-group-item">5、财险保费查询</li>
-        <li class="list-group-item">6、平台交易规模查询</li>
-        <li class="list-group-item">7、成交客户数查询</li>
-        <li class="list-group-item">8、官网活跃邮件定时发送</li>
-        <li class="list-group-item">9、业务员工号获取对应一账通绑定信息<a href="/ecdata/salesman/bankAndMobile"
+        <li class="list-group-item">6、寿险保费查询</li>
+        <li class="list-group-item">7、财险保费查询</li>
+        <li class="list-group-item">8、平台交易规模查询</li>
+        <li class="list-group-item">8、成交客户数查询</li>
+        <li class="list-group-item">10、官网活跃邮件定时发送</li>
+        <li class="list-group-item">11、业务员工号获取对应一账通绑定信息 <a href="/ecdata/salesman/bankAndMobile"
                                                          class="btn btn-success btn-xs">点击使用</a>
         </li>
     </ul>

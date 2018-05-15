@@ -5,6 +5,7 @@ import cn.com.chinalife.ecdata.entity.trade.Premium;
 import cn.com.chinalife.ecdata.entity.user.ActiveUser;
 import cn.com.chinalife.ecdata.entity.user.RegisterUser;
 import cn.com.chinalife.ecdata.service.ScheduleService;
+import cn.com.chinalife.ecdata.service.location.LocationAnalysisService;
 import cn.com.chinalife.ecdata.service.trade.LifePremiumService;
 import cn.com.chinalife.ecdata.service.trade.PropertyPremiumService;
 import cn.com.chinalife.ecdata.service.user.ActiveUserService;
@@ -41,6 +42,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
     PropertyPremiumService propertyPremiumService;
+
+    @Autowired
+    LocationAnalysisService locationAnalysisService;
 
     @Scheduled(cron = "0 0 3 * * ?")
     private void scheduledEntryForUpdate() throws InterruptedException, ParseException {
@@ -185,5 +189,33 @@ public class ScheduleServiceImpl implements ScheduleService {
         return activeUserService.queryOfficialSiteActiveNum(queryPara);
     }
 
+    @Scheduled(cron = "0 30 0 * * ?")
+    private void scheduledEntryForDistribute() throws Exception {
+        // 周一默认查询过去一周的数据
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        logger.info("开始更新运营商及地理位置分布信息");
+        int effectedRow = this.updateDistribute(queryPara);
+        logger.info("结束更新运营商及地理位置分布信息,影响条数为 {}", effectedRow);
+    }
+
+    public int updateDistribute(QueryPara queryPara) throws Exception {
+        int effectedRow = 0;
+        int temp;
+        if (queryPara.getWhereCondition() == null || CommonConstant.distributeIndexNameOfRegisterMobile.equals(queryPara.getWhereCondition())) {
+            logger.info("开始更新注册手机号相关的运营商及地理位置分布信息");
+            temp = locationAnalysisService.updateRegisterMobileDistribute(queryPara);
+            effectedRow += temp;
+            logger.info("结束更新注册手机号相关的运营商及地理位置分布信息");
+        }
+        if (queryPara.getWhereCondition() == null || CommonConstant.distributeIndexNameOfActiveIP.equals(queryPara.getWhereCondition())) {
+            logger.info("开始更新活跃用户IP的运营商及地理位置分布信息");
+            temp = locationAnalysisService.updateActiveIPDistribute(queryPara);
+            effectedRow += temp;
+            logger.info("结束更新活跃用户IP的运营商及地理位置分布信息");
+        }
+        return effectedRow;
+    }
 
 }

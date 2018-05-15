@@ -54,7 +54,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
 
     public List<RegisterUser> getRegisterUserNumOfAllSources(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
-        List<UserSource> userSourceList = initDao.getOldUserSource();
+        List<UserSource> userSourceList = initDao.getOldUserSourceOfAll();
         String userSourceCondition = getUserSourceConditionUsingList(userSourceList);
         queryPara.setWhereCondition(userSourceCondition);
         List<RegisterUser> registerUserList = registerUserDao.getRegisterUserNumOfAllSources(queryPara);
@@ -62,13 +62,10 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         for (UserSource userSource : userSourceList) {
             userSourceCodeAndNameMap.put(userSource.getUserSource(), userSource.getUserSourceName());
         }
-        userSourceCodeAndNameMap.put("21", "e宝APP");
-        userSourceCodeAndNameMap.put("22", "e宝微信");
-        userSourceCodeAndNameMap.put("23", "e宝柜面");
         for (RegisterUser registerUser : registerUserList) {
             registerUser.setTimeSpan(CommonConstant.statTimeSpanOfDate);
             registerUser.setIndexName(CommonConstant.statIndexNameOfRegister);
-            registerUser.setUserSource(userSourceCodeAndNameMap.get(registerUser.getUserSource()) == null ? "未知" : userSourceCodeAndNameMap.get(registerUser.getUserSource().trim()));
+            registerUser.setUserSource(userSourceCodeAndNameMap.get(registerUser.getUserSource()) == null ? registerUser.getUserSource() : userSourceCodeAndNameMap.get(registerUser.getUserSource().trim()));
         }
         Collections.sort(registerUserList, new Comparator<RegisterUser>() {
             public int compare(RegisterUser o1, RegisterUser o2) {

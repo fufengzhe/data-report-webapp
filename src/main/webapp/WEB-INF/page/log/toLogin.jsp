@@ -7,8 +7,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>欢迎登录</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
     <style>
         body {
             margin-left: auto;
@@ -43,8 +41,13 @@
 </button>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
-
 <script>
     $(function () {
         $("[data-toggle='popover']").popover();
@@ -66,7 +69,7 @@
                 success: function (data) {
                     var respCode=data.respCode;
                     if(respCode==0){
-                        window.history.back(-1);
+                        window.location.href=window.location.protocol+"//"+window.location.host+"/ecdata";
                     }else{
                         $('#toLogin').popover('show');
                     }
