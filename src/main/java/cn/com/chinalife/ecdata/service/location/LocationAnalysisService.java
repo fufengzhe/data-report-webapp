@@ -19,4 +19,10 @@ public interface LocationAnalysisService {
     List<AnalysisIndex> getUserSourceList();
 
     List<List<AnalysisIndex>> getActiveIPDistributeInfo(QueryPara queryPara);
+
+    int updateActiveTimeDis(QueryPara queryPara);
+
+    int updateUserCollectionInvokeDis(QueryPara queryPara);
+
+    List<List<AnalysisIndex>> getActiveHourAndUserCollDisInfo(QueryPara queryPara);
 }

@@ -21,4 +21,8 @@ public interface LocationAnalysisDao {
     List<AnalysisIndex> getUserSourceList();
 
     List<AnalysisIndex> getActiveIPDistributeInfo(QueryPara queryPara);
+
+    List<AnalysisIndex> getActiveHourDisInfo(QueryPara queryPara);
+
+    List<AnalysisIndex> getUserCollectionDisInfo(QueryPara queryPara);
 }

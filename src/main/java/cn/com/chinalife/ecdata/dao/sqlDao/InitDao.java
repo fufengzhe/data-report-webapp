@@ -12,6 +12,7 @@ import java.util.List;
 public interface InitDao {
     // 获取电商公司新渠道code及名字
     List<UserSource> getNewUserSource();
+    List<UserSource> getNewUserSourceOfAll();
 
     List<UserSource> getOldUserSource();
 

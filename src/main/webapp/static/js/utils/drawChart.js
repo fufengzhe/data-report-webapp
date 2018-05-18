@@ -116,11 +116,10 @@ function drawScatterChart(divId, chartName, legendData, tooltipFormatter, xAxisN
     };
     myChart.setOption(option);
 }
-function drawMapChart(divId,dataLocation,title,minData,maxData,seriesData){
+function drawMapChart(divId, dataLocation, title, minData, maxData, seriesData) {
     var myChart = echarts.init(document.getElementById(divId));
     $.get(dataLocation, function (chinaJson) {
-        echarts.registerMap('USA', chinaJson, {
-        });
+        echarts.registerMap('USA', chinaJson, {});
         option = {
             title: {
                 text: title,
@@ -143,9 +142,9 @@ function drawMapChart(divId,dataLocation,title,minData,maxData,seriesData){
                 min: minData,
                 max: maxData,
                 inRange: {
-                    color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                    color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'],
                 },
-                text:['高','低'],           // 文本，默认为数值文本
+                text: ['高', '低'],           // 文本，默认为数值文本
                 calculable: true
             },
             toolbox: {
@@ -165,18 +164,67 @@ function drawMapChart(divId,dataLocation,title,minData,maxData,seriesData){
                     type: 'map',
                     roam: true,
                     map: 'USA',
-                    itemStyle:{
-                        emphasis:{label:{show:true}}
+                    itemStyle: {
+                        emphasis: {label: {show: true}}
                     },
                     // 文本位置修正
                     textFixed: {
                         Alaska: [20, -20]
                     },
-                    data:seriesData
+                    data: seriesData
                 }
             ]
         };
 
         myChart.setOption(option);
     });
+}
+
+
+function drawBarChart(divId, chartName, xAxisName, xAxisData, yAxisName, seriesData) {
+    var myChart = echarts.init(document.getElementById(divId));
+    var option = {
+        title: {
+            text: chartName,
+            x: 'center'
+        },
+        color: ['#3398DB'],
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: [
+            {
+                type: 'category',
+                name: xAxisName,
+                data: xAxisData,
+                axisTick: {
+                    alignWithLabel: true
+                }
+            }
+        ],
+        yAxis: [
+            {
+                name: yAxisName,
+                type: 'value'
+            }
+        ],
+        series: [
+            {
+                name: '活跃人数',
+                type: 'bar',
+                barWidth: '60%',
+                data: seriesData
+            }
+        ]
+    };
+    myChart.setOption(option);
 }

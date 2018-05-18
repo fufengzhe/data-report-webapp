@@ -16,4 +16,8 @@ public interface LocationAnalysisNoSqlDao {
     List<AnalysisIndex> getActiveIPAndSourceList(QueryPara para);
 
     List<AnalysisIndex> getDistinctActiveIPAndSourceList(QueryPara para);
+
+    List<AnalysisIndex> getActiveTimeDis(QueryPara queryPara);
+
+    List<AnalysisIndex> getUserCollectionInvokeDis(QueryPara queryPara);
 }

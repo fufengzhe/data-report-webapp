@@ -116,4 +116,49 @@ public class LocationAnalysisController {
         }
     }
 
+    @RequestMapping("/activeHourAndUserCollDis")
+    public String activeHourAndUserCollDis(Model model) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            QueryPara queryPara = new QueryPara();
+            queryPara.setStartDate(DateUtils.getYesterday());
+            queryPara.setEndDate(DateUtils.getYesterday());
+            List<List<AnalysisIndex>> analysisIndexList = locationAnalysisService.getActiveHourAndUserCollDisInfo(queryPara);
+            List<AnalysisIndex> userSourceList = locationAnalysisService.getUserSourceList();
+            model.addAttribute("analysisIndexList", JSON.toJSONString(analysisIndexList));
+            model.addAttribute("userSourceList", JSON.toJSONString(userSourceList));
+            model.addAttribute("startDate", queryPara.getStartDate());
+            model.addAttribute("endDate", queryPara.getEndDate());
+            model.addAttribute("jsVersion", CommonConstant.jsVersion);
+            responseBean.setDetailInfo(model);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return "location/activeHourAndUserCollDis";
+        }
+    }
+
+    @RequestMapping(value = "/activeHourAndUserCollDisNumQuery", produces = {"text/html;charset=UTF-8;"})
+    @ResponseBody
+    public String queryActiveHourAndUserCollDis(QueryPara queryPara) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            List<List<AnalysisIndex>> analysisIndexList = locationAnalysisService.getActiveHourAndUserCollDisInfo(queryPara);
+            responseBean.setDetailInfo(analysisIndexList);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
+
 }

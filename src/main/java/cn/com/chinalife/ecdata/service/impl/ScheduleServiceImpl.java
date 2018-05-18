@@ -218,4 +218,41 @@ public class ScheduleServiceImpl implements ScheduleService {
         return effectedRow;
     }
 
+    @Scheduled(cron = "0 10 0 * * ?")
+    private void scheduledEntryForActiveTimeAndUserCollectionInvokeDis() throws Exception {
+        // 周一默认查询过去一周的数据
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        logger.info("开始更新活跃用户小时分布及用户中心USER集合请求情况信息");
+        int effectedRow = this.updateActiveTimeAndUserCollectionInvokeDis(queryPara);
+        logger.info("结束更新活跃用户小时分布及用户中心USER集合请求情况信息,影响条数为 {}", effectedRow);
+    }
+
+    private int updateActiveTimeAndUserCollectionInvokeDis(QueryPara queryPara) throws Exception {
+        int effectedRow = 0;
+        int temp;
+        temp = this.updateActiveTimeDis(queryPara);
+        effectedRow += temp;
+        temp = this.updateUserCollectionInvokeDis(queryPara);
+        effectedRow += temp;
+        return effectedRow;
+    }
+
+    public int updateActiveTimeDis(QueryPara queryPara) {
+        int effectedRow;
+        logger.info("开始更新活跃用户小时分布信息");
+        effectedRow = locationAnalysisService.updateActiveTimeDis(queryPara);
+        logger.info("开始更新活跃用户小时分布信息");
+        return effectedRow;
+    }
+
+    public int updateUserCollectionInvokeDis(QueryPara queryPara) {
+        int effectedRow;
+        logger.info("开始更新USER集合请求情况分布信息");
+        effectedRow = locationAnalysisService.updateUserCollectionInvokeDis(queryPara);
+        logger.info("结束更新USER集合请求情况分布信息");
+        return effectedRow;
+    }
+
 }

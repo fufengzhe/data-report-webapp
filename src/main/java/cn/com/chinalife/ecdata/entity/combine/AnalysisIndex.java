@@ -7,6 +7,7 @@ public class AnalysisIndex {
     private int registerNum;
     private int activeNum;
     private String statDate;
+    private String statHour;
     private String statDateSpan;
     private String indexName;
     private String indexSource;
@@ -39,6 +40,14 @@ public class AnalysisIndex {
 
     public void setStatDate(String statDate) {
         this.statDate = statDate;
+    }
+
+    public String getStatHour() {
+        return statHour;
+    }
+
+    public void setStatHour(String statHour) {
+        this.statHour = statHour;
     }
 
     public String getStatDateSpan() {
@@ -111,6 +120,7 @@ public class AnalysisIndex {
                 "registerNum=" + registerNum +
                 ", activeNum=" + activeNum +
                 ", statDate='" + statDate + '\'' +
+                ", statHour='" + statHour + '\'' +
                 ", statDateSpan='" + statDateSpan + '\'' +
                 ", indexName='" + indexName + '\'' +
                 ", indexSource='" + indexSource + '\'' +

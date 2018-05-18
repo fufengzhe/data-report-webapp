@@ -8,6 +8,14 @@
               DMP_USRCENTER.T_SYS_SRC WHERE SYS_SRC_CODE LIKE '009%'
     </select>
 
+    <select id="getNewUserSourceOfAll" resultType="UserSource">
+        SELECT
+        SYS_SRC_CODE userSource,SYS_SRC_NAME userSourceName
+        FROM
+        DMP_USRCENTER.T_SYS_SRC
+    </select>
+
+
     <select id="getOldUserSource" resultType="UserSource">
         SELECT
         OLD_USER_SOURCE userSource,SYS_SRC_NAME userSourceName

@@ -24,11 +24,13 @@ public class CommonConstant {
     public static String statIndexNameOfActive = "activeNum";
     public static String distributeIndexNameOfRegisterMobile = "registerMobile";
     public static String distributeIndexNameOfActiveIP = "activeIP";
+    public static String distributeIndexNameOfActiveHour = "activeHour";
+    public static String distributeIndexNameOfUserCollection = "userCollection";
     public static String statIndexNameOfPropertyPremiumPTPG = "propertyPremiumPTPG";
     public static String statIndexNameOfPropertyPremium = "propertyPremium";
     public static String statIndexNameOfLifePremium = "lifePremium";
     public static String userSourceOfAll = "总计";
-    public static int jsVersion = 4;
+    public static int jsVersion = 5;
     public static List<String> statIndexNameListOfPropertyPremium;
 
     static {

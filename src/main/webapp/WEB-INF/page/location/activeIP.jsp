@@ -35,6 +35,48 @@
 <body>
 
 <div class="container-fluid text-center">
+    <br/>
+    <div class="row panel-heading">
+        <div class='col-sm-2'></div>
+        <div class='col-sm-2'>
+            <div class="form-group">
+                <div class='input-group date text-center'>
+                    <input type='text' class="form-control" id="startDate" placeholder="选择时间"/>
+                    <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-2'>
+            <div class="form-group">
+                <div class='input-group date text-center'>
+                    <input type='text' class="form-control" id="endDate" placeholder="选择时间"/>
+                    <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-2'>
+            <div class="form-group">
+                <div class='select-group text-center'>
+                    <select id="userSource" class="selectpicker" data-live-search="true" multiple>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-2'>
+            <div class="form-group">
+                <div class='input-group text-center'>
+                        <span class="select-group-btn">
+                            <button type="button" class="btn btn-primary" id="queryDate">开始查询</button>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-2'></div>
+    </div>
     <div class="panel panel-default">
         <div class="panel-heading">
             渠道天维度活跃IP分布
@@ -42,47 +84,6 @@
     </div>
 
     <div class="row">
-        <div class="row panel-heading">
-            <div class='col-sm-2'></div>
-            <div class='col-sm-2'>
-                <div class="form-group">
-                    <div class='input-group date text-center'>
-                        <input type='text' class="form-control" id="startDate" placeholder="选择时间"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class='col-sm-2'>
-                <div class="form-group">
-                    <div class='input-group date text-center'>
-                        <input type='text' class="form-control" id="endDate" placeholder="选择时间"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class='col-sm-2'>
-                <div class="form-group">
-                    <div class='select-group text-center'>
-                        <select id="userSource" class="selectpicker" data-live-search="true" multiple>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class='col-sm-2'>
-                <div class="form-group">
-                    <div class='input-group text-center'>
-                        <span class="select-group-btn">
-                            <button type="button" class="btn btn-primary" id="queryDate">开始查询</button>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class='col-sm-2'></div>
-        </div>
         <div class="text-center col-md-6" id="companyPieChart" style="height:700px">
         </div>
         <div class="text-center col-md-6" id="locationPieChart" style="height:700px">
@@ -159,7 +160,7 @@
                 setButtonDisabled('queryDate', true);
                 $.ajax({
                     url: 'activeIPNumQuery',
-                    data: {"startDate": startDate, "endDate": startDate, "userSource": userSource},
+                    data: {"startDate": startDate, "endDate": endDate, "userSource": userSource},
                     traditional: true,
                     dataType: "json",
                     success: function (data) {

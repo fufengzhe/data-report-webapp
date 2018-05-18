@@ -215,7 +215,7 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
 
     private Map<String, String> getNewSourceCodeAndNameMap() {
         Map<String, String> codeAndName = new HashMap<String, String>();
-        List<UserSource> userSourceList = initDao.getNewUserSource();
+        List<UserSource> userSourceList = initDao.getNewUserSourceOfAll();
         for (UserSource userSource : userSourceList) {
             codeAndName.put(userSource.getUserSource(), userSource.getUserSourceName());
         }
@@ -253,6 +253,58 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         queryPara.setDistributeType("2");
         List<AnalysisIndex> activeIPLocationDistribute = locationAnalysisDao.getActiveIPDistributeInfo(queryPara);
         analysisIndexList.add(activeIPLocationDistribute);
+        logger.info("service返回结果为 {}", JSON.toJSONString(analysisIndexList));
+        return analysisIndexList;
+    }
+
+    public int updateActiveTimeDis(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        Map<String, String> codeAndName = this.getNewSourceCodeAndNameMap();
+        int effectedRow = 0;
+        List<AnalysisIndex> activeTimeDisList = locationAnalysisNoSqlDao.getActiveTimeDis(queryPara);
+        for (AnalysisIndex analysisIndex : activeTimeDisList) {
+            analysisIndex.setIndexSource(codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexName() : codeAndName.get(analysisIndex.getIndexSource()));
+        }
+        if (activeTimeDisList != null && activeTimeDisList.size() > 0) {
+            effectedRow = locationAnalysisDao.updateDistributeInfo(activeTimeDisList);
+        }
+        logger.info("service更新完成，受影响行数为 {}", effectedRow);
+        return effectedRow;
+    }
+
+    public int updateUserCollectionInvokeDis(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        Map<String, String> codeAndName = this.getNewSourceCodeAndNameMap();
+        int effectedRow = 0;
+        List<AnalysisIndex> userCollectionInvokeDisList = locationAnalysisNoSqlDao.getUserCollectionInvokeDis(queryPara);
+        for (AnalysisIndex analysisIndex : userCollectionInvokeDisList) {
+            analysisIndex.setIndexSource(codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource()));
+        }
+        if (userCollectionInvokeDisList != null && userCollectionInvokeDisList.size() > 0) {
+            effectedRow = locationAnalysisDao.updateDistributeInfo(userCollectionInvokeDisList);
+        }
+        logger.info("service更新完成，受影响行数为 {}", effectedRow);
+        return effectedRow;
+    }
+
+    public List<List<AnalysisIndex>> getActiveHourAndUserCollDisInfo(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        List<List<AnalysisIndex>> analysisIndexList = new ArrayList<List<AnalysisIndex>>();
+        this.setWhereConditionUsingPara(queryPara.getUserSource(), queryPara);
+        queryPara.setDistributeType("3");
+        List<AnalysisIndex> activeHourList = locationAnalysisDao.getActiveHourDisInfo(queryPara);
+        analysisIndexList.add(activeHourList);
+        queryPara.setDistributeType("4");
+        List<AnalysisIndex> userCollectionFunList = locationAnalysisDao.getUserCollectionDisInfo(queryPara);
+        for (AnalysisIndex analysisIndex : userCollectionFunList) {
+            String distributeName = analysisIndex.getDistributeName();
+            int index = distributeName.indexOf("Impl.");
+            analysisIndex.setDistributeName(distributeName.substring(index + 5));
+        }
+        analysisIndexList.add(userCollectionFunList);
+        queryPara.setDistributeType("5");
+        List<AnalysisIndex> userCollectionReturnList = locationAnalysisDao.getUserCollectionDisInfo(queryPara);
+        analysisIndexList.add(userCollectionReturnList);
         logger.info("service返回结果为 {}", JSON.toJSONString(analysisIndexList));
         return analysisIndexList;
     }

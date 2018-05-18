@@ -6,7 +6,7 @@
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>注册手机号分布</title>
+    <title>活跃用户时间段及用户中心请求分布</title>
     <style type="text/css">
         html {
             height: 100%
@@ -77,25 +77,24 @@
         </div>
         <div class='col-sm-2'></div>
     </div>
-
     <div class="panel panel-default">
         <div class="panel-heading">
-            渠道天维度注册手机号分布
+            用户中心请求分布
         </div>
     </div>
 
     <div class="row">
-        <div class="text-center col-md-6" id="companyPieChart" style="height:700px">
+        <div class="text-center col-md-6" id="funPieChart" style="height:700px">
         </div>
-        <div class="text-center col-md-6" id="locationPieChart" style="height:700px">
+        <div class="text-center col-md-6" id="returnPieChart" style="height:700px">
         </div>
     </div>
     <div class="panel panel-default">
         <div class="panel-heading">
-            渠道注册手机号地理位置分布
+            活跃用户数小时维度分布
         </div>
     </div>
-    <div class="container-fluid text-center" id="locationMapChart" style="height:800px;">
+    <div class="container-fluid text-center" id="activeHourBarChart" style="height:800px;">
     </div>
 </div>
 
@@ -126,8 +125,8 @@
         userSourceDom.append("<option value=" + userSourceList[i].indexSource + ">" + userSourceList[i].indexSource + "</option>");
     }
     userSourceDom.selectpicker('refresh');
-    pieChart(list[0], "companyPieChart", "天维度渠道注册手机号运营商分布");
-    pieChart(list[1], "locationPieChart", "天维度渠道注册手机号地理位置分布");
+    pieChart(list[1], "funPieChart", "用户中心服务请求分布");
+    pieChart(list[2], "returnPieChart", "用户中心返回情况分布");
     function pieChart(data, divId, chartName) {
         var legendData = [];
         var seriesData = [];
@@ -138,19 +137,15 @@
         drawPieChart(divId, chartName, legendData, seriesData);
     }
 
-    mapChart(list[1], "locationMapChart", "天维度渠道注册手机号地理位置分布");
-    function mapChart(data, divId, title) {
-        var minData = 1;
-        var maxData = 1;
+    barChart(list[0], "activeHourBarChart", "活跃用户数小时维度分布", "小时", "数量");
+    function barChart(data, divId, title, xName, yName) {
+        var xAixsData = [];
         var seriesData = [];
         for (var i = 0; i < data.length; i++) {
-            if (maxData < data[i].indexValue) {
-                maxData = data[i].indexValue;
-            }
-            seriesData.push({ name: data[i].distributeName,value: data[i].indexValue});
+            xAixsData.push(data[i].distributeName);
+            seriesData.push(data[i].indexValue);
         }
-        var dataLocation='${pageContext.request.contextPath}/static/data/china.json';
-        drawMapChart(divId,dataLocation ,title, minData, maxData, seriesData);
+        drawBarChart(divId, title, xName, xAixsData, yName, seriesData);
     }
     $(function () {
         $("#queryDate").click(function () {
@@ -160,7 +155,7 @@
             if ("" != startDate.trim() && "" != endDate.trim()) {
                 setButtonDisabled('queryDate', true);
                 $.ajax({
-                    url: 'registerMobileNumQuery',
+                    url: 'activeHourAndUserCollDisNumQuery',
                     data: {"startDate": startDate, "endDate": endDate, "userSource": userSource},
                     traditional: true,
                     dataType: "json",
@@ -168,9 +163,9 @@
                         var respCode = data.respCode;
                         if (respCode == 0) {
                             list = data.detailInfo;
-                            pieChart(list[0], "companyPieChart", "天维度渠道注册手机号运营商分布");
-                            pieChart(list[1], "locationPieChart", "天维度渠道注册手机号地理位置分布");
-                            mapChart(list[1], "locationMapChart", "天维度渠道注册手机号地理位置分布");
+                            pieChart(list[1], "funPieChart", "用户中心服务请求分布");
+                            pieChart(list[2], "returnPieChart", "用户中心返回情况分布");
+                            barChart(list[0], "activeHourBarChart", "活跃用户数小时维度分布");
                         }
                         setButtonDisabled('queryDate', false);
                     }
