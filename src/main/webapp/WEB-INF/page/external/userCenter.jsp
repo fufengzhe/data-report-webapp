@@ -21,7 +21,7 @@
         </div>
     </div>
 </nav>
-<h1 align="center">Hello!Welcome To Data Server Designed For User Center!</h1>
+<h1 align="center">Hello!Welcome To Data Server For User Center!</h1>
 <h4 align="center">May Your Work Be Driven By Data!</h4>
 <h6 align="center">Powered By Information Technology Department Of CLEC!</h6>
 
@@ -75,7 +75,7 @@
             var text = document.getElementById('log').innerHTML;
             if ("登出" == text) {
                 $.ajax({
-                    url: 'user/logout',
+                    url: '../user/logout',
                     dataType: "json",
                     success: function (data) {
                         var respCode = data.respCode;

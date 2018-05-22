@@ -30,9 +30,11 @@
 </div>
 <br/>
 <!--下面是登陆按钮,包括颜色控制-->
-<button type="button" style="width:280px;" class="btn btn-primary" id="toLogin" data-loading-text="登录中..." data-toggle="popover" data-trigger="manual"
+<button type="button" style="width:280px;" class="btn btn-primary" id="toLogin" data-loading-text="登录中..."
+        data-toggle="popover" data-trigger="manual"
         data-container="body" data-toggle="popover" data-placement="bottom"
-        title="用户名或密码错误!" data-content="请输入正确的用户名及密码，如无账号，查看账号创建">登 录</button>
+        title="用户名或密码错误!" data-content="请输入正确的用户名及密码，如无账号，查看账号创建">登 录
+</button>
 <br/><br/>
 <button type="button" style="width:280px;" class="btn btn-info" data-toggle="popover" data-trigger="hover"
         data-container="body" data-toggle="popover" data-placement="bottom"
@@ -62,15 +64,16 @@
             var username = $("#username").val();
             var password = $("#password").val();
             $.ajax({
-                url:  'login',
+                url: 'login',
                 data: {"username": username, "password": password},
                 dataType: "json",
                 scriptCharset: 'utf-8',
                 success: function (data) {
-                    var respCode=data.respCode;
-                    if(respCode==0){
-                        window.location.href=window.location.protocol+"//"+window.location.host+"/ecdata";
-                    }else{
+                    var respCode = data.respCode;
+                    if (respCode == 0) {
+                        window.history.go(-1);
+//                        window.location.href = window.location.protocol + "//" + window.location.host + "/ecdata";
+                    } else {
                         $('#toLogin').popover('show');
                     }
                     setButtonDisabled('toLogin', false);

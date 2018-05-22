@@ -142,7 +142,7 @@
     function graphChart(data, divId, chartName) {
         var formatterFunction = function (params) {
             return params.data.name
-                + (params.data.fromIndexValue == undefined ? ('<br/> 迁徙用户数' + params.data.indexValue) : ('<br/>迁出用户数: ' + params.data.fromIndexValue)) +
+                + (params.data.fromIndexValue == undefined ? ('<br/> 迁徙用户数: ' + params.data.indexValue) : ('<br/>迁出用户数: ' + params.data.fromIndexValue)) +
                 (params.data.toIndexValue == undefined ? '' : ('<br/>迁入用户数: ' + params.data.toIndexValue));
         }
         var seriesData = [];
