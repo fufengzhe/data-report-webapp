@@ -11,9 +11,13 @@ public class AnalysisIndex {
     private String statDateSpan;
     private String indexName;
     private String indexSource;
+    private String fromUserSource;
+    private String toUserSource;
     private String distributeType;
     private String distributeName;
     private Integer indexValue;
+    private Integer fromIndexValue;
+    private Integer toIndexValue;
     private String mobile;
     private String ip;
 
@@ -74,6 +78,22 @@ public class AnalysisIndex {
         this.indexSource = indexSource;
     }
 
+    public String getFromUserSource() {
+        return fromUserSource;
+    }
+
+    public void setFromUserSource(String fromUserSource) {
+        this.fromUserSource = fromUserSource;
+    }
+
+    public String getToUserSource() {
+        return toUserSource;
+    }
+
+    public void setToUserSource(String toUserSource) {
+        this.toUserSource = toUserSource;
+    }
+
     public String getDistributeType() {
         return distributeType;
     }
@@ -96,6 +116,22 @@ public class AnalysisIndex {
 
     public void setIndexValue(Integer indexValue) {
         this.indexValue = indexValue;
+    }
+
+    public Integer getFromIndexValue() {
+        return fromIndexValue;
+    }
+
+    public void setFromIndexValue(Integer fromIndexValue) {
+        this.fromIndexValue = fromIndexValue;
+    }
+
+    public Integer getToIndexValue() {
+        return toIndexValue;
+    }
+
+    public void setToIndexValue(Integer toIndexValue) {
+        this.toIndexValue = toIndexValue;
     }
 
     public String getMobile() {
@@ -124,9 +160,13 @@ public class AnalysisIndex {
                 ", statDateSpan='" + statDateSpan + '\'' +
                 ", indexName='" + indexName + '\'' +
                 ", indexSource='" + indexSource + '\'' +
+                ", fromUserSource='" + fromUserSource + '\'' +
+                ", toUserSource='" + toUserSource + '\'' +
                 ", distributeType='" + distributeType + '\'' +
                 ", distributeName='" + distributeName + '\'' +
                 ", indexValue=" + indexValue +
+                ", fromIndexValue=" + fromIndexValue +
+                ", toIndexValue=" + toIndexValue +
                 ", mobile='" + mobile + '\'' +
                 ", ip='" + ip + '\'' +
                 '}';

@@ -25,4 +25,8 @@ public interface LocationAnalysisService {
     int updateUserCollectionInvokeDis(QueryPara queryPara);
 
     List<List<AnalysisIndex>> getActiveHourAndUserCollDisInfo(QueryPara queryPara);
+
+    int updateMigrateCollection(QueryPara queryPara);
+
+    List<List<AnalysisIndex>> getMigrateCollectionDis(QueryPara queryPara);
 }

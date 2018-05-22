@@ -200,4 +200,26 @@ public class ScheduleController {
         }
     }
 
+    /**
+     * @param queryPara
+     * @return
+     */
+    @RequestMapping("/updateMigrateCollection")
+    @ResponseBody
+    public String updateMigrateCollection(QueryPara queryPara) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            int effectedRowsNum = scheduleService.updateMigrateCollection(queryPara);
+            responseBean.setDetailInfo("更新行数为" + effectedRowsNum);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.updateFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
 }

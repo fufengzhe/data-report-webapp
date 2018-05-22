@@ -188,6 +188,48 @@ public class LocationAnalysisNoSqlDaoImpl implements LocationAnalysisNoSqlDao {
         return analysisIndexList;
     }
 
+    public List<AnalysisIndex> getMigrateDisInfo(QueryPara queryPara) {
+        DBCollection dbCollection = mongoTemplate.getCollection("migrate");
+        // aggregate 实现方法
+        // 过滤时间和渠道
+        List<DBObject> stageList1 = new ArrayList<DBObject>();
+        BasicDBObject[] timeFilterArray = {new BasicDBObject("loginTime", new BasicDBObject("$gte", queryPara.getStartDate() + CommonConstant.beginAppendTime)),
+                new BasicDBObject("loginTime", new BasicDBObject("$lte", queryPara.getEndDate() + CommonConstant.endAppendTime))};
+        BasicDBObject timeFilterCon = new BasicDBObject();
+        timeFilterCon.put("$and", timeFilterArray);
+        BasicDBObject matchTime = new BasicDBObject("$match", timeFilterCon);
+        stageList1.add(matchTime);
+        BasicDBObject matchFromNotEqualTo = new BasicDBObject("$match", new BasicDBObject("clientSender", new BasicDBObject("$ne", "$clientSender")));
+        stageList1.add(matchFromNotEqualTo);
+        BasicDBObject temp1 = new BasicDBObject("fromClientSender", "$clientSender").append("toClientSender", "$clientSender").append("oldUserId", "$oldUserId");
+        temp1.append("migrateDate", new BasicDBObject(new BasicDBObject("$substr", Arrays.asList("$loginTime", 0, 10))));
+        BasicDBObject groupFieldOne = new BasicDBObject("_id", temp1);
+        BasicDBObject groupOne = new BasicDBObject("$group", groupFieldOne);
+        stageList1.add(groupOne);
+        BasicDBObject temp2 = new BasicDBObject("migrateDate", "$_id.migrateDate").append("fromClientSender", "$_id.fromClientSender").
+                append("toClientSender", "$_id.toClientSender");
+        BasicDBObject groupFieldTwo = new BasicDBObject("_id", temp2);
+        groupFieldTwo.put("migrateNum", new BasicDBObject("$sum", 1));
+        BasicDBObject groupTwo = new BasicDBObject("$group", groupFieldTwo);
+        stageList1.add(groupTwo);
+        Cursor cursor = dbCollection.aggregate(stageList1, AggregationOptions.builder().allowDiskUse(true).build());
+        List<AnalysisIndex> analysisIndexList = new ArrayList<AnalysisIndex>();
+        while (cursor.hasNext()) {
+            DBObject dbObject = cursor.next();
+            DBObject category = (DBObject) dbObject.get("_id");
+            AnalysisIndex analysisIndex = new AnalysisIndex();
+            analysisIndex.setStatDate(category.get("migrateDate").toString());
+            analysisIndex.setStatDateSpan(CommonConstant.statTimeSpanOfDate);
+            analysisIndex.setIndexName(CommonConstant.distributeIndexNameOfMigrateCollection);
+            analysisIndex.setIndexSource(category.get("fromClientSender").toString());
+            analysisIndex.setDistributeType("6");
+            analysisIndex.setDistributeName(category.get("toClientSender").toString());
+            analysisIndex.setIndexValue(Integer.parseInt(dbObject.get("migrateNum").toString()));
+            analysisIndexList.add(analysisIndex);
+        }
+        return analysisIndexList;
+    }
+
     private void setAnalysisIndexUsingDBObject(AnalysisIndex analysisIndex, DBObject dbObject, String distributeName, String distributeType) {
         DBObject category = (DBObject) dbObject.get("_id");
         analysisIndex.setStatDate(category.get("logDate").toString());

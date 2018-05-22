@@ -228,3 +228,49 @@ function drawBarChart(divId, chartName, xAxisName, xAxisData, yAxisName, seriesD
     };
     myChart.setOption(option);
 }
+
+function drawGraphChart(divId, chartName, formatterFunction, seriesData, linksData) {
+    var myChart = echarts.init(document.getElementById(divId));
+    var option = {
+        title: {
+            text: chartName,
+            x: 'right'
+        },
+        tooltip: {
+            formatter: formatterFunction,
+        },
+        animationDurationUpdate: 1500,
+        animationEasingUpdate: 'quinticInOut',
+        series: [
+            {
+                type: 'graph',
+                layout: 'none',
+                symbolSize: 50,
+                roam: true,
+                label: {
+                    normal: {
+                        show: true
+                    }
+                },
+                edgeSymbol: ['circle', 'arrow'],
+                edgeSymbolSize: [0,10],
+                edgeLabel: {
+                    normal: {
+                        textStyle: {
+                            fontSize: 15
+                        }
+                    }
+                },
+                data: seriesData,
+                links: linksData,
+                lineStyle: {
+                    normal: {
+                        opacity: 1,
+                    }
+                }
+            }
+        ]
+
+    };
+    myChart.setOption(option);
+}

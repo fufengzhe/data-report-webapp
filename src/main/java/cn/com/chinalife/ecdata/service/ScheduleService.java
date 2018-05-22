@@ -29,4 +29,6 @@ public interface ScheduleService {
     int updateActiveTimeDis(QueryPara queryPara);
 
     int updateUserCollectionInvokeDis(QueryPara queryPara);
+
+    int updateMigrateCollection(QueryPara queryPara);
 }

@@ -7,6 +7,8 @@ public class QueryPara {
     private String startDate;
     private String endDate;
     private String userSource;
+    private String fromUserSource;
+    private String toUserSource;
     private String username;
     private String password;
     private String queryDate;
@@ -36,6 +38,22 @@ public class QueryPara {
 
     public void setUserSource(String userSource) {
         this.userSource = userSource;
+    }
+
+    public String getFromUserSource() {
+        return fromUserSource;
+    }
+
+    public void setFromUserSource(String fromUserSource) {
+        this.fromUserSource = fromUserSource;
+    }
+
+    public String getToUserSource() {
+        return toUserSource;
+    }
+
+    public void setToUserSource(String toUserSource) {
+        this.toUserSource = toUserSource;
     }
 
     public String getUsername() {
@@ -92,6 +110,8 @@ public class QueryPara {
                 "startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
                 ", userSource='" + userSource + '\'' +
+                ", fromUserSource='" + fromUserSource + '\'' +
+                ", toUserSource='" + toUserSource + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", queryDate='" + queryDate + '\'' +

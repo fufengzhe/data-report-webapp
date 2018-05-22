@@ -1,8 +1,8 @@
 package cn.com.chinalife.ecdata.service.impl.location;
 
+import cn.com.chinalife.ecdata.dao.noSqlDao.location.LocationAnalysisNoSqlDao;
 import cn.com.chinalife.ecdata.dao.sqlDao.InitDao;
 import cn.com.chinalife.ecdata.dao.sqlDao.location.LocationAnalysisDao;
-import cn.com.chinalife.ecdata.dao.noSqlDao.location.LocationAnalysisNoSqlDao;
 import cn.com.chinalife.ecdata.entity.combine.AnalysisIndex;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
@@ -21,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by xiexiangyu on 2018/3/14.
@@ -309,6 +306,63 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         return analysisIndexList;
     }
 
+    public int updateMigrateCollection(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        Map<String, String> codeAndName = this.getNewSourceCodeAndNameMap();
+        int effectedRow = 0;
+        List<AnalysisIndex> migrateDisList = locationAnalysisNoSqlDao.getMigrateDisInfo(queryPara);
+        for (AnalysisIndex analysisIndex : migrateDisList) {
+            analysisIndex.setIndexSource(codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexName() : codeAndName.get(analysisIndex.getIndexSource()));
+            analysisIndex.setDistributeName(codeAndName.get(analysisIndex.getDistributeName()) == null ? analysisIndex.getDistributeName() : codeAndName.get(analysisIndex.getDistributeName()));
+        }
+        if (migrateDisList != null && migrateDisList.size() > 0) {
+            effectedRow = locationAnalysisDao.updateDistributeInfo(migrateDisList);
+        }
+        logger.info("service更新完成，受影响行数为 {}", effectedRow);
+        return effectedRow;
+    }
+
+    public List<List<AnalysisIndex>> getMigrateCollectionDis(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        List<List<AnalysisIndex>> analysisIndexList = new ArrayList<List<AnalysisIndex>>();
+        queryPara.setFromUserSource(this.getWhereConditionUsingPara(queryPara.getFromUserSource()));
+        queryPara.setToUserSource(this.getWhereConditionUsingPara(queryPara.getToUserSource()));
+        queryPara.setDistributeType("6");
+        List<AnalysisIndex> migrateCollectionDisList = locationAnalysisDao.getMigrateCollectionDis(queryPara);
+        analysisIndexList.add(migrateCollectionDisList);
+        List<AnalysisIndex> migrateCollectionFromDisList = locationAnalysisDao.getMigrateCollectionFromDis(queryPara);
+        List<AnalysisIndex> migrateCollectionToDisList = locationAnalysisDao.getMigrateCollectionToDis(queryPara);
+        List<AnalysisIndex> fromAndToList = this.mergeFromAndToList(migrateCollectionFromDisList, migrateCollectionToDisList);
+        analysisIndexList.add(fromAndToList);
+        logger.info("service返回结果为 {}", JSON.toJSONString(analysisIndexList));
+        return analysisIndexList;
+    }
+
+    private List<AnalysisIndex> mergeFromAndToList(List<AnalysisIndex> migrateCollectionFromDisList, List<AnalysisIndex> migrateCollectionToDisList) {
+        List<AnalysisIndex> analysisIndexList = new ArrayList<AnalysisIndex>();
+        Map<String, Integer> fromMap = new HashMap<String, Integer>();
+        Map<String, Integer> toMap = new HashMap<String, Integer>();
+        Set<String> sourceSet = new HashSet<String>();
+        for (AnalysisIndex analysisIndex : migrateCollectionFromDisList) {
+            sourceSet.add(analysisIndex.getFromUserSource());
+            fromMap.put(analysisIndex.getFromUserSource(), analysisIndex.getIndexValue());
+        }
+        for (AnalysisIndex analysisIndex : migrateCollectionToDisList) {
+            sourceSet.add(analysisIndex.getToUserSource());
+            toMap.put(analysisIndex.getToUserSource(), analysisIndex.getIndexValue());
+        }
+        for (String source : sourceSet) {
+            AnalysisIndex analysisIndex = new AnalysisIndex();
+            analysisIndex.setIndexSource(source);
+            Integer fromIndex = fromMap.get(source);
+            analysisIndex.setFromIndexValue(fromIndex == null ? 0 : fromIndex);
+            Integer toIndex = toMap.get(source);
+            analysisIndex.setToIndexValue(toIndex == null ? 0 : toIndex);
+            analysisIndexList.add(analysisIndex);
+        }
+        return analysisIndexList;
+    }
+
     private void setWhereConditionUsingPara(String userSource, QueryPara queryPara) {
         if (userSource != null) {
             String[] temp = userSource.split(",");
@@ -318,6 +372,22 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
             }
             userSourceCondition.append("'").append(temp[temp.length - 1]).append("')");
             queryPara.setUserSource(userSourceCondition.toString());
+            queryPara.setFromUserSource(userSourceCondition.toString());
+            queryPara.setUserSource(userSourceCondition.toString());
+        }
+    }
+
+    private String getWhereConditionUsingPara(String userSource) {
+        if (userSource != null) {
+            String[] temp = userSource.split(",");
+            StringBuilder userSourceCondition = new StringBuilder("(");
+            for (int i = 0; i < temp.length - 1; i++) {
+                userSourceCondition.append("'").append(temp[i]).append("',");
+            }
+            userSourceCondition.append("'").append(temp[temp.length - 1]).append("')");
+            return userSourceCondition.toString();
+        } else {
+            return null;
         }
     }
 

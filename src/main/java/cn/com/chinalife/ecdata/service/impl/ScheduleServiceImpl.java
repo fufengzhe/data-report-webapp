@@ -255,4 +255,22 @@ public class ScheduleServiceImpl implements ScheduleService {
         return effectedRow;
     }
 
+    @Scheduled(cron = "0 15 0 * * ?")
+    private void scheduledEntryForMigrateCollectionDis() throws Exception {
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        this.updateMigrateCollection(queryPara);
+    }
+
+    public int updateMigrateCollection(QueryPara queryPara) {
+        int effectedRow = 0;
+        int temp;
+        logger.info("开始更新migrate集合分布信息");
+        temp = locationAnalysisService.updateMigrateCollection(queryPara);
+        effectedRow += temp;
+        logger.info("结束更新migrate集合分布信息,受影响行数为 {}", effectedRow);
+        return effectedRow;
+    }
+
 }

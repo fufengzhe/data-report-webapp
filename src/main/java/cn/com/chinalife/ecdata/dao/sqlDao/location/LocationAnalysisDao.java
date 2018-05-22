@@ -25,4 +25,10 @@ public interface LocationAnalysisDao {
     List<AnalysisIndex> getActiveHourDisInfo(QueryPara queryPara);
 
     List<AnalysisIndex> getUserCollectionDisInfo(QueryPara queryPara);
+
+    List<AnalysisIndex> getMigrateCollectionDis(QueryPara queryPara);
+
+    List<AnalysisIndex> getMigrateCollectionFromDis(QueryPara queryPara);
+
+    List<AnalysisIndex> getMigrateCollectionToDis(QueryPara queryPara);
 }

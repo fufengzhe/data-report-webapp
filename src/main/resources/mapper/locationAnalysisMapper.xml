@@ -87,6 +87,63 @@
         GROUP BY DISTRIBUTE_NAME ORDER BY SUM(INDEX_VALUE) DESC
     </select>
 
+    <select id="getMigrateCollectionDis" resultType="AnalysisIndex" parameterType="QueryPara">
+        SELECT
+        INDEX_SOURCE fromUserSource ,DISTRIBUTE_NAME toUserSource,SUM (INDEX_VALUE) indexValue
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'migrateCollection' AND STAT_TIME_SPAN = 'D'
+        AND STAT_TIME>=#{startDate}
+        <![CDATA[
+              AND STAT_TIME<=#{endDate}
+        ]]>
+        AND DISTRIBUTE_TYPE = #{distributeType}
+        <if test="fromUserSource != null and fromUserSource != ''">
+            AND INDEX_SOURCE IN ${fromUserSource}
+        </if>
+        <if test="toUserSource != null and toUserSource != ''">
+            AND DISTRIBUTE_NAME IN ${toUserSource}
+        </if>
+        GROUP BY INDEX_SOURCE,DISTRIBUTE_NAME
+    </select>
+
+    <select id="getMigrateCollectionFromDis" resultType="AnalysisIndex" parameterType="QueryPara">
+        SELECT
+        INDEX_SOURCE fromUserSource ,SUM (INDEX_VALUE) indexValue
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'migrateCollection' AND STAT_TIME_SPAN = 'D'
+        AND STAT_TIME>=#{startDate}
+        <![CDATA[
+              AND STAT_TIME<=#{endDate}
+        ]]>
+        AND DISTRIBUTE_TYPE = #{distributeType}
+        <if test="fromUserSource != null and fromUserSource != ''">
+            AND INDEX_SOURCE IN ${fromUserSource}
+        </if>
+        <if test="toUserSource != null and toUserSource != ''">
+            AND DISTRIBUTE_NAME IN ${toUserSource}
+        </if>
+        GROUP BY INDEX_SOURCE
+    </select>
+
+    <select id="getMigrateCollectionToDis" resultType="AnalysisIndex" parameterType="QueryPara">
+        SELECT
+        DISTRIBUTE_NAME toUserSource ,SUM (INDEX_VALUE) indexValue
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'migrateCollection' AND STAT_TIME_SPAN = 'D'
+        AND STAT_TIME>=#{startDate}
+        <![CDATA[
+              AND STAT_TIME<=#{endDate}
+        ]]>
+        AND DISTRIBUTE_TYPE = #{distributeType}
+        <if test="fromUserSource != null and fromUserSource != ''">
+            AND INDEX_SOURCE IN ${fromUserSource}
+        </if>
+        <if test="toUserSource != null and toUserSource != ''">
+            AND DISTRIBUTE_NAME IN ${toUserSource}
+        </if>
+        GROUP BY DISTRIBUTE_NAME
+    </select>
+
 
     <insert id="updateDistributeInfo" parameterType="java.util.List">
         INSERT INTO DMP_SELECT.DISTRIBUTE_RESULT

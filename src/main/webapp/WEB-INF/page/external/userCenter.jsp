@@ -21,7 +21,7 @@
         </div>
     </div>
 </nav>
-<h1 align="center">Hello!Welcome To Data Server!</h1>
+<h1 align="center">Hello!Welcome To Data Server Designed For User Center!</h1>
 <h4 align="center">May Your Work Be Driven By Data!</h4>
 <h6 align="center">Powered By Information Technology Department Of CLEC!</h6>
 
@@ -43,35 +43,9 @@
         </li>
         <li class="list-group-item">7、注册&活跃综合分布 <a href="/ecdata/combinationAnalysis/registerAndActive"
                                                   class="btn btn-success btn-xs">点击查看</a></li>
-        <li class="list-group-item">8、寿险保费查询</li>
-        <li class="list-group-item">9、财险保费查询</li>
-        <li class="list-group-item">10、平台交易规模查询</li>
-        <li class="list-group-item">11、成交客户数查询</li>
-        <li class="list-group-item">12、官网活跃邮件定时发送</li>
-        <li class="list-group-item">13、业务员工号获取对应一账通绑定信息 <a href="/ecdata/salesman/bankAndMobile"
-                                                         class="btn btn-success btn-xs">点击使用</a>
-        </li>
     </ul>
 </div>
 
-<div class="container">
-
-    <h2><span class="label label-success glyphicon glyphicon-list-alt"> 数据展示:</span></h2>
-    <br/>
-    <ul class="list-group">
-        <li class="list-group-item">目前提供安卓APP客户端查询，下载地址：<a target="_blank" href="https://www.pgyer.com/8Vkb">
-            安卓APP下载</a></li>
-    </ul>
-</div>
-
-<div class="container">
-
-    <h2><span class="label label-success glyphicon glyphicon-flag"> 我们可以提供:</span></h2>
-    <br/>
-    <ul class="list-group">
-        <li class="list-group-item">任何业务线生产库数据统计及展示</li>
-    </ul>
-</div>
 
 <br/>
 
