@@ -42,6 +42,7 @@
             <div class='col-sm-5'></div>
         </div>
     </div>
+    <div class="alert alert-warning" style="display:none;" id="noData">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="dateScatterChart" style="height:700px;">
     </div>
     <br/>
@@ -69,6 +70,7 @@
             <div class='col-sm-5'></div>
         </div>
     </div>
+    <div class="alert alert-warning" style="display:none;" id="noDataOfMonth">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="monthScatterChart" style="height:700px;">
 
     </div>
@@ -84,7 +86,6 @@
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
-
 
 
 <script type="text/javascript">
@@ -160,7 +161,14 @@
                     success: function (data) {
                         var respCode = data.respCode;
                         if (respCode == 0) {
-                            prepareDataAndDraw('dateScatterChart', '日维度注册&活跃用户分布',data.detailInfo);
+                            list = data.detailInfo;
+                            if (list.length == 0) {
+                                $("#noData").css('display', 'block');
+                                echarts.init(document.getElementById('dateScatterChart')).clear();
+                            } else {
+                                $("#noData").css('display', 'none');
+                                prepareDataAndDraw('dateScatterChart', '日维度注册&活跃用户分布', list);
+                            }
                         }
                         setButtonDisabled('queryDate', false);
                     }
@@ -181,7 +189,14 @@
                     success: function (data) {
                         var respCode = data.respCode;
                         if (respCode == 0) {
-                            prepareDataAndDraw('monthScatterChart', '月维度注册&活跃用户分布',data.detailInfo);
+                            list = data.detailInfo;
+                            if (list.length == 0) {
+                                $("#noDataOfMonth").css('display', 'block');
+                                echarts.init(document.getElementById('monthScatterChart')).clear();
+                            } else {
+                                $("#noDataOfMonth").css('display', 'none');
+                                prepareDataAndDraw('monthScatterChart', '月维度注册&活跃用户分布', list);
+                            }
                         }
                         setButtonDisabled('queryMonth', false);
                     }

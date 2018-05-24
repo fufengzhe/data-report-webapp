@@ -85,9 +85,13 @@
     </div>
 
     <div class="row">
-        <div class="text-center col-md-6" id="companyPieChart" style="height:700px">
+        <div class="text-center col-sm-6">
+            <div class="alert alert-warning" style="display:none;" id="noDataOfCompanyPie">无数据，请更改查询条件或联系开发人员。</div>
+            <div id="companyPieChart" style="height:700px"></div>
         </div>
-        <div class="text-center col-md-6" id="locationPieChart" style="height:700px">
+        <div class="text-center col-sm-6">
+            <div class="alert alert-warning" style="display:none;" id="noDataOfLocationPie">无数据，请更改查询条件或联系开发人员。</div>
+            <div id="locationPieChart" style="height:700px"></div>
         </div>
     </div>
     <div class="panel panel-default">
@@ -95,6 +99,7 @@
             渠道注册手机号地理位置分布
         </div>
     </div>
+    <div class="alert alert-warning" style="display:none;" id="noDataOfLocationMap">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="locationMapChart" style="height:800px;">
     </div>
 </div>
@@ -168,9 +173,24 @@
                         var respCode = data.respCode;
                         if (respCode == 0) {
                             list = data.detailInfo;
-                            pieChart(list[0], "companyPieChart", "天维度渠道注册手机号运营商分布");
-                            pieChart(list[1], "locationPieChart", "天维度渠道注册手机号地理位置分布");
-                            mapChart(list[1], "locationMapChart", "天维度渠道注册手机号地理位置分布");
+                            if (list[0].length == 0) {
+                                $("#noDataOfCompanyPie").css('display', 'block');
+                                echarts.init(document.getElementById('companyPieChart')).clear();
+                            } else {
+                                $("#noDataOfCompanyPie").css('display', 'none');
+                                pieChart(list[0], "companyPieChart", "天维度渠道注册手机号运营商分布");
+                            }
+                            if (list[1].length == 0) {
+                                $("#noDataOfLocationPie").css('display', 'block');
+                                $("#noDataOfLocationMap").css('display', 'block');
+                                echarts.init(document.getElementById('locationPieChart')).clear();
+                                echarts.init(document.getElementById('locationMapChart')).clear();
+                            } else {
+                                $("#noDataOfLocationPie").css('display', 'none');
+                                $("#noDataOfLocationMap").css('display', 'none');
+                                pieChart(list[1], "locationPieChart", "天维度渠道注册手机号地理位置分布");
+                                mapChart(list[1], "locationMapChart", "天维度渠道注册手机号地理位置分布");
+                            }
                         }
                         setButtonDisabled('queryDate', false);
                     }

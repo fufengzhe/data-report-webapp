@@ -84,9 +84,13 @@
     </div>
 
     <div class="row">
-        <div class="text-center col-md-6" id="funPieChart" style="height:700px">
+        <div class="text-center col-sm-6">
+            <div class="alert alert-warning" style="display:none;" id="noDataOfFun">无数据，请更改查询条件或联系开发人员。</div>
+            <div id="funPieChart" style="height:700px"> </div>
         </div>
-        <div class="text-center col-md-6" id="returnPieChart" style="height:700px">
+        <div class="text-center col-sm-6">
+            <div class="alert alert-warning" style="display:none;" id="noDataOfReturn">无数据，请更改查询条件或联系开发人员。</div>
+            <div id="returnPieChart" style="height:700px"> </div>
         </div>
     </div>
     <div class="panel panel-default">
@@ -94,6 +98,7 @@
             活跃用户数小时维度分布
         </div>
     </div>
+    <div class="alert alert-warning" style="display:none;" id="noDataOfActiveHour">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="activeHourBarChart" style="height:800px;">
     </div>
 </div>
@@ -163,9 +168,27 @@
                         var respCode = data.respCode;
                         if (respCode == 0) {
                             list = data.detailInfo;
-                            pieChart(list[1], "funPieChart", "用户中心服务请求分布");
-                            pieChart(list[2], "returnPieChart", "用户中心返回情况分布");
-                            barChart(list[0], "activeHourBarChart", "活跃用户数小时维度分布");
+                            if (list[1].length == 0) {
+                                $("#noDataOfFun").css('display', 'block');
+                                echarts.init(document.getElementById('funPieChart')).clear();
+                            } else {
+                                $("#noDataOfFun").css('display', 'none');
+                                pieChart(list[1], "funPieChart", "用户中心服务请求分布");
+                            }
+                            if (list[2].length == 0) {
+                                $("#noDataOfReturn").css('display', 'block');
+                                echarts.init(document.getElementById('returnPieChart')).clear();
+                            } else {
+                                $("#noDataOfReturn").css('display', 'none');
+                                pieChart(list[2], "returnPieChart", "用户中心返回情况分布");
+                            }
+                            if (list[0].length == 0) {
+                                $("#noDataOfActiveHour").css('display', 'block');
+                                echarts.init(document.getElementById('activeHourBarChart')).clear();
+                            } else {
+                                $("#noDataOfActiveHour").css('display', 'none');
+                                barChart(list[0], "activeHourBarChart", "活跃用户数小时维度分布");
+                            }
                         }
                         setButtonDisabled('queryDate', false);
                     }

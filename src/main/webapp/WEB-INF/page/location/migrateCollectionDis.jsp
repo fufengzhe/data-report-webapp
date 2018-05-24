@@ -87,6 +87,7 @@
         </div>
         <div class='col-sm-1'></div>
     </div>
+    <div class="alert alert-warning" style="display:none;" id="noData">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="migrateGraphChart" style="height:800px;">
     </div>
     <div class="panel panel-default">
@@ -112,7 +113,7 @@
         </div>
         <div class='col-sm-4'></div>
     </div>
-
+    <div class="alert alert-warning" style="display:none;" id="noDataOfUserNum">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="migrateUserNumPieChart" style="height:600px;">
     </div>
     <%--<div class="row">--%>
@@ -225,7 +226,13 @@
                         var respCode = data.respCode;
                         if (respCode == 0) {
                             list = data.detailInfo;
-                            graphChart(list, "migrateGraphChart", "用户迁移分布");
+                            if (list[0].length == 0 && list[1].length == 0) {
+                                $("#noData").css('display','block');
+                                echarts.init(document.getElementById('migrateGraphChart')).clear();
+                            }else{
+                                $("#noData").css('display','none');
+                                graphChart(list, "migrateGraphChart", "用户迁移分布");
+                            }
                         }
                         setButtonDisabled('queryDate', false);
                     }
@@ -253,7 +260,13 @@
                         var respCode = data.respCode;
                         if (respCode == 0) {
                             list = data.detailInfo;
-                            pieChart(list[0], "migrateUserNumPieChart", "用户迁入渠道数分布");
+                            if (list[0].length == 0 ) {
+                                $("#noDataOfUserNum").css('display','block');
+                                echarts.init(document.getElementById('migrateUserNumPieChart')).clear();
+                            }else{
+                                $("#noDataOfUserNum").css('display','none');
+                                pieChart(list[0], "migrateUserNumPieChart", "用户迁入渠道数分布");
+                            }
                         }
                         setButtonDisabled('queryButton', false);
                     }

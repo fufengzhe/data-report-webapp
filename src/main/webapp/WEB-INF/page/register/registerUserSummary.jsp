@@ -55,9 +55,13 @@
             </div>
             <div class='col-sm-2'></div>
         </div>
-        <div class="text-center col-md-6" id="datePieChart" style="height:700px">
+        <div class="text-center col-sm-6">
+            <div class="alert alert-warning" style="display:none;" id="noDataOfDatePie">无数据，请更改查询条件或联系开发人员。</div>
+            <div id="datePieChart" style="height:700px"></div>
         </div>
-        <div class="text-center col-md-6" id="monthPieChart" style="height:700px">
+        <div class="text-center col-sm-6">
+            <div class="alert alert-warning" style="display:none;" id="noDataOfMonthPie">无数据，请更改查询条件或联系开发人员。</div>
+            <div id="monthPieChart" style="height:700px"></div>
         </div>
     </div>
     <div class="panel panel-default">
@@ -65,6 +69,7 @@
             过去七天注册用户数趋势
         </div>
     </div>
+    <div class="alert alert-warning" style="display:none;" id="noDataOfDateTrend">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="dateTrendChart" style="height:700px;">
     </div>
 </div>
@@ -125,7 +130,14 @@
                     success: function (data) {
                         var respCode = data.respCode;
                         if (respCode == 0) {
-                            pieChart(data.detailInfo, "datePieChart", "天维度各渠道注册数分布");
+                            list = data.detailInfo;
+                            if (list.length == 0 ) {
+                                $("#noDataOfDatePie").css('display','block');
+                                echarts.init(document.getElementById('datePieChart')).clear();
+                            }else{
+                                $("#noDataOfDatePie").css('display','none');
+                                pieChart(list, "datePieChart", "天维度各渠道注册数分布");
+                            }
                         }
                         setButtonDisabled('queryDate', false);
                     }
@@ -146,7 +158,14 @@
                     success: function (data) {
                         var respCode = data.respCode;
                         if (respCode == 0) {
-                            pieChart(data.detailInfo, "monthPieChart", "月维度各渠道注册数分布");
+                            list = data.detailInfo;
+                            if (list.length == 0 ) {
+                                $("#noDataOfMonthPie").css('display','block');
+                                echarts.init(document.getElementById('monthPieChart')).clear();
+                            }else{
+                                $("#noDataOfMonthPie").css('display','none');
+                                pieChart(list, "monthPieChart", "月维度各渠道注册数分布");
+                            }
                         }
                         setButtonDisabled('queryMonth', false);
                     }
