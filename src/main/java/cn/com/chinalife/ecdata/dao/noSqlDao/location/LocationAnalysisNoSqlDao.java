@@ -22,4 +22,6 @@ public interface LocationAnalysisNoSqlDao {
     List<AnalysisIndex> getUserCollectionInvokeDis(QueryPara queryPara);
 
     List<AnalysisIndex> getMigrateDisInfo(QueryPara queryPara);
+
+    List<AnalysisIndex> getMigrateUserNumDisInfo(QueryPara queryPara);
 }

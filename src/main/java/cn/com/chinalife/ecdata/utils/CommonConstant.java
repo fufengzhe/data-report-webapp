@@ -27,11 +27,12 @@ public class CommonConstant {
     public static String distributeIndexNameOfActiveHour = "activeHour";
     public static String distributeIndexNameOfUserCollection = "userCollection";
     public static String distributeIndexNameOfMigrateCollection = "migrateCollection";
+    public static String distributeIndexNameOfMigrateCollectionUserNum = "migrateCollectionUserNum";
     public static String statIndexNameOfPropertyPremiumPTPG = "propertyPremiumPTPG";
     public static String statIndexNameOfPropertyPremium = "propertyPremium";
     public static String statIndexNameOfLifePremium = "lifePremium";
-    public static String userSourceOfAll = "总计";
-    public static int jsVersion = 6;
+    public static String userSourceOfAll = "ALL";
+    public static int jsVersion = 7;
     public static List<String> statIndexNameListOfPropertyPremium;
 
     static {

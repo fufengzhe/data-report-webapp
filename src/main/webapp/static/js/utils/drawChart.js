@@ -34,7 +34,6 @@ function drawPieChart(divId, chartName, legendData, seriesData) {
     };
     myChart.setOption(option);
 }
-
 function drawTrendChart(divId, chartName, legendData, xData, seriesData) {
     var myChart = echarts.init(document.getElementById(divId));
     var option = {
@@ -71,8 +70,6 @@ function drawTrendChart(divId, chartName, legendData, xData, seriesData) {
     };
     myChart.setOption(option);
 }
-
-
 function drawScatterChart(divId, chartName, legendData, tooltipFormatter, xAxisName, yAxisName, series) {
     var myChart = echarts.init(document.getElementById(divId));
     var option = {
@@ -179,8 +176,6 @@ function drawMapChart(divId, dataLocation, title, minData, maxData, seriesData) 
         myChart.setOption(option);
     });
 }
-
-
 function drawBarChart(divId, chartName, xAxisName, xAxisData, yAxisName, seriesData) {
     var myChart = echarts.init(document.getElementById(divId));
     var option = {
@@ -228,13 +223,12 @@ function drawBarChart(divId, chartName, xAxisName, xAxisData, yAxisName, seriesD
     };
     myChart.setOption(option);
 }
-
 function drawGraphChart(divId, chartName, formatterFunction, seriesData, linksData) {
     var myChart = echarts.init(document.getElementById(divId));
     var option = {
         title: {
             text: chartName,
-            x: 'right'
+            x: 'center'
         },
         tooltip: {
             formatter: formatterFunction,

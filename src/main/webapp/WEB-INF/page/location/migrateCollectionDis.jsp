@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -34,6 +33,11 @@
 <body>
 <div class="container-fluid text-center">
     <br/>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            用户迁移分布 (用户A在官网注册，之后在掌上国寿登录，则用户A从官网迁移到掌上国寿)
+        </div>
+    </div>
     <div class="row panel-heading">
         <div class='col-sm-1'></div>
         <div class='col-sm-2'>
@@ -83,19 +87,34 @@
         </div>
         <div class='col-sm-1'></div>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            用户迁移分布
-        </div>
-    </div>
     <div class="container-fluid text-center" id="migrateGraphChart" style="height:800px;">
     </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            用户迁入渠道数分布 (用户A在官网注册，之后在掌上国寿和国寿i动登录，则用户A迁入渠道数为2)
+        </div>
+    </div>
+    <div class="row panel-heading">
+        <div class='col-sm-4'></div>
+        <div class='col-sm-3'>
+            <div class="form-group">
+                <div class='input-group date text-center'>
+                    <span class="input-group-addon">截止日期</span>
+                    <input type='text' class="form-control" id="statDate" placeholder="选择时间"/>
+                    <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="queryButton">开始查询</button>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-4'></div>
+    </div>
 
-    <%--<div class="panel panel-default">--%>
-    <%--<div class="panel-heading">--%>
-    <%--活跃用户数小时维度分布--%>
-    <%--</div>--%>
-    <%--</div>--%>
+    <div class="container-fluid text-center" id="migrateUserNumPieChart" style="height:600px;">
+    </div>
     <%--<div class="row">--%>
     <%--<div class="text-center col-md-6" id="funPieChart" style="height:700px">--%>
     <%--</div>--%>
@@ -103,7 +122,6 @@
     <%--</div>--%>
     <%--</div>--%>
 </div>
-
 <br/>
 <div id="main" style="width: 600px;height:400px;"></div>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
@@ -117,12 +135,12 @@
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <%--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZjFuwSnrpwicUzxIxguxFRQEXbWiwxjO"></script>--%>
-
 <script type="text/javascript">
     var list =${analysisIndexList};
     var userSourceList =${userSourceList};
     $("#startDate").val('${startDate}');
     $("#endDate").val('${endDate}');
+    $("#statDate").val('${startDate}');
     var fromUserSourceDom = $("#fromUserSource");
     var toUserSourceDom = $("#toUserSource");
     fromUserSourceDom.selectpicker({
@@ -137,8 +155,8 @@
     }
     fromUserSourceDom.selectpicker('refresh');
     toUserSourceDom.selectpicker('refresh');
-
     graphChart(list, "migrateGraphChart", "用户迁移分布");
+    pieChart(list[2], "migrateUserNumPieChart", "用户迁入渠道数分布");
     function graphChart(data, divId, chartName) {
         var formatterFunction = function (params) {
             return params.data.name
@@ -168,12 +186,21 @@
                 },
                 lineStyle: {
                     normal: {
-                        curveness: (i % 2 == 0 ? 0.3 : 0.5)
+                        curveness: (i % 2 == 0 ? 0.1 : 0.3)
                     }
                 }
             });
         }
         drawGraphChart(divId, chartName, formatterFunction, seriesData, linksData);
+    }
+    function pieChart(data, divId, chartName) {
+        var legendData = [];
+        var seriesData = [];
+        for (var i = 0; i < data.length; i++) {
+            legendData.push(data[i].distributeName);
+            seriesData.push({value: data[i].indexValue, name: data[i].distributeName});
+        }
+        drawPieChart(divId, chartName, legendData, seriesData);
     }
     $(function () {
         $("#queryDate").click(function () {
@@ -189,7 +216,8 @@
                         "startDate": startDate,
                         "endDate": endDate,
                         "fromUserSource": fromUserSource,
-                        "toUserSource": toUserSource
+                        "toUserSource": toUserSource,
+                        "queryType": "1"
                     },
                     traditional: true,
                     dataType: "json",
@@ -200,6 +228,34 @@
                             graphChart(list, "migrateGraphChart", "用户迁移分布");
                         }
                         setButtonDisabled('queryDate', false);
+                    }
+                });
+            }
+        });
+    });
+
+    $(function () {
+        $("#queryButton").click(function () {
+            var startDate = $("#statDate").val();
+            var endDate = $("#statDate").val();
+            if ("" != startDate.trim() && "" != endDate.trim()) {
+                setButtonDisabled('queryButton', true);
+                $.ajax({
+                    url: 'migrateCollectionDisNumQuery',
+                    data: {
+                        "startDate": startDate,
+                        "endDate": endDate,
+                        "queryType": "2"
+                    },
+                    traditional: true,
+                    dataType: "json",
+                    success: function (data) {
+                        var respCode = data.respCode;
+                        if (respCode == 0) {
+                            list = data.detailInfo;
+                            pieChart(list[0], "migrateUserNumPieChart", "用户迁入渠道数分布");
+                        }
+                        setButtonDisabled('queryButton', false);
                     }
                 });
             }

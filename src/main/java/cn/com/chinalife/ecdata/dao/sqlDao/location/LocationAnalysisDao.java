@@ -31,4 +31,6 @@ public interface LocationAnalysisDao {
     List<AnalysisIndex> getMigrateCollectionFromDis(QueryPara queryPara);
 
     List<AnalysisIndex> getMigrateCollectionToDis(QueryPara queryPara);
+
+    List<AnalysisIndex> getMigrateCollectionUserNumDis(QueryPara queryPara);
 }

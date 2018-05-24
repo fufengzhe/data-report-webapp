@@ -15,6 +15,7 @@ public class QueryPara {
     private String whereCondition;
     private String timeSpan;
     private String distributeType;
+    private String queryType;
 
     public String getStartDate() {
         return startDate;
@@ -104,6 +105,14 @@ public class QueryPara {
         this.distributeType = distributeType;
     }
 
+    public String getQueryType() {
+        return queryType;
+    }
+
+    public void setQueryType(String queryType) {
+        this.queryType = queryType;
+    }
+
     @Override
     public String toString() {
         return "QueryPara{" +
@@ -118,6 +127,7 @@ public class QueryPara {
                 ", whereCondition='" + whereCondition + '\'' +
                 ", timeSpan='" + timeSpan + '\'' +
                 ", distributeType='" + distributeType + '\'' +
+                ", queryType='" + queryType + '\'' +
                 '}';
     }
 }

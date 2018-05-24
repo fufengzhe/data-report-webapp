@@ -56,6 +56,8 @@ public class InvokeUtils {
         URIBuilder uriBuilder = new URIBuilder("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm");
         CloseableHttpResponse response = doGetWithProxy(uriBuilder, "tel", "15810604756");
         System.out.println(EntityUtils.toString(response.getEntity()));
+        String s="name:22\n" +
+                "age:22";
 //        CloseableHttpResponse response1 = doGet(uriBuilder, "tel", "13935994080");
 //        String entity1 = EntityUtils.toString(response1.getEntity(), "utf-8");
 //        System.out.println(entity1);

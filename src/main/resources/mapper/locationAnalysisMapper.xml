@@ -36,7 +36,7 @@
         SELECT
         DISTINCT INDEX_SOURCE AS indexSource
         FROM
-        DMP_SELECT.DISTRIBUTE_RESULT
+        DMP_SELECT.DISTRIBUTE_RESULT WHERE INDEX_SOURCE!='ALL'
     </select>
 
     <select id="getActiveIPDistributeInfo" resultType="AnalysisIndex" parameterType="QueryPara">
@@ -142,6 +142,19 @@
             AND DISTRIBUTE_NAME IN ${toUserSource}
         </if>
         GROUP BY DISTRIBUTE_NAME
+    </select>
+
+    <select id="getMigrateCollectionUserNumDis" resultType="AnalysisIndex" parameterType="QueryPara">
+        SELECT
+        #{startDate} startDate,DISTRIBUTE_NAME distributeName ,SUM (INDEX_VALUE) indexValue
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'migrateCollectionUserNum' AND STAT_TIME_SPAN = 'D'
+        AND STAT_TIME>=#{startDate}
+        <![CDATA[
+              AND STAT_TIME<=#{endDate}
+        ]]>
+        AND DISTRIBUTE_TYPE = #{distributeType}
+        GROUP BY DISTRIBUTE_NAME ORDER BY SUM (INDEX_VALUE) DESC
     </select>
 
 

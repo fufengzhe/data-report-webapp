@@ -318,6 +318,15 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         if (migrateDisList != null && migrateDisList.size() > 0) {
             effectedRow = locationAnalysisDao.updateDistributeInfo(migrateDisList);
         }
+        List<AnalysisIndex> migrateUserNumDisList = locationAnalysisNoSqlDao.getMigrateUserNumDisInfo(queryPara);
+        for (AnalysisIndex analysisIndex : migrateUserNumDisList) {
+            analysisIndex.setIndexSource(CommonConstant.userSourceOfAll);
+            analysisIndex.setStatDate(DateUtils.getYesterday());
+        }
+        if (migrateUserNumDisList != null && migrateUserNumDisList.size() > 0) {
+            int temp = locationAnalysisDao.updateDistributeInfo(migrateUserNumDisList);
+            effectedRow += temp;
+        }
         logger.info("service更新完成，受影响行数为 {}", effectedRow);
         return effectedRow;
     }
@@ -325,15 +334,22 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
     public List<List<AnalysisIndex>> getMigrateCollectionDis(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<List<AnalysisIndex>> analysisIndexList = new ArrayList<List<AnalysisIndex>>();
-        queryPara.setFromUserSource(this.getWhereConditionUsingPara(queryPara.getFromUserSource()));
-        queryPara.setToUserSource(this.getWhereConditionUsingPara(queryPara.getToUserSource()));
-        queryPara.setDistributeType("6");
-        List<AnalysisIndex> migrateCollectionDisList = locationAnalysisDao.getMigrateCollectionDis(queryPara);
-        analysisIndexList.add(migrateCollectionDisList);
-        List<AnalysisIndex> migrateCollectionFromDisList = locationAnalysisDao.getMigrateCollectionFromDis(queryPara);
-        List<AnalysisIndex> migrateCollectionToDisList = locationAnalysisDao.getMigrateCollectionToDis(queryPara);
-        List<AnalysisIndex> fromAndToList = this.mergeFromAndToList(migrateCollectionFromDisList, migrateCollectionToDisList);
-        analysisIndexList.add(fromAndToList);
+        if (queryPara.getQueryType() == null || "1".equals(queryPara.getQueryType())) {
+            queryPara.setFromUserSource(this.getWhereConditionUsingPara(queryPara.getFromUserSource()));
+            queryPara.setToUserSource(this.getWhereConditionUsingPara(queryPara.getToUserSource()));
+            queryPara.setDistributeType("6");
+            List<AnalysisIndex> migrateCollectionDisList = locationAnalysisDao.getMigrateCollectionDis(queryPara);
+            analysisIndexList.add(migrateCollectionDisList);
+            List<AnalysisIndex> migrateCollectionFromDisList = locationAnalysisDao.getMigrateCollectionFromDis(queryPara);
+            List<AnalysisIndex> migrateCollectionToDisList = locationAnalysisDao.getMigrateCollectionToDis(queryPara);
+            List<AnalysisIndex> fromAndToList = this.mergeFromAndToList(migrateCollectionFromDisList, migrateCollectionToDisList);
+            analysisIndexList.add(fromAndToList);
+        }
+        if (queryPara.getQueryType() == null || "2".equals(queryPara.getQueryType())) {
+            queryPara.setDistributeType("7");
+            List<AnalysisIndex> migrateCollectionUserNumDisList = locationAnalysisDao.getMigrateCollectionUserNumDis(queryPara);
+            analysisIndexList.add(migrateCollectionUserNumDisList);
+        }
         logger.info("service返回结果为 {}", JSON.toJSONString(analysisIndexList));
         return analysisIndexList;
     }
