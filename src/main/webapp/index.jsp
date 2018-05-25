@@ -6,6 +6,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" href="${pageContext.request.contextPath}/static/img/logo.ico" type="img/x-ico" />
     <title>国寿电商数据后台</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
 </head>

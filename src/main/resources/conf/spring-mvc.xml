@@ -64,6 +64,8 @@
         </mvc:interceptor>
     </mvc:interceptors>
 
+    <mvc:view-controller path="/test" view-name="test/test"/>
+
     <import resource="classpath:conf/spring-mongo.xml"/>
     <import resource="classpath:conf/spring-mybatis.xml"/>
 </beans>
