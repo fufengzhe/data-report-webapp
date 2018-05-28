@@ -4,6 +4,7 @@ import cn.com.chinalife.ecdata.entity.trade.Premium;
 
 import javax.servlet.http.Cookie;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
 import java.util.*;
 
 /**
@@ -73,7 +74,27 @@ public class CommonUtils {
         premium.setYearAmount(new BigDecimal("0.00"));
     }
 
-    public static void main(String[] args) {
+    public static String getMD5(String str) throws Exception {
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        md5.update((str).getBytes("UTF-8"));
+        byte b[] = md5.digest();
+        int i;
+        StringBuffer buf = new StringBuffer("");
+        for (int offset = 0; offset < b.length; offset++) {
+            i = b[offset];
+            if (i < 0) {
+                i += 256;
+            }
+            if (i < 16) {
+                buf.append("0");
+            }
+            buf.append(Integer.toHexString(i));
+        }
+        return buf.toString();
+    }
+
+    public static void main(String[] args) throws Exception{
+        System.out.println(getMD5("222222"));
         System.out.println(convertToTenThousandUnit(new BigDecimal(11565.11)));
     }
 }

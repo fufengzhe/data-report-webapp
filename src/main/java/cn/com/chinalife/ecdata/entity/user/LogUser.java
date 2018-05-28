@@ -6,7 +6,7 @@ package cn.com.chinalife.ecdata.entity.user;
 public class LogUser {
     private String username;
     private String password;
-    private String resource;
+    private String resources;
 
     public String getUsername() {
         return username;
@@ -24,12 +24,12 @@ public class LogUser {
         this.password = password;
     }
 
-    public String getResource() {
-        return resource;
+    public String getResources() {
+        return resources;
     }
 
-    public void setResource(String resource) {
-        this.resource = resource;
+    public void setResources(String resources) {
+        this.resources = resources;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class LogUser {
         return "LogUser{" +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", resource='" + resource + '\'' +
+                ", resources='" + resources + '\'' +
                 '}';
     }
 }

@@ -1,10 +1,10 @@
 package cn.com.chinalife.ecdata.service.impl;
 
 import cn.com.chinalife.ecdata.dao.sqlDao.AuthDao;
+import cn.com.chinalife.ecdata.dao.sqlDao.user.LogUserDao;
 import cn.com.chinalife.ecdata.entity.ResponseBean;
 import cn.com.chinalife.ecdata.entity.user.LogUser;
 import cn.com.chinalife.ecdata.service.AuthService;
-import cn.com.chinalife.ecdata.utils.AuthUtils;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
@@ -25,6 +25,8 @@ public class AuthServiceImpl implements AuthService {
     private final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
     @Autowired
     AuthDao authDao;
+    @Autowired
+    LogUserDao logUserDao;
 
     public boolean authCheck(LogUser logUser, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         logger.info("interceptor传入的参数为 {}", JSON.toJSONString(logUser));
@@ -47,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         String resource = this.getResourceUsingUsername(logUser);
         if (resource != null) {
             // ""表示所有权限
-            if ("".equals(resource)) {
+            if ("ALL".equals(resource)) {
                 logger.info("当前用户为最高权限!");
                 return true;
             } else {
@@ -76,14 +78,11 @@ public class AuthServiceImpl implements AuthService {
 
 
     private String getResourceUsingUsername(LogUser logUser) {
-        String username = logUser.getUsername();
-        String resource = null;
-        for (LogUser temp : AuthUtils.existedAuthLogUserList) {
-            if (username.equals(temp.getUsername())) {
-                resource = temp.getResource();
-                break;
-            }
+        LogUser temp = logUserDao.findUserResourcesUsingName(logUser);
+        if (temp != null) {
+            return temp.getResources();
+        } else {
+            return null;
         }
-        return resource;
     }
 }
