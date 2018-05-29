@@ -144,15 +144,7 @@ public class LifePremiumServiceImpl implements LifePremiumService {
         queryPara.setStartDate(dateList.get(0));
         queryPara.setEndDate(dateList.get(dateList.size() - 1));
         List<Premium> premiumDateTrendInfo = lifePremiumDao.getLifeDateTrendInfo(queryPara);
-        for (Premium premium : premiumDateTrendInfo) {
-            premium.setAccumulatedAmount7(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount7()));
-            premium.setAccumulatedAmount6(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount6()));
-            premium.setAccumulatedAmount5(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount5()));
-            premium.setAccumulatedAmount4(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount4()));
-            premium.setAccumulatedAmount3(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount3()));
-            premium.setAccumulatedAmount2(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount2()));
-            premium.setAccumulatedAmount1(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount1()));
-        }
+        CommonUtils.convertToTenThousandUnitForPremium(premiumDateTrendInfo);
         premiumList.add(premiumDateTrendInfo);
         logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
         return premiumList;

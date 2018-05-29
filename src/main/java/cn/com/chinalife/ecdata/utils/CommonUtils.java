@@ -93,7 +93,19 @@ public class CommonUtils {
         return buf.toString();
     }
 
-    public static void main(String[] args) throws Exception{
+    public static void convertToTenThousandUnitForPremium(List<Premium> premiumList) {
+        for (Premium premium : premiumList) {
+            premium.setAccumulatedAmount7(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount7()));
+            premium.setAccumulatedAmount6(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount6()));
+            premium.setAccumulatedAmount5(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount5()));
+            premium.setAccumulatedAmount4(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount4()));
+            premium.setAccumulatedAmount3(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount3()));
+            premium.setAccumulatedAmount2(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount2()));
+            premium.setAccumulatedAmount1(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount1()));
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
         System.out.println(getMD5("222222"));
         System.out.println(convertToTenThousandUnit(new BigDecimal(11565.11)));
     }

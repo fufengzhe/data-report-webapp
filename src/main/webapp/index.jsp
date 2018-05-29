@@ -46,7 +46,8 @@
         </li>
         <li class="list-group-item">8、寿险保费查询 <a href="/ecdata/life/premiumSummary" class="btn btn-success btn-xs">点击查看</a>
         </li>
-        <li class="list-group-item">9、财险保费查询</li>
+        <li class="list-group-item">9、财险保费查询 <a href="/ecdata/property/premiumSummary" class="btn btn-success btn-xs">点击查看</a>
+        </li>
         <li class="list-group-item">10、平台交易规模查询</li>
         <li class="list-group-item">11、成交客户数查询</li>
         <li class="list-group-item">12、官网活跃邮件定时发送</li>

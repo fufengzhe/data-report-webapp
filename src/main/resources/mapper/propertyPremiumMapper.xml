@@ -149,6 +149,56 @@
         GROUP BY INDEX_SOURCE ORDER BY sum(INDEX_VALUE) DESC
     </select>
 
+    <select id="getPropertyPremiumDisInfoList" resultType="Premium" parameterType="QueryPara">
+        SELECT
+        INDEX_SOURCE branchName, sum(INDEX_VALUE) accumulatedAmount
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME LIKE 'propertyPremium%' AND STAT_TIME_SPAN='D'
+        AND
+        <![CDATA[
+         STAT_TIME >= #{startDate}
+		]]>
+        AND
+        <![CDATA[
+        STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY INDEX_SOURCE ORDER BY sum(INDEX_VALUE) DESC
+    </select>
+
+    <select id="getPropertyPremiumCompleteRatioInfo" resultType="Premium" parameterType="QueryPara">
+        SELECT
+        SUM (INDEX_VALUE) yearAmount
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME LIKE 'propertyPremium%' AND STAT_TIME_SPAN='D'
+        AND
+        <![CDATA[
+         STAT_TIME >= concat(TO_CHAR(SYSDATE-1,'yyyy'),'-01-01')
+		]]>
+        AND
+        <![CDATA[
+        STAT_TIME <= TO_CHAR(SYSDATE-1,'yyyy-mm-dd')
+        ]]>
+    </select>
+
+    <select id="getPropertyDateTrendInfo" resultType="Premium" parameterType="QueryPara">
+        SELECT INDEX_SOURCE branchName,SUM ( CASE WHEN STAT_TIME = to_char(sysdate-7,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) accumulatedAmount7,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-6,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) accumulatedAmount6,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-5,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) accumulatedAmount5,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-4,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) accumulatedAmount4,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-3,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) accumulatedAmount3,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) accumulatedAmount2,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) accumulatedAmount1
+        FROM DMP_SELECT.STAT_RESULT
+        WHERE INDEX_NAME LIKE 'propertyPremium%'
+        AND STAT_TIME_SPAN = 'D'
+        <![CDATA[
+			       and STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY INDEX_SOURCE
+    </select>
 
     <insert id="updatePropertyPremium" parameterType="java.util.List">
         INSERT INTO DMP_SELECT.STAT_RESULT

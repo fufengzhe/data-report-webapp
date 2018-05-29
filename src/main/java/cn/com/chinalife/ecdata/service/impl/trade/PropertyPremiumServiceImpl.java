@@ -95,6 +95,39 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
         return effectedRow;
     }
 
+    public List<List<Premium>> getPreimumSummaryList(QueryPara queryPara, List<String> dateList) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<List<Premium>> premiumList = new ArrayList<List<Premium>>();
+        List<Premium> premiumDisInfo = propertyPremiumDao.getPropertyPremiumDisInfoList(queryPara);
+        for (Premium premium : premiumDisInfo) {
+            premium.setAccumulatedAmount(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount()));
+        }
+        premiumList.add(premiumDisInfo);
+        List<Premium> premiumCompleteRatioInfo = propertyPremiumDao.getPropertyPremiumCompleteRatioInfo(queryPara);
+        premiumCompleteRatioInfo.get(0).setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premiumCompleteRatioInfo.get(0).getYearAmount(), new BigDecimal("4000000000"), 4)));
+        premiumCompleteRatioInfo.get(0).setYearAmount(CommonUtils.convertToTenThousandUnit(premiumCompleteRatioInfo.get(0).getYearAmount()));
+        premiumList.add(premiumCompleteRatioInfo);
+        queryPara.setStartDate(dateList.get(0));
+        queryPara.setEndDate(dateList.get(dateList.size() - 1));
+        List<Premium> premiumDateTrendInfo = propertyPremiumDao.getPropertyDateTrendInfo(queryPara);
+        CommonUtils.convertToTenThousandUnitForPremium(premiumDateTrendInfo);
+        premiumList.add(premiumDateTrendInfo);
+        logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
+        return premiumList;
+    }
+
+    public List<Premium> queryPropertyPremiumNum(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<Premium> premiumList = propertyPremiumDao.getPropertyPremiumDisInfoList(queryPara);
+        for (Premium premium : premiumList) {
+            premium.setAccumulatedAmount(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount()));
+        }
+        logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
+        return premiumList;
+    }
+
     private void handleReverseAndCorrect(List<Order> orderList, List<Order> reverseAndCorrectOrderList) {
         Map<String, BigDecimal> reverseAndCorrectMap = new HashMap<String, BigDecimal>();
         for (Order order : reverseAndCorrectOrderList) {

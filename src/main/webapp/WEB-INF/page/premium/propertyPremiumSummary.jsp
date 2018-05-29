@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>寿险保费概览</title>
+    <title>财险保费概览</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
           type="text/css">
@@ -17,7 +17,7 @@
 <div class="container-fluid text-center">
     <div class="panel panel-default">
         <div class="panel-heading">
-            寿险保费分布及KPI完成率
+            财险保费分布及KPI完成率
         </div>
     </div>
 
@@ -54,7 +54,7 @@
     </div>
     <div class="panel panel-default">
         <div class="panel-heading">
-            过去七天寿险保费趋势
+            过去七天财险保费趋势
         </div>
     </div>
     <div class="alert alert-warning" style="display:none;" id="noDataOfDateTrend">无数据，请更改查询条件或联系开发人员。</div>
@@ -73,7 +73,7 @@
     var list =${premiumList};
     $("#startDate").val('${startDate}');
     $("#endDate").val('${endDate}');
-    pieChart(list[0], "premiumPieChart", "寿险保费分布(万元)");
+    pieChart(list[0], "premiumPieChart", "财险保费分布(万元)");
     function pieChart(data, divId, chartName) {
         var legendData = [];
         var seriesData = [];
@@ -93,7 +93,7 @@
         drawGaugeChart(divId, chartName, seriesData);
     }
     var dateStrs =${dates};
-    trendChart(list[2], dateStrs, "dateTrendChart", "过去七天寿险保费趋势(万元)");
+    trendChart(list[2], dateStrs, "dateTrendChart", "过去七天财险保费趋势(万元)");
     function trendChart(data, dateStrs, divId, chartName) {
         var legendData = [];
         var xData = [];
@@ -131,7 +131,7 @@
                                 echarts.init(document.getElementById('datePieChart')).clear();
                             } else {
                                 $("#noDataOfPremiumPie").css('display', 'none');
-                                pieChart(list, "premiumPieChart", "寿险保费分布(万元)");
+                                pieChart(list, "premiumPieChart", "财险保费分布(万元)");
                             }
                         }
                         setButtonDisabled('queryDate', false);

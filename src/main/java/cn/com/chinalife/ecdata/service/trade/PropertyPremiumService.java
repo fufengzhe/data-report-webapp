@@ -16,4 +16,8 @@ public interface PropertyPremiumService {
     int deleteAllExistedRecord(List<String> statIndexNameListOfPropertyPremium);
 
     int updatePropertyPremium(QueryPara queryPara);
+
+    List<List<Premium>> getPreimumSummaryList(QueryPara queryPara, List<String> dateList);
+
+    List<Premium> queryPropertyPremiumNum(QueryPara queryPara);
 }

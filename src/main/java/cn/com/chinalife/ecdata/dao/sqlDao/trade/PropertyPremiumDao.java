@@ -34,4 +34,10 @@ public interface PropertyPremiumDao {
     int updatePropertyPremium(List<Premium> premiumList);
 
     List<Premium> getPropertyPremiumDetail(QueryPara queryPara);
+
+    List<Premium> getPropertyPremiumDisInfoList(QueryPara queryPara);
+
+    List<Premium> getPropertyPremiumCompleteRatioInfo(QueryPara queryPara);
+
+    List<Premium> getPropertyDateTrendInfo(QueryPara queryPara);
 }
