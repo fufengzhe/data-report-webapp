@@ -42,9 +42,10 @@
         </li>
         <li class="list-group-item">6、用户迁移分布 <a href="/ecdata/locationAnalysis/migrateCollectionDis" class="btn btn-success btn-xs">点击查看</a>
         </li>
-        <li class="list-group-item">7、注册&活跃综合分布 <a href="/ecdata/combinationAnalysis/registerAndActive"
-                                                  class="btn btn-success btn-xs">点击查看</a></li>
-        <li class="list-group-item">8、寿险保费查询</li>
+        <li class="list-group-item">7、注册&活跃综合分布 <a href="/ecdata/combinationAnalysis/registerAndActive" class="btn btn-success btn-xs">点击查看</a>
+        </li>
+        <li class="list-group-item">8、寿险保费查询 <a href="/ecdata/life/premiumSummary" class="btn btn-success btn-xs">点击查看</a>
+        </li>
         <li class="list-group-item">9、财险保费查询</li>
         <li class="list-group-item">10、平台交易规模查询</li>
         <li class="list-group-item">11、成交客户数查询</li>

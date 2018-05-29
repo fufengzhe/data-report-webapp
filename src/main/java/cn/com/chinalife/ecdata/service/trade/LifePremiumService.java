@@ -20,4 +20,7 @@ public interface LifePremiumService {
 
     List<Premium> getLifePremiumDetailFromStatResult(QueryPara queryPara);
 
+    List<List<Premium>> getPreimumSummaryList(QueryPara queryPara, List<String> dateList);
+
+    List<Premium> queryPremiumNum(QueryPara queryPara);
 }

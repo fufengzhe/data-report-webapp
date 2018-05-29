@@ -128,6 +128,46 @@ public class LifePremiumServiceImpl implements LifePremiumService {
         return premiumList;
     }
 
+    public List<List<Premium>> getPreimumSummaryList(QueryPara queryPara, List<String> dateList) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<List<Premium>> premiumList = new ArrayList<List<Premium>>();
+        List<Premium> premiumDisInfo = lifePremiumDao.getLifePremiumDisInfoList(queryPara);
+        for (Premium premium : premiumDisInfo) {
+            premium.setAccumulatedAmount(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount()));
+        }
+        premiumList.add(premiumDisInfo);
+        List<Premium> premiumCompleteRatioInfo = lifePremiumDao.getLifePremiumCompleteRatioInfo(queryPara);
+        premiumCompleteRatioInfo.get(0).setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(premiumCompleteRatioInfo.get(0).getYearAmount(), new BigDecimal("280000000"), 4)));
+        premiumCompleteRatioInfo.get(0).setYearAmount(CommonUtils.convertToTenThousandUnit(premiumCompleteRatioInfo.get(0).getYearAmount()));
+        premiumList.add(premiumCompleteRatioInfo);
+        queryPara.setStartDate(dateList.get(0));
+        queryPara.setEndDate(dateList.get(dateList.size() - 1));
+        List<Premium> premiumDateTrendInfo = lifePremiumDao.getLifeDateTrendInfo(queryPara);
+        for (Premium premium : premiumDateTrendInfo) {
+            premium.setAccumulatedAmount7(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount7()));
+            premium.setAccumulatedAmount6(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount6()));
+            premium.setAccumulatedAmount5(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount5()));
+            premium.setAccumulatedAmount4(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount4()));
+            premium.setAccumulatedAmount3(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount3()));
+            premium.setAccumulatedAmount2(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount2()));
+            premium.setAccumulatedAmount1(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount1()));
+        }
+        premiumList.add(premiumDateTrendInfo);
+        logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
+        return premiumList;
+    }
+
+    public List<Premium> queryPremiumNum(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<Premium> premiumList = lifePremiumDao.getLifePremiumDisInfoList(queryPara);
+        for (Premium premium : premiumList) {
+            premium.setAccumulatedAmount(CommonUtils.convertToTenThousandUnit(premium.getAccumulatedAmount()));
+        }
+        logger.info("service返回结果为 {}", JSON.toJSONString(premiumList));
+        return premiumList;
+    }
 
     private String getPolicyNoFilterStrUsingList(List<Order> agentIDAndPolicyNoList) {
         StringBuilder sb = new StringBuilder(" ( ");

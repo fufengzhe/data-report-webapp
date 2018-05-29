@@ -247,7 +247,7 @@ function drawGraphChart(divId, chartName, formatterFunction, seriesData, linksDa
                     }
                 },
                 edgeSymbol: ['circle', 'arrow'],
-                edgeSymbolSize: [0,10],
+                edgeSymbolSize: [0, 10],
                 edgeLabel: {
                     normal: {
                         textStyle: {
@@ -268,3 +268,31 @@ function drawGraphChart(divId, chartName, formatterFunction, seriesData, linksDa
     };
     myChart.setOption(option);
 }
+function drawGaugeChart(divId, chartName, seriesData) {
+    var myChart = echarts.init(document.getElementById(divId));
+    option = {
+        title: {
+            text: chartName,
+            x: 'center'
+        },
+        tooltip: {
+            formatter: "{a} <br/>{b} : {c}%"
+        },
+        toolbox: {
+            feature: {
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        series: [
+            {
+                name: '业务指标',
+                type: 'gauge',
+                detail: {formatter: '{value}%'},
+                data: seriesData,
+            }
+        ]
+    };
+    myChart.setOption(option);
+}
+

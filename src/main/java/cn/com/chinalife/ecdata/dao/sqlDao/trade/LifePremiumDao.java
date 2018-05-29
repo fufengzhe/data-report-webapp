@@ -33,4 +33,10 @@ public interface LifePremiumDao {
     List<Premium> getLifePremiumOfLower();
 
     List<Premium> getLifePremiumDetailFromStatResult(QueryPara queryPara);
+
+    List<Premium> getLifePremiumDisInfoList(QueryPara queryPara);
+
+    List<Premium> getLifePremiumCompleteRatioInfo(QueryPara queryPara);
+
+    List<Premium> getLifeDateTrendInfo(QueryPara queryPara);
 }
