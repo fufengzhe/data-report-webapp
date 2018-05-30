@@ -309,10 +309,13 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
     public int updateMigrateCollection(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         Map<String, String> codeAndName = this.getNewSourceCodeAndNameMap();
+        Map<String, String> codeAndNameOld = this.getSourceCodeAndNameMap();
         int effectedRow = 0;
         List<AnalysisIndex> migrateDisList = locationAnalysisNoSqlDao.getMigrateDisInfo(queryPara);
         for (AnalysisIndex analysisIndex : migrateDisList) {
-            analysisIndex.setIndexSource(codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexName() : codeAndName.get(analysisIndex.getIndexSource()));
+            analysisIndex.setIndexSource(codeAndName.get(analysisIndex.getIndexSource()) == null ?
+                    (codeAndNameOld.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndNameOld.get(analysisIndex.getIndexSource()))
+                    : codeAndName.get(analysisIndex.getIndexSource()));
             analysisIndex.setDistributeName(codeAndName.get(analysisIndex.getDistributeName()) == null ? analysisIndex.getDistributeName() : codeAndName.get(analysisIndex.getDistributeName()));
         }
         if (migrateDisList != null && migrateDisList.size() > 0) {

@@ -44,5 +44,31 @@
     </bean>
 
 
+    <mongo:mongo id="mongoUserCollect" replica-set="${mongo.hostport}">
+        <!-- 一些连接属性的设置 -->
+        <mongo:options
+                connections-per-host="${mongo.connectionsPerHost}"
+                threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"
+                connect-timeout="${mongo.connectTimeout}"
+                max-wait-time="${mongo.maxWaitTime}"
+                auto-connect-retry="${mongo.autoConnectRetry}"
+                socket-keep-alive="${mongo.socketKeepAlive}"
+                socket-timeout="${mongo.socketTimeout}"
+                slave-ok="${mongo.slaveOk}"
+                write-number="1"
+                write-timeout="0"
+                write-fsync="true"/>
+    </mongo:mongo>
+
+    <mongo:db-factory dbname="${mongo.datebaseofusercollect}" mongo-ref="mongoUserCollect" />
+
+
+    <bean id="mongoTemplateOfUserCollect" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg ref="mongoUserCollect" />
+        <constructor-arg name="databaseName" value="${mongo.datebaseofusercollect}" />
+        <constructor-arg ref="userCredentials" />
+    </bean>
+
+
 
 </beans>

@@ -6,6 +6,7 @@ import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import com.mongodb.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +21,11 @@ import java.util.List;
 public class LocationAnalysisNoSqlDaoImpl implements LocationAnalysisNoSqlDao {
 
     @Autowired
+    @Qualifier("mongoTemplate")
     MongoTemplate mongoTemplate;
+    @Autowired
+    @Qualifier("mongoTemplateOfUserCollect")
+    MongoTemplate mongoTemplateOfUserCollect;
 
     public List<AnalysisIndex> getActiveIPAndSourceList(QueryPara queryPara) {
         DBCollection dbCollection = mongoTemplate.getCollection("UserActionCollection");
@@ -189,20 +194,26 @@ public class LocationAnalysisNoSqlDaoImpl implements LocationAnalysisNoSqlDao {
     }
 
     public List<AnalysisIndex> getMigrateDisInfo(QueryPara queryPara) {
-        DBCollection dbCollection = mongoTemplate.getCollection("migrate");
+        DBCollection dbCollection = mongoTemplateOfUserCollect.getCollection("migrate");
         // aggregate 实现方法
         // 过滤时间和渠道
         List<DBObject> stageList1 = new ArrayList<DBObject>();
-        BasicDBObject[] timeFilterArray = {new BasicDBObject("loginTime", new BasicDBObject("$gte", queryPara.getStartDate() + CommonConstant.beginAppendTime)),
-                new BasicDBObject("loginTime", new BasicDBObject("$lte", queryPara.getEndDate() + CommonConstant.endAppendTime))};
+        BasicDBObject projectField = new BasicDBObject("clientSender", 1).append("sysSrc", 1).append("oldUserId", 1).append("createTime", 1).
+                append("flag", 1).append("difference", new BasicDBObject("$eq", Arrays.asList("$clientSender", "$sysSrc")));
+        BasicDBObject project = new BasicDBObject("$project", projectField);
+        stageList1.add(project);
+        BasicDBObject[] timeFilterArray = {new BasicDBObject("createTime", new BasicDBObject("$gte", queryPara.getStartDate() + CommonConstant.beginAppendTime)),
+                new BasicDBObject("createTime", new BasicDBObject("$lte", queryPara.getEndDate() + CommonConstant.endAppendTime))};
         BasicDBObject timeFilterCon = new BasicDBObject();
         timeFilterCon.put("$and", timeFilterArray);
         BasicDBObject matchTime = new BasicDBObject("$match", timeFilterCon);
         stageList1.add(matchTime);
-        BasicDBObject matchFromNotEqualTo = new BasicDBObject("$match", new BasicDBObject("clientSender", new BasicDBObject("$ne", "$clientSender")));
+        BasicDBObject matchFromNotEqualTo = new BasicDBObject("$match", new BasicDBObject("difference", false));
         stageList1.add(matchFromNotEqualTo);
-        BasicDBObject temp1 = new BasicDBObject("fromClientSender", "$clientSender").append("toClientSender", "$clientSender").append("oldUserId", "$oldUserId");
-        temp1.append("migrateDate", new BasicDBObject(new BasicDBObject("$substr", Arrays.asList("$loginTime", 0, 10))));
+        BasicDBObject matchFlag = new BasicDBObject("$match", new BasicDBObject("flag", "1"));
+        stageList1.add(matchFlag);
+        BasicDBObject temp1 = new BasicDBObject("fromClientSender", "$sysSrc").append("toClientSender", "$clientSender").append("oldUserId", "$oldUserId");
+        temp1.append("migrateDate", new BasicDBObject(new BasicDBObject("$substr", Arrays.asList("$createTime", 0, 10))));
         BasicDBObject groupFieldOne = new BasicDBObject("_id", temp1);
         BasicDBObject groupOne = new BasicDBObject("$group", groupFieldOne);
         stageList1.add(groupOne);
@@ -231,12 +242,18 @@ public class LocationAnalysisNoSqlDaoImpl implements LocationAnalysisNoSqlDao {
     }
 
     public List<AnalysisIndex> getMigrateUserNumDisInfo(QueryPara queryPara) {
-        DBCollection dbCollection = mongoTemplate.getCollection("migrate");
+        DBCollection dbCollection = mongoTemplateOfUserCollect.getCollection("migrate");
         // aggregate 实现方法
         // 过滤时间和渠道
         List<DBObject> stageList1 = new ArrayList<DBObject>();
-        BasicDBObject matchFromNotEqualTo = new BasicDBObject("$match", new BasicDBObject("clientSender", new BasicDBObject("$ne", "$clientSender")));
+        BasicDBObject projectField = new BasicDBObject("clientSender", 1).append("sysSrc", 1).append("oldUserId", 1).append("createTime", 1).
+                append("flag", 1).append("difference", new BasicDBObject("$eq", Arrays.asList("$clientSender", "$sysSrc")));
+        BasicDBObject project = new BasicDBObject("$project", projectField);
+        stageList1.add(project);
+        BasicDBObject matchFromNotEqualTo = new BasicDBObject("$match", new BasicDBObject("difference", false));
         stageList1.add(matchFromNotEqualTo);
+        BasicDBObject matchFlag = new BasicDBObject("$match", new BasicDBObject("flag", "1"));
+        stageList1.add(matchFlag);
         BasicDBObject temp1 = new BasicDBObject("clientSender", "$clientSender").append("oldUserId", "$oldUserId");
         BasicDBObject groupFieldOne = new BasicDBObject("_id", temp1);
         BasicDBObject groupOne = new BasicDBObject("$group", groupFieldOne);

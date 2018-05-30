@@ -256,13 +256,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         return effectedRow;
     }
 
-//    @Scheduled(cron = "0 15 0 * * ?")
-//    private void scheduledEntryForMigrateCollectionDis() throws Exception {
-//        QueryPara queryPara = new QueryPara();
-//        queryPara.setStartDate(DateUtils.getYesterday());
-//        queryPara.setEndDate(DateUtils.getYesterday());
-//        this.updateMigrateCollection(queryPara);
-//    }
+    @Scheduled(cron = "0 15 0 * * ?")
+    private void scheduledEntryForMigrateCollectionDis() throws Exception {
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        this.updateMigrateCollection(queryPara);
+    }
 
     public int updateMigrateCollection(QueryPara queryPara) {
         int effectedRow = 0;
