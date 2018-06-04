@@ -2,17 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.salesman.SalesmanRelatedDao">
 
+
     <select id="getOldUserIdListUsingSalesmanNo" resultType="java.lang.String" parameterType="java.util.List">
         SELECT
-        B.OLDUSER_ID||','||A.ACCOUNT_CODE
+        B.OLDUSER_ID || ',' || T .ACCOUNT_CODE
         FROM
-        DMP_USRCENTER.T_USER_EBUSINESS_ACCOUNT A
-        INNER JOIN DMP_USRCENTER.T_USER B ON A .USER_ID = B.USER_ID
-        WHERE A.ACCOUNT_CODE IN
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+        (
+            SELECT
+            A.ACCOUNT_CODE ACCOUNT_CODE,SUBSTR (TO_CHAR(WM_CONCAT (A.USER_ID)),INSTR (WM_CONCAT(A.USER_ID), ',' ,- 1) + 1) USER_ID
+            FROM
+            DMP_USRCENTER.T_USER_EBUSINESS_ACCOUNT A
+            WHERE
+            A.ACCOUNT_CODE IN
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}
-        </foreach>
+            </foreach>
+            GROUP BY
+            A.ACCOUNT_CODE
+        )T INNER JOIN DMP_USRCENTER.T_USER B ON T.USER_ID = B.USER_ID
     </select>
+
 
     <select id="getSalesmanRelatedListUsingOldUserId" resultType="SalesmanRelated" parameterType="java.util.List">
         SELECT t1.account_no oldUserId,t1.user_name userName,t1.cert_code identifyNo,t3.mobile mobile,t2.bank_account bankAccount,t2.bank_name bankName
