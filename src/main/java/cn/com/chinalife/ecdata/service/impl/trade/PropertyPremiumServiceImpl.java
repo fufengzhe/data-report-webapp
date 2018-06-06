@@ -80,17 +80,29 @@ public class PropertyPremiumServiceImpl implements PropertyPremiumService {
         //计算财险电销
         List<Premium> premiumListOfDX = propertyPremiumDao.getPremiumDetailListOfDX(queryPara);
         logger.info("财险电销查询结果为 {}", JSON.toJSONString(premiumListOfDX));
-        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfDX);
+        if (premiumListOfDX != null && premiumListOfDX.size() > 0) {
+            temp = propertyPremiumDao.updatePropertyPremium(premiumListOfDX);
+        } else {
+            temp = 0;
+        }
         effectedRow += temp;
         //计算财险电销批退批改
         List<Premium> premiumListOfPTPG = propertyPremiumDao.getPremiumDetailListOfPTPG(queryPara);
         logger.info("批退批改查询结果为 {}", JSON.toJSONString(premiumListOfPTPG));
-        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfPTPG);
+        if (premiumListOfPTPG != null && premiumListOfPTPG.size() > 0) {
+            temp = propertyPremiumDao.updatePropertyPremium(premiumListOfPTPG);
+        } else {
+            temp = 0;
+        }
         effectedRow += temp;
         //计算财险网销
         List<Premium> premiumListOfInternet = propertyPremiumDao.getPremiumDetailListOfInternet(queryPara);
         logger.info("网销查询结果为 {}", JSON.toJSONString(premiumListOfInternet));
-        temp = propertyPremiumDao.updatePropertyPremium(premiumListOfInternet);
+        if (premiumListOfInternet != null && premiumListOfInternet.size() > 0) {
+            temp = propertyPremiumDao.updatePropertyPremium(premiumListOfInternet);
+        } else {
+            temp = 0;
+        }
         effectedRow += temp;
         return effectedRow;
     }

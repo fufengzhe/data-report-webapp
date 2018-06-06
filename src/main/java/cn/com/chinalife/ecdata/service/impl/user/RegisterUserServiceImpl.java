@@ -77,7 +77,11 @@ public class RegisterUserServiceImpl implements RegisterUserService {
     }
 
     public int updateRegister(List<RegisterUser> registerUserList) {
-        return registerUserDao.updateRegister(registerUserList);
+        if (registerUserList != null && registerUserList.size() > 0) {
+            return registerUserDao.updateRegister(registerUserList);
+        } else {
+            return 0;
+        }
     }
 
     public List<RegisterUser> getRegisterUserNumOfAllSourcesFromStatResult(QueryPara queryPara) {

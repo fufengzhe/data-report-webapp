@@ -110,7 +110,11 @@ public class LifePremiumServiceImpl implements LifePremiumService {
     }
 
     public int updateLifePremium(List<Premium> premiumList) {
-        return lifePremiumDao.updateLifePremium(premiumList);
+        if (premiumList != null && premiumList.size() > 0) {
+            return lifePremiumDao.updateLifePremium(premiumList);
+        } else {
+            return 0;
+        }
     }
 
     public int deleteAllExistedRecord(String indexName) {
