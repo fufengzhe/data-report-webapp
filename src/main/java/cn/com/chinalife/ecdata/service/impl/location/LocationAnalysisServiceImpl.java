@@ -396,7 +396,7 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         }
     }
 
-    private String getWhereConditionUsingPara(String userSource) {
+    public String getWhereConditionUsingPara(String userSource) {
         if (userSource != null) {
             String[] temp = userSource.split(",");
             StringBuilder userSourceCondition = new StringBuilder("(");

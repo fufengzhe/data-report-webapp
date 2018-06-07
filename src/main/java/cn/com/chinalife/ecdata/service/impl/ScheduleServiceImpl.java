@@ -10,6 +10,7 @@ import cn.com.chinalife.ecdata.service.trade.LifePremiumService;
 import cn.com.chinalife.ecdata.service.trade.PropertyPremiumService;
 import cn.com.chinalife.ecdata.service.user.ActiveUserService;
 import cn.com.chinalife.ecdata.service.user.RegisterUserService;
+import cn.com.chinalife.ecdata.service.userShare.UserShareService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import cn.com.chinalife.ecdata.utils.DateUtils;
 import cn.com.chinalife.ecdata.utils.HtmlUtils;
@@ -45,6 +46,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
     LocationAnalysisService locationAnalysisService;
+
+    @Autowired
+    UserShareService userShareService;
 
     @Scheduled(cron = "0 0 3 * * ?")
     private void scheduledEntryForUpdate() throws InterruptedException, ParseException {
@@ -273,5 +277,23 @@ public class ScheduleServiceImpl implements ScheduleService {
         logger.info("结束更新migrate集合分布信息,受影响行数为 {}", effectedRow);
         return effectedRow;
     }
+
+    @Scheduled(cron = "0 30 4 * * ?")
+    private void scheduledEntryForUserShareUpdate() throws InterruptedException, ParseException {
+        // 默认更新昨天所有渠道的数据
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        this.updateUserShare(queryPara);
+    }
+
+    public int updateUserShare(QueryPara queryPara) {
+        int effectedRowNum = 0;
+        logger.info("开始更新共享条款相关数据");
+        effectedRowNum = userShareService.updateUserShare(queryPara);
+        logger.info("结束更新共享条款相关数据，受影响的条数为 {}", effectedRowNum);
+        return effectedRowNum;
+    }
+
 
 }

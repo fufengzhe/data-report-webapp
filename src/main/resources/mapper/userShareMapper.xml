@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.userShare.UserShareDao">
+    <select id="getUserShareDisInfo" resultType="UserShare" parameterType="QueryPara">
+        SELECT
+        SYS_SRC userSource,to_char(CREATE_TIME,'yyyy-mm-dd') statDate,to_char(CREATE_TIME,'hh24') statHour,count(*) shareNum
+        FROM DMP_BLOC.T_USER_SHARE
+        WHERE
+        <![CDATA[
+			        create_time >= TO_DATE(concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+        <![CDATA[
+                    and create_time <= TO_DATE(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+        GROUP BY SYS_SRC,to_char(CREATE_TIME,'yyyy-mm-dd'),to_char(CREATE_TIME,'hh24')
+    </select>
+
+    <select id="getUserSourceList" resultType="UserShare" parameterType="QueryPara">
+        SELECT DISTINCT INDEX_SOURCE userSource FROM DMP_SELECT.DISTRIBUTE_RESULT WHERE INDEX_NAME='userShare'
+    </select>
+
+    <select id="getUserSourceDisList" resultType="UserShare" parameterType="QueryPara">
+        SELECT
+        INDEX_SOURCE userSource,SUM(INDEX_VALUE) shareNum
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'userShare' AND STAT_TIME_SPAN = 'D'
+        AND STAT_TIME>=#{startDate}
+        <![CDATA[
+              AND STAT_TIME<=#{endDate}
+        ]]>
+        <if test="userSource != null and userSource != ''">
+            AND INDEX_SOURCE IN ${userSource}
+        </if>
+        GROUP BY INDEX_SOURCE ORDER BY SUM(INDEX_VALUE) DESC
+    </select>
+
+    <select id="getHourDisList" resultType="UserShare" parameterType="QueryPara">
+        SELECT
+        DISTRIBUTE_NAME userSource,SUM(INDEX_VALUE) shareNum
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'userShare' AND STAT_TIME_SPAN = 'D'
+        AND STAT_TIME>=#{startDate}
+        <![CDATA[
+              AND STAT_TIME<=#{endDate}
+        ]]>
+        <if test="userSource != null and userSource != ''">
+            AND INDEX_SOURCE IN ${userSource}
+        </if>
+        GROUP BY DISTRIBUTE_NAME ORDER BY SUM(INDEX_VALUE) DESC
+    </select>
+
+    <select id="getDateTrendList" resultType="UserShare" parameterType="QueryPara">
+        SELECT INDEX_SOURCE userSource,SUM ( CASE WHEN STAT_TIME = to_char(sysdate-7,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) shareNum7,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-6,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) shareNum6,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-5,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) shareNum5,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-4,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) shareNum4,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-3,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) shareNum3,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) shareNum2,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) shareNum1
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE INDEX_NAME = 'userShare'
+        AND STAT_TIME_SPAN = 'D'
+        <![CDATA[
+			       and STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY INDEX_SOURCE
+    </select>
+
+
+    <insert id="updateUserShare" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.DISTRIBUTE_RESULT
+        (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, INDEX_SOURCE, DISTRIBUTE_TYPE,
+        DISTRIBUTE_NAME,INDEX_VALUE,CREATE_TIME,UPDATE_TIME)
+        SELECT
+        t1.statDate,t1.statDateSpan,t1.indexName,t1.indexSource,t1.distributeType,t1.distributeName,t1.indexValue,t1.createTime,t1.updateTime
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.statDate,jdbcType=VARCHAR} statDate,
+            #{item.statTimeSpan,jdbcType=VARCHAR} statDateSpan,
+            #{item.indexName,jdbcType=VARCHAR} indexName,
+            #{item.userSource,jdbcType=VARCHAR} indexSource,
+            #{item.distributeType,jdbcType=VARCHAR} distributeType,
+            #{item.statHour,jdbcType=VARCHAR} distributeName,
+            #{item.shareNum,jdbcType=NUMERIC} indexValue,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
+</mapper>

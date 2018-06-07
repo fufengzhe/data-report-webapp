@@ -31,4 +31,6 @@ public interface ScheduleService {
     int updateUserCollectionInvokeDis(QueryPara queryPara);
 
     int updateMigrateCollection(QueryPara queryPara);
+
+    int updateUserShare(QueryPara queryPara);
 }

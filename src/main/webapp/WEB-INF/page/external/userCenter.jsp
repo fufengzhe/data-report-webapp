@@ -43,6 +43,8 @@
         </li>
         <li class="list-group-item">7、注册&活跃综合分布 <a href="/ecdata/combinationAnalysis/registerAndActive"
                                                   class="btn btn-success btn-xs">点击查看</a></li>
+        <li class="list-group-item">8、共享条款签署分布 <a href="/ecdata/userShare/distribute" class="btn btn-success btn-xs">点击查看</a>
+        </li>
     </ul>
 </div>
 

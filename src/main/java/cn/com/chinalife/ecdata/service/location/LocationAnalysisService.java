@@ -29,4 +29,6 @@ public interface LocationAnalysisService {
     int updateMigrateCollection(QueryPara queryPara);
 
     List<List<AnalysisIndex>> getMigrateCollectionDis(QueryPara queryPara);
+    // 将1,1,1 转换成 ['1','1','1']方便where条件查询
+    String getWhereConditionUsingPara(String userSource);
 }
