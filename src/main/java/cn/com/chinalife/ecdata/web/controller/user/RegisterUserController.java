@@ -69,7 +69,6 @@ public class RegisterUserController {
     }
 
 
-
     @RequestMapping("/summary")
     public String queryRegisterUserSummary(Model model) {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
@@ -78,6 +77,8 @@ public class RegisterUserController {
             List<List<RegisterUser>> registerUserList = registerUserService.getRegisterUserSummaryList();
             model.addAttribute("registerUserList", JSON.toJSONString(registerUserList));
             List<String> dateList = DateUtils.getDateList(DateUtils.getBeforeXDay(7), DateUtils.getBeforeXDay(1));
+            model.addAttribute("startDate", DateUtils.getYesterday());
+            model.addAttribute("startMonth", DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
             model.addAttribute("dates", JSON.toJSONString(dateList));
             model.addAttribute("jsVersion", CommonConstant.jsVersion);
             responseBean.setDetailInfo(model);

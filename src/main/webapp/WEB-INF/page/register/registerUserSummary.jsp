@@ -85,9 +85,9 @@
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <script>
     var list =${registerUserList};
-    $("#startDate").val(list[0][0].startDate);
+    $("#startDate").val('${startDate}');
     pieChart(list[0], "datePieChart", "天维度各渠道注册数分布");
-    $("#startMonth").val(list[1][0].startDate);
+    $("#startMonth").val('${startMonth}');
     pieChart(list[1], "monthPieChart", "月维度各渠道注册数分布");
     function pieChart(data, divId, chartName) {
         var legendData = [];

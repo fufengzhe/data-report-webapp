@@ -30,31 +30,31 @@
     <h2><span class="label label-success glyphicon glyphicon-ok"> 已有功能（所有指标秒级响应）:</span></h2>
     <br/>
     <ul class="list-group">
-        <li class="list-group-item">1、注册用户数查询 <a href="/ecdata/registerUser/summary" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">1、注册用户数查询 <a href="/ecdata/registerUser/summary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">2、注册用户手机号归属地及运营商分布 <a href="/ecdata/locationAnalysis/registerMobile" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">2、注册用户手机号归属地及运营商分布 <a href="/ecdata/locationAnalysis/registerMobile" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">3、活跃用户数及明细查询 <a href="/ecdata/activeUser/summary" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">3、活跃用户数及明细查询 <a href="/ecdata/activeUser/summary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">4、活跃用户IP归属地分布 <a href="/ecdata/locationAnalysis/activeIP" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">4、活跃用户IP归属地分布 <a href="/ecdata/locationAnalysis/activeIP" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">5、活跃用户时间段及用户中心请求分布 <a href="/ecdata/locationAnalysis/activeHourAndUserCollDis" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">5、活跃用户时间段及用户中心请求分布 <a href="/ecdata/locationAnalysis/activeHourAndUserCollDis" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">6、用户迁移分布 <a href="/ecdata/locationAnalysis/migrateCollectionDis" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">6、用户迁徙分布 <a href="/ecdata/locationAnalysis/migrateCollectionDis" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">7、注册&活跃综合分布 <a href="/ecdata/combinationAnalysis/registerAndActive" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">7、注册&活跃综合分布 <a href="/ecdata/combinationAnalysis/registerAndActive" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">8、共享条款签署分布 <a href="/ecdata/userShare/distribute" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">8、共享条款签署分布 <a href="/ecdata/userShare/distribute" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">9、寿险保费查询 <a href="/ecdata/life/premiumSummary" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">9、寿险保费查询 <a href="/ecdata/life/premiumSummary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">10、财险保费查询 <a href="/ecdata/property/premiumSummary" class="btn btn-success btn-xs">点击查看</a>
+        <li class="list-group-item">10、财险保费查询 <a href="/ecdata/property/premiumSummary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
         <li class="list-group-item">11、平台交易规模查询</li>
         <li class="list-group-item">12、成交客户数查询</li>
         <li class="list-group-item">13、官网活跃邮件定时发送</li>
         <li class="list-group-item">14、业务员工号获取对应一账通绑定信息 <a href="/ecdata/salesman/bankAndMobile"
-                                                         class="btn btn-success btn-xs">点击使用</a>
+                                                         class="btn btn-success btn-xs" target="_blank">点击使用</a>
         </li>
     </ul>
 </div>
