@@ -5,7 +5,7 @@
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>用户迁移分布</title>
+    <title>用户迁徙分布</title>
     <style type="text/css">
         html {
             height: 100%
@@ -35,7 +35,7 @@
     <br/>
     <div class="panel panel-default">
         <div class="panel-heading">
-            用户迁移分布 (用户A在官网注册，之后在掌上国寿登录，则用户A从官网迁移到掌上国寿)
+            用户迁徙分布 (用户A在官网注册，之后在掌上国寿登录，则用户A从官网迁徙到掌上国寿)
         </div>
     </div>
     <div class="row panel-heading">
@@ -88,6 +88,7 @@
         <div class='col-sm-1'></div>
     </div>
     <div class="alert alert-warning" style="display:none;" id="noData">无数据，请更改查询条件或联系开发人员。</div>
+    <div class="alert alert-warning" style="display:none;" id="dataHint">渠道太多，不予展示，请选择特定的迁出渠道和迁入渠道查询（支持多选）。</div>
     <div class="container-fluid text-center" id="migrateGraphChart" style="height:800px;">
     </div>
     <div class="panel panel-default">
@@ -156,9 +157,14 @@
     }
     fromUserSourceDom.selectpicker('refresh');
     toUserSourceDom.selectpicker('refresh');
-    graphChart(list, "migrateGraphChart", "用户迁移分布");
+    graphChart(list, "migrateGraphChart", "用户迁徙分布");
     pieChart(list[2], "migrateUserNumPieChart", "用户迁入渠道数分布");
     function graphChart(data, divId, chartName) {
+        if (data[1].length > 11) {
+            $("#dataHint").css('display', 'block');
+            echarts.init(document.getElementById('migrateGraphChart')).clear();
+            return;
+        }
         var formatterFunction = function (params) {
             return params.data.name
                 + (params.data.fromIndexValue == undefined ? ('<br/> 迁徙用户数: ' + params.data.indexValue) : ('<br/>迁出用户数: ' + params.data.fromIndexValue)) +
@@ -227,11 +233,13 @@
                         if (respCode == 0) {
                             list = data.detailInfo;
                             if (list[0].length == 0 && list[1].length == 0) {
-                                $("#noData").css('display','block');
+                                $("#dataHint").css('display', 'none');
+                                $("#noData").css('display', 'block');
                                 echarts.init(document.getElementById('migrateGraphChart')).clear();
-                            }else{
-                                $("#noData").css('display','none');
-                                graphChart(list, "migrateGraphChart", "用户迁移分布");
+                            } else {
+                                $("#dataHint").css('display', 'none');
+                                $("#noData").css('display', 'none');
+                                graphChart(list, "migrateGraphChart", "用户迁徙分布");
                             }
                         }
                         setButtonDisabled('queryDate', false);
@@ -260,11 +268,11 @@
                         var respCode = data.respCode;
                         if (respCode == 0) {
                             list = data.detailInfo;
-                            if (list[0].length == 0 ) {
-                                $("#noDataOfUserNum").css('display','block');
+                            if (list[0].length == 0) {
+                                $("#noDataOfUserNum").css('display', 'block');
                                 echarts.init(document.getElementById('migrateUserNumPieChart')).clear();
-                            }else{
-                                $("#noDataOfUserNum").css('display','none');
+                            } else {
+                                $("#noDataOfUserNum").css('display', 'none');
                                 pieChart(list[0], "migrateUserNumPieChart", "用户迁入渠道数分布");
                             }
                         }

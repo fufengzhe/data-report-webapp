@@ -107,7 +107,7 @@
     var userSourceList =${userSourceList};
     var userSourceDom = $("#userSource");
     userSourceDom.selectpicker({
-        noneSelectedText: '全部渠道'
+        noneSelectedText: '全部签署渠道'
     });
     for (var i = 0; i < userSourceList.length; i++) {
         userSourceDom.append("<option value=" + userSourceList[i].userSource + ">" + userSourceList[i].userSource + "</option>");
