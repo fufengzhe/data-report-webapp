@@ -238,8 +238,15 @@ function drawGraphChart(divId, chartName, formatterFunction, seriesData, linksDa
         series: [
             {
                 type: 'graph',
-                layout: 'none',
+                layout: 'force',
+                force: {
+                    // initLayout: 'circular',
+                    gravity: 0.05,
+                    repulsion: 500,
+                    edgeLength: [400, 600]
+                },
                 symbolSize: 50,
+                draggable: true,
                 roam: true,
                 label: {
                     normal: {

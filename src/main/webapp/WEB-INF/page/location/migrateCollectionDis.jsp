@@ -95,7 +95,7 @@
     </div>
     <div class="alert alert-warning" style="display:none;" id="noData">无数据，请更改查询条件或联系开发人员。</div>
     <div class="alert alert-warning" style="display:none;" id="dataHint">渠道太多，不予展示，请选择特定的迁出渠道和迁入渠道查询（支持多选）。</div>
-    <div class="container-fluid text-center" id="migrateGraphChart" style="height:800px;">
+    <div class="container-fluid text-center" id="migrateGraphChart" style="height:900px;">
     </div>
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -212,10 +212,11 @@
         var seriesData = [];
         var linksData = [];
         for (var i = 0; i < data[1].length; i++) {
-            var x = i + 1;
-            var y = (i % 2 == 0 ? 1 : 3);
+//            var x = i + 1;
+//            var y = (i % 2 == 0 ? 1 : 2);
             seriesData.push({
-                name: data[1][i].indexSource, x: x, y: y,
+                name: data[1][i].indexSource,
+//                x: x, y: y,
                 fromIndexValue: data[1][i].fromIndexValue, toIndexValue: data[1][i].toIndexValue
             });
         }
@@ -232,7 +233,7 @@
                 },
                 lineStyle: {
                     normal: {
-                        curveness: (i % 2 == 0 ? 0.1 : 0.3)
+                        curveness: 0.2
                     }
                 }
             });
