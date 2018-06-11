@@ -26,6 +26,8 @@
           type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-select.min.css"
           type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript"
             src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
@@ -76,7 +78,7 @@
                 </div>
             </div>
         </div>
-        <div class='col-sm-2'>
+        <div class='col-sm-1'>
             <div class="form-group">
                 <div class='input-group text-center'>
                         <span class="select-group-btn">
@@ -84,6 +86,10 @@
                         </span>
                 </div>
             </div>
+        </div>
+        <div class='col-sm-1'>
+            <button class="btn btn-success" data-toggle="modal" data-target="#graphModal">表格视图
+            </button>
         </div>
         <div class='col-sm-1'></div>
     </div>
@@ -112,20 +118,51 @@
                 </div>
             </div>
         </div>
+        <div class='col-sm-1'>
+            <button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图
+            </button>
+        </div>
         <div class='col-sm-4'></div>
     </div>
     <div class="alert alert-warning" style="display:none;" id="noDataOfUserNum">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="migrateUserNumPieChart" style="height:600px;">
     </div>
-    <%--<div class="row">--%>
-    <%--<div class="text-center col-md-6" id="funPieChart" style="height:700px">--%>
-    <%--</div>--%>
-    <%--<div class="text-center col-md-6" id="returnPieChart" style="height:700px">--%>
-    <%--</div>--%>
-    <%--</div>--%>
+    <%--模态框--%>
+    <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="graphTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <%--模态框--%>
+    <div class="modal fade" id="pieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="pieTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 </div>
 <br/>
-<div id="main" style="width: 600px;height:400px;"></div>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
 <script type="text/javascript"
@@ -134,6 +171,8 @@
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <%--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZjFuwSnrpwicUzxIxguxFRQEXbWiwxjO"></script>--%>
@@ -160,7 +199,7 @@
     graphChart(list, "migrateGraphChart", "用户迁徙分布");
     pieChart(list[2], "migrateUserNumPieChart", "用户迁入渠道数分布");
     function graphChart(data, divId, chartName) {
-        if (data[1].length > 11) {
+        if (data[0].length > 14) {
             $("#dataHint").css('display', 'block');
             echarts.init(document.getElementById('migrateGraphChart')).clear();
             return;
@@ -240,6 +279,7 @@
                                 $("#dataHint").css('display', 'none');
                                 $("#noData").css('display', 'none');
                                 graphChart(list, "migrateGraphChart", "用户迁徙分布");
+                                $("#graphTable").bootstrapTable('load', list[1]);
                             }
                         }
                         setButtonDisabled('queryDate', false);
@@ -274,6 +314,7 @@
                             } else {
                                 $("#noDataOfUserNum").css('display', 'none');
                                 pieChart(list[0], "migrateUserNumPieChart", "用户迁入渠道数分布");
+                                $("#pieTable").bootstrapTable('load', list[0]);
                             }
                         }
                         setButtonDisabled('queryButton', false);
@@ -282,6 +323,13 @@
             }
         });
     });
+    generateDataTable("graphTable", [[{"field": "indexSource"}, {"field": "fromIndexValue"}, {"field": "toIndexValue"}],
+        [{"title": "渠道"}, {"title": "迁出用户数"}, {"title": "迁入用户数"}]])
+    $("#graphTable").bootstrapTable('load', list[1]);
+    generateDataTable("pieTable", [[{"field": "distributeName"}, {"field": "indexValue"}],
+        [{"title": "迁入渠道数"}, {"title": "用户数"}]])
+    $("#graphTable").bootstrapTable('load', list[1]);
+    $("#pieTable").bootstrapTable('load', list[2]);
 </script>
 
 </body>

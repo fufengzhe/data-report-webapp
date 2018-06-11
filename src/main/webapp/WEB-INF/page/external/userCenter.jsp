@@ -39,7 +39,7 @@
         </li>
         <li class="list-group-item">5、活跃用户时间段及用户中心请求分布 <a href="/ecdata/locationAnalysis/activeHourAndUserCollDis" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">6、用户迁移分布 <a href="/ecdata/locationAnalysis/migrateCollectionDis" class="btn btn-success btn-xs" target="_blank">点击查看</a>
+        <li class="list-group-item">6、用户迁徙分布 <a href="/ecdata/locationAnalysis/migrateCollectionDis" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
         <li class="list-group-item">7、注册&活跃综合分布 <a href="/ecdata/combinationAnalysis/registerAndActive"
                                                   class="btn btn-success btn-xs" target="_blank">点击查看</a></li>
