@@ -11,6 +11,8 @@
           type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-select.min.css"
           type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
 </head>
@@ -58,7 +60,7 @@
                     </div>
                 </div>
             </div>
-            <div class='col-sm-2'>
+            <div class='col-sm-1'>
                 <div class="form-group">
                     <div class='input-group text-center'>
                         <span class="select-group-btn">
@@ -66,6 +68,10 @@
                         </span>
                     </div>
                 </div>
+            </div>
+            <div class='col-sm-1'>
+                <button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图
+                </button>
             </div>
             <div class='col-sm-2'></div>
         </div>
@@ -81,7 +87,9 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            过去七天共享条款签署数趋势
+            过去七天共享条款签署数趋势&nbsp&nbsp
+            <button class="btn btn-success" data-toggle="modal" data-target="#dateTrendModal">表格视图
+            </button>
         </div>
         <%--<div class="panel-body">--%>
         <%--面板内容--%>
@@ -89,6 +97,41 @@
     </div>
     <div class="alert alert-warning" style="display:none;" id="noDataOfDateTrend">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="dateTrendChart" style="height:700px;">
+    </div>
+    <%--模态框--%>
+    <div class="modal fade" id="pieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="sourcePieTable"></table>
+                    <table id="hourPieTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <%--模态框--%>
+    <div class="modal fade" id="dateTrendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width:900px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="dateTrendTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
     </div>
 </div>
 
@@ -101,6 +144,8 @@
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <script>
@@ -167,16 +212,20 @@
                             if (list[0].length == 0) {
                                 $("#noDataOfUserSourcePie").css('display', 'block');
                                 echarts.init(document.getElementById('userSourcePieChart')).clear();
+                                $("#sourcePieTable").bootstrapTable('load', []);
                             } else {
                                 $("#noDataOfUserSourcePie").css('display', 'none');
                                 pieChart(list[0], "userSourcePieChart", "共享条款签署渠道分布");
+                                $("#sourcePieTable").bootstrapTable('load', list[0]);
                             }
                             if (list[1].length == 0) {
                                 $("#noDataOfHourPie").css('display', 'block');
                                 echarts.init(document.getElementById('hourPieChart')).clear();
+                                $("#hourPieTable").bootstrapTable('load', []);
                             } else {
                                 $("#noDataOfHourPie").css('display', 'none');
                                 pieChart(list[1], "hourPieChart", "共享条款签署时间段分布");
+                                $("#hourPieTable").bootstrapTable('load', list[1]);
                             }
                         }
                         setButtonDisabled('queryDate', false);
@@ -185,6 +234,16 @@
             }
         });
     });
+    generateDataTable("sourcePieTable", [[{"field": "userSource"}, {"field": "shareNum"}],
+        [{"title": "渠道"}, {"title": "共享用户数"}]])
+    generateDataTable("hourPieTable", [[{"field": "userSource"}, {"field": "shareNum"}],
+        [{"title": "渠道"}, {"title": "共享用户数"}]])
+    $("#sourcePieTable").bootstrapTable('load', list[0]);
+    $("#hourPieTable").bootstrapTable('load', list[1]);
+    generateDataTable("dateTrendTable", [[{"field": "userSource"}, {"field": "shareNum7"}, {"field": "shareNum6"}, {"field": "shareNum5"},
+        {"field": "shareNum4"}, {"field": "shareNum3"}, {"field": "shareNum2"}, {"field": "shareNum1"}],
+        [{"title": "渠道"}, {"title": dateStrs[0]}, {"title": dateStrs[1]}, {"title": dateStrs[2]}, {"title": dateStrs[3]}, {"title": dateStrs[4]}, {"title": dateStrs[5]}, {"title": dateStrs[6]}]])
+    $("#dateTrendTable").bootstrapTable('load', list[2]);
 
 </script>
 

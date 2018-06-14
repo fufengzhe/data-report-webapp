@@ -27,6 +27,8 @@
           type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-select.min.css"
           type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript"
             src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
@@ -66,7 +68,7 @@
                 </div>
             </div>
         </div>
-        <div class='col-sm-2'>
+        <div class='col-sm-1'>
             <div class="form-group">
                 <div class='input-group text-center'>
                         <span class="select-group-btn">
@@ -74,6 +76,10 @@
                         </span>
                 </div>
             </div>
+        </div>
+        <div class='col-sm-1'>
+            <button class="btn btn-success" data-toggle="modal" data-target="#myModal">表格视图
+            </button>
         </div>
         <div class='col-sm-2'></div>
     </div>
@@ -102,6 +108,24 @@
     <div class="alert alert-warning" style="display:none;" id="noDataOfLocationMap">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="locationMapChart" style="height:800px;">
     </div>
+    <%--模态框--%>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="companyTable"></table>
+                    <table id="locationTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 </div>
 
 <br/>
@@ -114,6 +138,8 @@
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <%--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZjFuwSnrpwicUzxIxguxFRQEXbWiwxjO"></script>--%>
@@ -131,8 +157,18 @@
         userSourceDom.append("<option value=" + userSourceList[i].indexSource + ">" + userSourceList[i].indexSource + "</option>");
     }
     userSourceDom.selectpicker('refresh');
-    pieChart(list[0], "companyPieChart", "天维度渠道活跃IP运营商分布");
-    pieChart(list[1], "locationPieChart", "天维度渠道活跃IP地理位置分布");
+    if(list[0].length==0){
+        $("#noDataOfCompanyPie").css('display', 'block');
+    }else{
+        pieChart(list[0], "companyPieChart", "天维度渠道活跃IP运营商分布");
+    }
+    if(list[1].length==0){
+        $("#noDataOfLocationPie").css('display', 'block');
+        $("#noDataOfLocationMap").css('display', 'block');
+    }else{
+        pieChart(list[1], "locationPieChart", "天维度渠道活跃IP地理位置分布");
+        mapChart(list[1], "locationMapChart", "天维度渠道活跃IP地理位置分布");
+    }
     function pieChart(data, divId, chartName) {
         var legendData = [];
         var seriesData = [];
@@ -142,8 +178,6 @@
         }
         drawPieChart(divId, chartName, legendData, seriesData);
     }
-
-    mapChart(list[1], "locationMapChart", "天维度渠道活跃IP地理位置分布");
     function mapChart(data, divId, title) {
         var minData = 1;
         var maxData = 1;
@@ -176,20 +210,24 @@
                             if (list[0].length == 0) {
                                 $("#noDataOfCompany").css('display', 'block');
                                 echarts.init(document.getElementById('companyPieChart')).clear();
+                                $("#companyTable").bootstrapTable('load', []);
                             } else {
                                 $("#noDataOfCompany").css('display', 'none');
                                 pieChart(list[0], "companyPieChart", "天维度渠道活跃IP运营商分布");
+                                $("#companyTable").bootstrapTable('load', list[0]);
                             }
                             if (list[1].length == 0) {
                                 $("#noDataOfLocationPie").css('display', 'block');
                                 $("#noDataOfLocationMap").css('display', 'block');
                                 echarts.init(document.getElementById('locationPieChart')).clear();
                                 echarts.init(document.getElementById('locationMapChart')).clear();
+                                $("#locationTable").bootstrapTable('load', []);
                             } else {
                                 $("#noDataOfLocationPie").css('display', 'none');
                                 $("#noDataOfLocationMap").css('display', 'none');
                                 pieChart(list[1], "locationPieChart", "天维度渠道活跃IP地理位置分布");
                                 mapChart(list[1], "locationMapChart", "天维度渠道活跃IP地理位置分布");
+                                $("#locationTable").bootstrapTable('load', list[1]);
                             }
                         }
                         setButtonDisabled('queryDate', false);
@@ -198,6 +236,10 @@
             }
         });
     });
+    generateDataTable("companyTable", [[{"field": "distributeName"}, {"field": "indexValue"}], [{"title": "运营商"}, {"title": "用户数"}]])
+    $("#companyTable").bootstrapTable('load', list[0]);
+    generateDataTable("locationTable", [[{"field": "distributeName"}, {"field": "indexValue"}], [{"title": "省份"}, {"title": "用户数"}]])
+    $("#locationTable").bootstrapTable('load', list[1]);
 </script>
 
 </body>

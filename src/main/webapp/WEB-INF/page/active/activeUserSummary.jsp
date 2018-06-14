@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
           type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
 </head>
@@ -41,8 +43,10 @@
                     </div>
                 </div>
             </div>
-            <div class='col-sm-2'></div>
-
+            <div class='col-sm-1'>
+                <button class="btn btn-success" data-toggle="modal" data-target="#datePieModal">表格视图
+                </button>
+            </div>
             <div class='col-sm-2'></div>
             <div class='col-sm-2'>
                 <div class="form-group">
@@ -56,6 +60,10 @@
                         </span>
                     </div>
                 </div>
+            </div>
+            <div class='col-sm-1'>
+                <button class="btn btn-success" data-toggle="modal" data-target="#monthPieModal">表格视图
+                </button>
             </div>
             <div class='col-sm-2'></div>
         </div>
@@ -71,7 +79,9 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            过去七天活跃用户数趋势
+            过去七天活跃用户数趋势&nbsp&nbsp
+            <button class="btn btn-success" data-toggle="modal" data-target="#dateTrendModal">表格视图
+            </button>
         </div>
         <%--<div class="panel-body">--%>
         <%--面板内容--%>
@@ -80,6 +90,59 @@
     <div class="alert alert-warning" style="display:none;" id="noDataOfDateTrend">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="dateTrendChart" style="height:700px;">
     </div>
+
+    <%--模态框--%>
+    <div class="modal fade" id="datePieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="datePieTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <%--模态框--%>
+    <div class="modal fade" id="monthPieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="monthPieTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <%--模态框--%>
+    <div class="modal fade" id="dateTrendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width:900px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="dateTrendTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
 </div>
 
 
@@ -90,13 +153,23 @@
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
+<script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <script>
     var list =${activeUserSummaryList};
-    $("#startDate").val(list[0][0].statDate);
-    pieChart(list[0], "datePieChart", "天维度各渠道活跃数分布");
-    $("#startMonth").val(list[1][0].statDate);
-    pieChart(list[1], "monthPieChart", "月维度各渠道活跃数分布");
+    $("#startDate").val('${startDate}');
+    if(list[0].length==0){
+        $("#noDataOfDatePie").css('display', 'block');
+    }else{
+        pieChart(list[0], "datePieChart", "天维度各渠道活跃数分布");
+    }
+    $("#startMonth").val('${startMonth}');
+    if(list[1].length==0){
+        $("#noDataOfMonthPie").css('display', 'block');
+    }else{
+        pieChart(list[1], "monthPieChart", "月维度各渠道活跃数分布");
+    }
     function pieChart(data, divId, chartName) {
         var legendData = [];
         var seriesData = [];
@@ -107,7 +180,11 @@
         drawPieChart(divId, chartName, legendData, seriesData);
     }
     var dateStrs=${dates};
-    trendChart(list[2], dateStrs, "dateTrendChart", "过去七天活跃用户数趋势");
+    if(list[2].length==0){
+        $("#noDataOfDateTrend").css('display', 'block');
+    }else{
+        trendChart(list[2], dateStrs, "dateTrendChart", "过去七天活跃用户数趋势");
+    }
     function trendChart(data, dateStrs, divId, chartName) {
         var legendData = [];
         var xData = [];
@@ -142,9 +219,11 @@
                             if (list.length == 0 ) {
                                 $("#noDataOfDatePie").css('display','block');
                                 echarts.init(document.getElementById('datePieChart')).clear();
+                                $("#datePieTable").bootstrapTable('load', []);
                             }else{
                                 $("#noDataOfDatePie").css('display','none');
                                 pieChart(data.detailInfo, "datePieChart", "天维度各渠道活跃数分布");
+                                $("#datePieTable").bootstrapTable('load', list);
                             }
                         }
                         setButtonDisabled('queryDate', false);
@@ -170,9 +249,11 @@
                             if (list.length == 0 ) {
                                 $("#noDataOfMonthPie").css('display','block');
                                 echarts.init(document.getElementById('monthPieChart')).clear();
+                                $("#monthPieTable").bootstrapTable('load', []);
                             }else{
                                 $("#noDataOfMonthPie").css('display','none');
                                 pieChart(data.detailInfo, "monthPieChart", "月维度各渠道活跃数分布");
+                                $("#monthPieTable").bootstrapTable('load', list);
                             }
                         }
                         setButtonDisabled('queryMonth', false);
@@ -181,7 +262,17 @@
             }
         });
     });
-
+    generateDataTable("datePieTable", [[{"field": "userSource"}, {"field": "activeUserNum"}],
+        [{"title": "渠道"}, {"title": "活跃用户数"}]])
+    $("#datePieTable").bootstrapTable('load', list[0]);
+    generateDataTable("monthPieTable", [[{"field": "userSource"}, {"field": "activeUserNum"}],
+        [{"title": "渠道"}, {"title": "活跃用户数"}]])
+    $("#monthPieTable").bootstrapTable('load', list[1]);
+    generateDataTable("dateTrendTable", [[{"field": "userSource"}, {"field": "activeUserNumOf7"}, {"field": "activeUserNumOf6"}, {"field": "activeUserNumOf5"},
+        {"field": "activeUserNumOf4"}, {"field": "activeUserNumOf3"}, {"field": "activeUserNumOf2"}, {"field": "activeUserNumOf1"}],
+        [{"title": "渠道"}, {"title": dateStrs[0]}, {"title": dateStrs[1]}, {"title": dateStrs[2]}, {"title": dateStrs[3]}, {"title": dateStrs[4]}, {"title": dateStrs[5]},
+            {"title": dateStrs[6]}]])
+    $("#dateTrendTable").bootstrapTable('load', list[2]);
 </script>
 
 </body>

@@ -33,7 +33,7 @@ public class CommonConstant {
     public static String statIndexNameOfLifePremium = "lifePremium";
     public static String statIndexNameOfUserShare = "userShare";
     public static String userSourceOfAll = "ALL";
-    public static int jsVersion = 8;
+    public static int jsVersion = 9;
     public static List<String> statIndexNameListOfPropertyPremium;
 
     static {

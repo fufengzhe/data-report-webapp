@@ -199,7 +199,7 @@
     graphChart(list, "migrateGraphChart", "用户迁徙分布");
     pieChart(list[2], "migrateUserNumPieChart", "用户迁入渠道数分布");
     function graphChart(data, divId, chartName) {
-        if (data[0].length > 14) {
+        if (data[0].length > 23) {
             $("#dataHint").css('display', 'block');
             echarts.init(document.getElementById('migrateGraphChart')).clear();
             return;
@@ -276,6 +276,7 @@
                                 $("#dataHint").css('display', 'none');
                                 $("#noData").css('display', 'block');
                                 echarts.init(document.getElementById('migrateGraphChart')).clear();
+                                $("#graphTable").bootstrapTable('load', []);
                             } else {
                                 $("#dataHint").css('display', 'none');
                                 $("#noData").css('display', 'none');
@@ -312,6 +313,7 @@
                             if (list[0].length == 0) {
                                 $("#noDataOfUserNum").css('display', 'block');
                                 echarts.init(document.getElementById('migrateUserNumPieChart')).clear();
+                                $("#pieTable").bootstrapTable('load', []);
                             } else {
                                 $("#noDataOfUserNum").css('display', 'none');
                                 pieChart(list[0], "migrateUserNumPieChart", "用户迁入渠道数分布");
@@ -329,7 +331,6 @@
     $("#graphTable").bootstrapTable('load', list[1]);
     generateDataTable("pieTable", [[{"field": "distributeName"}, {"field": "indexValue"}],
         [{"title": "迁入渠道数"}, {"title": "用户数"}]])
-    $("#graphTable").bootstrapTable('load', list[1]);
     $("#pieTable").bootstrapTable('load', list[2]);
 </script>
 

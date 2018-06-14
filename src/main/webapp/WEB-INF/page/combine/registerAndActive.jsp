@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
           type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript"
             src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
@@ -25,7 +27,7 @@
     </div>
     <div class="row">
         <div class="row panel-heading">
-            <div class='col-sm-5'></div>
+            <div class='col-sm-4'></div>
             <div class='col-sm-2'>
                 <div class="form-group">
                     <div class='input-group date text-center'>
@@ -39,7 +41,11 @@
                     </div>
                 </div>
             </div>
-            <div class='col-sm-5'></div>
+            <div class='col-sm-2'>
+                <button class="btn btn-success" data-toggle="modal" data-target="#dateModal">表格视图
+                </button>
+            </div>
+            <div class='col-sm-4'></div>
         </div>
     </div>
     <div class="alert alert-warning" style="display:none;" id="noData">无数据，请更改查询条件或联系开发人员。</div>
@@ -53,7 +59,7 @@
     </div>
     <div class="row">
         <div class="row panel-heading">
-            <div class='col-sm-5'></div>
+            <div class='col-sm-4'></div>
             <div class='col-sm-2'>
                 <div class="form-group">
                     <div class='input-group date text-center'>
@@ -67,14 +73,50 @@
                     </div>
                 </div>
             </div>
-            <div class='col-sm-5'></div>
+            <div class='col-sm-2'>
+                <button class="btn btn-success" data-toggle="modal" data-target="#monthModal">表格视图
+                </button>
+            </div>
+            <div class='col-sm-4'></div>
         </div>
     </div>
     <div class="alert alert-warning" style="display:none;" id="noDataOfMonth">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="monthScatterChart" style="height:700px;">
-
     </div>
-    <br/>
+    <%--模态框--%>
+    <div class="modal fade" id="dateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="dateTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <%--模态框--%>
+    <div class="modal fade" id="monthModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="monthTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 
 </div>
 
@@ -84,6 +126,8 @@
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 
@@ -165,9 +209,11 @@
                             if (list.length == 0) {
                                 $("#noData").css('display', 'block');
                                 echarts.init(document.getElementById('dateScatterChart')).clear();
+                                $("#dateTable").bootstrapTable('load', []);
                             } else {
                                 $("#noData").css('display', 'none');
                                 prepareDataAndDraw('dateScatterChart', '日维度注册&活跃用户分布', list);
+                                $("#dateTable").bootstrapTable('load', list);
                             }
                         }
                         setButtonDisabled('queryDate', false);
@@ -193,9 +239,11 @@
                             if (list.length == 0) {
                                 $("#noDataOfMonth").css('display', 'block');
                                 echarts.init(document.getElementById('monthScatterChart')).clear();
+                                $("#monthTable").bootstrapTable('load', []);
                             } else {
                                 $("#noDataOfMonth").css('display', 'none');
                                 prepareDataAndDraw('monthScatterChart', '月维度注册&活跃用户分布', list);
+                                $("#monthTable").bootstrapTable('load', list);
                             }
                         }
                         setButtonDisabled('queryMonth', false);
@@ -204,6 +252,10 @@
             }
         });
     });
+    generateDataTable("dateTable", [[{"field": "indexSource"}, {"field": "registerNum"}, {"field": "activeNum"}], [{"title": "渠道"}, {"title": "注册数"}, {"title": "活跃数"}]])
+    $("#dateTable").bootstrapTable('load', list[0]);
+    generateDataTable("monthTable", [[{"field": "indexSource"}, {"field": "registerNum"}, {"field": "activeNum"}], [{"title": "渠道"}, {"title": "注册数"}, {"title": "活跃数"}]])
+    $("#monthTable").bootstrapTable('load', list[1]);
 </script>
 
 </body>

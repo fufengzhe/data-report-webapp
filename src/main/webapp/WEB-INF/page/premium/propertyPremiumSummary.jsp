@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
           type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
+          type="text/css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/echarts.min.js"></script>
     <script type="text/javascript"
             src="${pageContext.request.contextPath}/static/js/utils/drawChart.js?ver=${jsVersion}"></script>
@@ -41,6 +43,10 @@
                     </div>
                 </div>
             </div>
+            <div class='col-sm-1'>
+                <button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图
+                </button>
+            </div>
             <div class='col-sm-1'></div>
         </div>
         <div class="text-center col-sm-6">
@@ -54,11 +60,47 @@
     </div>
     <div class="panel panel-default">
         <div class="panel-heading">
-            过去七天财险保费趋势
+            过去七天财险保费趋势&nbsp&nbsp
+            <button class="btn btn-success" data-toggle="modal" data-target="#dateTrendModal">表格视图
+            </button>
         </div>
     </div>
     <div class="alert alert-warning" style="display:none;" id="noDataOfDateTrend">无数据，请更改查询条件或联系开发人员。</div>
     <div class="container-fluid text-center" id="dateTrendChart" style="height:700px;">
+    </div>
+    <%--模态框--%>
+    <div class="modal fade" id="pieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="pieTable"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <%--模态框--%>
+    <div class="modal fade" id="dateTrendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true" >
+        <div class="modal-dialog" style="width:900px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">数据表格</h4>
+                </div>
+                <div class="modal-body" >
+                    <table id="dateTrendTable" ></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
     </div>
 </div>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
@@ -67,6 +109,8 @@
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <script>
@@ -128,10 +172,12 @@
                             list = data.detailInfo;
                             if (list.length == 0) {
                                 $("#noDataOfPremiumPie").css('display', 'block');
-                                echarts.init(document.getElementById('datePieChart')).clear();
+                                echarts.init(document.getElementById('premiumPieChart')).clear();
+                                $("#pieTable").bootstrapTable('load', []);
                             } else {
                                 $("#noDataOfPremiumPie").css('display', 'none');
                                 pieChart(list, "premiumPieChart", "财险保费分布(万元)");
+                                $("#pieTable").bootstrapTable('load', list);
                             }
                         }
                         setButtonDisabled('queryDate', false);
@@ -140,7 +186,13 @@
             }
         });
     });
-
+    generateDataTable("pieTable", [[{"field": "branchName"}, {"field": "accumulatedAmount"}],
+        [{"title": "分公司"}, {"title": "保费（万元）"}]])
+    $("#pieTable").bootstrapTable('load', list[0]);
+    generateDataTable("dateTrendTable", [[{"field": "branchName"}, {"field": "accumulatedAmount7"}, {"field": "accumulatedAmount6"}, {"field": "accumulatedAmount5"},
+        {"field": "accumulatedAmount4"}, {"field": "accumulatedAmount3"}, {"field": "accumulatedAmount2"}, {"field": "accumulatedAmount1"}],
+        [{"title": "渠道"}, {"title": dateStrs[0]}, {"title": dateStrs[1]}, {"title": dateStrs[2]}, {"title": dateStrs[3]}, {"title": dateStrs[4]}, {"title": dateStrs[5]}, {"title": dateStrs[6]}]])
+    $("#dateTrendTable").bootstrapTable('load', list[2]);
 </script>
 
 </body>

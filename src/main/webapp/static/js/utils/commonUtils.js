@@ -91,7 +91,7 @@ function generateDataTable(divId, fieldAndTitleJson) {
         cache: false,
         pagination: true,
         search: true,
-        pageList: [10, 20, 30],
+        pageList: [5, 10, 20],
         columns: columnsArray
     });
 
