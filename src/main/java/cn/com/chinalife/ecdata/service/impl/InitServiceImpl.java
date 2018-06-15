@@ -48,6 +48,14 @@ public class InitServiceImpl implements InitService {
         return this.getMapUsingList(userSourceList);
     }
 
+    public Map<String, String> getNewUserSourceCodeAndName() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<UserSource> userSourceList = initDao.getNewUserSource();
+        logger.info("service返回结果为 {}", JSON.toJSONString(userSourceList));
+        return this.getMapUsingList(userSourceList);
+    }
+
     Map<String, String> getMapUsingList(List<UserSource> userSourceList) {
         Map<String, String> map = new HashMap<String, String>();
         for (UserSource userSource : userSourceList) {

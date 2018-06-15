@@ -14,4 +14,6 @@ public interface InitService {
     List<UserSource> getOldUserSource();
 
     Map<String, String> getAllNewUserSourceCodeAndName();
+
+    Map<String, String> getNewUserSourceCodeAndName();
 }

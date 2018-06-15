@@ -19,6 +19,7 @@
         <typeAlias alias="AnalysisIndex" type="cn.com.chinalife.ecdata.entity.combine.AnalysisIndex" />
         <typeAlias alias="LocationAnalysis" type="cn.com.chinalife.ecdata.entity.location.LocationAnalysis" />
         <typeAlias alias="UserShare" type="cn.com.chinalife.ecdata.entity.userShare.UserShare" />
+        <typeAlias alias="UserRetention" type="cn.com.chinalife.ecdata.entity.user.UserRetention" />
     </typeAliases>
 </configuration>
 

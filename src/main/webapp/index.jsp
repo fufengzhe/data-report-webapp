@@ -46,6 +46,8 @@
         </li>
         <li class="list-group-item">8、共享条款签署分布 <a href="/ecdata/userShare/distribute" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
+        <%--<li class="list-group-item">9、用户留存分析 <a href="/ecdata/userRetention/summary" class="btn btn-success btn-xs" target="_blank">点击查看</a>--%>
+        <%--</li>--%>
         <li class="list-group-item">9、寿险保费查询 <a href="/ecdata/life/premiumSummary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
         <li class="list-group-item">10、财险保费查询 <a href="/ecdata/property/premiumSummary" class="btn btn-success btn-xs" target="_blank">点击查看</a>

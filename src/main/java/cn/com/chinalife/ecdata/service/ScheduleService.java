@@ -33,4 +33,6 @@ public interface ScheduleService {
     int updateMigrateCollection(QueryPara queryPara);
 
     int updateUserShare(QueryPara queryPara);
+
+    int updateUserRetention(QueryPara queryPara) throws Exception;
 }

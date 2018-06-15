@@ -41,7 +41,7 @@ public class CombinationAnalysisServiceImpl implements CombinationAnalysisServic
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         if (queryPara == null) {
             queryPara = new QueryPara();
-            queryPara.setStartDate(DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
+            queryPara.setStartDate(DateUtils.getMonthUsingYesterday(DateUtils.getYesterday()));
         }
         List<AnalysisIndex> analysisIndexList = new ArrayList<AnalysisIndex>();
         //因注册和活跃在计算月维度时计算方式不同，活跃月维度之间涉及到去重逻辑，所以要分开计算

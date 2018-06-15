@@ -81,7 +81,7 @@ public class SalesmanRelatedServiceImpl implements SalesmanRelatedService {
         html.append("</table>");
         html.append("</html>");
         String[] toList = mail.split(",");
-        MailUtils.sendHtmlMail("348452440@qq.com", toList, null, null, "业务员一账通绑卡信息", html.toString());
+        MailUtils.sendHtmlMail("348452440@qq.com", toList, null, "348452440@qq.com", "业务员一账通绑卡信息", html.toString());
     }
 
     private String[][] getTableContent(List<SalesmanRelated> salesmanRelatedList, String[] title) {

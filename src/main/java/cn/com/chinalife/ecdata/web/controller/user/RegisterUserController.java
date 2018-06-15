@@ -78,7 +78,7 @@ public class RegisterUserController {
             model.addAttribute("registerUserList", JSON.toJSONString(registerUserList));
             List<String> dateList = DateUtils.getDateList(DateUtils.getBeforeXDay(7), DateUtils.getBeforeXDay(1));
             model.addAttribute("startDate", DateUtils.getYesterday());
-            model.addAttribute("startMonth", DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
+            model.addAttribute("startMonth", DateUtils.getMonthUsingYesterday(DateUtils.getYesterday()));
             model.addAttribute("dates", JSON.toJSONString(dateList));
             model.addAttribute("jsVersion", CommonConstant.jsVersion);
             responseBean.setDetailInfo(model);

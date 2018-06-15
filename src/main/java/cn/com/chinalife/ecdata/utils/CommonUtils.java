@@ -1,6 +1,7 @@
 package cn.com.chinalife.ecdata.utils;
 
 import cn.com.chinalife.ecdata.entity.trade.Premium;
+import cn.com.chinalife.ecdata.entity.user.UserSource;
 
 import javax.servlet.http.Cookie;
 import java.math.BigDecimal;
@@ -105,8 +106,34 @@ public class CommonUtils {
         }
     }
 
+    public static String getStrJoinWithComma(List<UserSource> userSourceList) {
+        StringBuilder stringBuilder = new StringBuilder("[");
+        for (int i = 0; i < userSourceList.size() - 1; i++) {
+            stringBuilder.append("\"").append(userSourceList.get(i).getUserSource()).append("\",");
+        }
+        stringBuilder.append("\"").append(userSourceList.get(userSourceList.size() - 1).getUserSource()).append("\"");
+        stringBuilder.append("]");
+        return stringBuilder.toString();
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println(getMD5("222222"));
         System.out.println(convertToTenThousandUnit(new BigDecimal(11565.11)));
+        List<String> a = new ArrayList<String>();
+        a.add("a");
+        a.add("b");
+        a.add("c");
+        List<String> b = new ArrayList<String>();
+        b.addAll(a);
+        System.out.println(a);
+        System.out.println(b);
+        a.remove(0);
+        System.out.println(a);
+        System.out.println(b);
+        a=null;
+        b.retainAll(a);
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println("2018-06-06".compareTo("2018-06-07"));
     }
 }

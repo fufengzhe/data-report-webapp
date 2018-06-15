@@ -25,6 +25,14 @@ public class DateUtils {
         return new SimpleDateFormat("yyyy-MM-dd").format(current.getTime());
     }
 
+    public static String getBeforeXDayBasedGivenDate(String givenDate, int num) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar current = Calendar.getInstance();
+        current.setTime(simpleDateFormat.parse(givenDate));
+        current.add(Calendar.DATE, -num);
+        return simpleDateFormat.format(current.getTime());
+    }
+
     public static String getTheDayBeforeYesterday() {
         Calendar current = Calendar.getInstance();
         current.add(Calendar.DATE, -2);
@@ -36,7 +44,7 @@ public class DateUtils {
         return month + "-01";
     }
 
-    public static String getMonthUsingYesteray(String yesterday) {
+    public static String getMonthUsingYesterday(String yesterday) {
         return yesterday.substring(0, 7);
     }
 
@@ -80,8 +88,10 @@ public class DateUtils {
 
 
     public static void main(String[] args) throws ParseException {
-        System.out.println(getBeforeXDay(1));
-        System.out.println(getBeforeXDay(7));
+        System.out.println(getBeforeXDay(2));
+        System.out.println(getBeforeXDayBasedGivenDate("2018-06-13", 2));
+        System.out.println(getBeforeXDay(30));
+        System.out.println(getDateList(getBeforeXDay(30), getBeforeXDay(2)));
         System.out.println(addXDateBasedGivenDate("2018-04-30", 2));
     }
 

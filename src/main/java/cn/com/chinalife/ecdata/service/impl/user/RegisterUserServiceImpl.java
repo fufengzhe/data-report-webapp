@@ -101,7 +101,7 @@ public class RegisterUserServiceImpl implements RegisterUserService {
         List<RegisterUser> registerUserListOfDate = this.getRegisterUserNumOfAllSourcesFromStatResult(queryPara);
         lists.add(registerUserListOfDate);
 
-        queryPara.setStartDate(DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
+        queryPara.setStartDate(DateUtils.getMonthUsingYesterday(DateUtils.getYesterday()));
         List<RegisterUser> registerUserListOfMonth = this.getRegisterUserNumOfAllSourcesFromStatResult(queryPara);
         lists.add(registerUserListOfMonth);
 

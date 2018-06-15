@@ -32,7 +32,7 @@
     <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">开始演示模态框</button>
     <!-- 模态框（Modal） -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width: 1000px;height: 1000px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <%--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>--%>
@@ -50,7 +50,6 @@
         </div><!-- /.modal -->
     </div>
 </div>
-
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
@@ -70,17 +69,41 @@
         pagination: true,
         search: true,
         pageList: [5, 10],
-        columns: [{
-            field: 'label',
-            title: '消费金额（￥）',
-            align: 'center',
-            width: '50%'
-        }, {
-            field: 'orderNum',
-            title: '订单量',
-            align: 'center',
-            width: '50%'
-        }]
+        columns: [[
+            {
+                field: 'label',
+                title: '注册日期',
+                halign : 'center',
+                valign:"middle",
+                rowspan: 2
+            }, {
+                field: 'label',
+                title: '注册量',
+                align: 'center',
+                valign:"middle",
+                rowspan: 2,
+            }, {
+                field: 'label',
+                title: '留存率',
+                align: 'center',
+                colspan: 3,
+                rowspan: 1
+            }
+        ],[
+            {
+                field: 'label',
+                title: '一天后',
+                align: 'center',
+            }, {
+                field: 'orderNum',
+                title: '两天后',
+                align: 'center',
+            }, {
+                field: 'orderNum',
+                title: '三天后',
+                align: 'center',
+            }
+        ]]
     });
         $("#table").bootstrapTable('load', [{"label": "a", "orderNum": 55}, {"label": "b", "orderNum": 66}, {
         "label": "b",

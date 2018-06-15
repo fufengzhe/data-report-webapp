@@ -140,7 +140,7 @@ public class ActiveUserServiceImpl implements ActiveUserService {
         List<ActiveUser> activeUserListOfDate = this.getActiveUserNumOfAllSourcesFromStatResult(queryPara);
         lists.add(activeUserListOfDate);
 
-        queryPara.setStartDate(DateUtils.getMonthUsingYesteray(DateUtils.getYesterday()));
+        queryPara.setStartDate(DateUtils.getMonthUsingYesterday(DateUtils.getYesterday()));
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfMonth);
         List<ActiveUser> activeUserListOfMonth = this.getActiveUserNumOfAllSourcesFromStatResult(queryPara);
         lists.add(activeUserListOfMonth);

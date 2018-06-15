@@ -6,6 +6,7 @@ package cn.com.chinalife.ecdata.entity.user;
 public class UserSource {
     private String userSource;
     private String userSourceName;
+    private String oldUserSource;
 
     public String getUserSource() {
         return userSource;
@@ -23,11 +24,20 @@ public class UserSource {
         this.userSourceName = userSourceName;
     }
 
+    public String getOldUserSource() {
+        return oldUserSource;
+    }
+
+    public void setOldUserSource(String oldUserSource) {
+        this.oldUserSource = oldUserSource;
+    }
+
     @Override
     public String toString() {
         return "UserSource{" +
                 "userSource='" + userSource + '\'' +
                 ", userSourceName='" + userSourceName + '\'' +
+                ", oldUserSource='" + oldUserSource + '\'' +
                 '}';
     }
 }

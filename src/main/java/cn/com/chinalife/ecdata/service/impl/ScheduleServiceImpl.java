@@ -10,6 +10,7 @@ import cn.com.chinalife.ecdata.service.trade.LifePremiumService;
 import cn.com.chinalife.ecdata.service.trade.PropertyPremiumService;
 import cn.com.chinalife.ecdata.service.user.ActiveUserService;
 import cn.com.chinalife.ecdata.service.user.RegisterUserService;
+import cn.com.chinalife.ecdata.service.user.UserRetentionService;
 import cn.com.chinalife.ecdata.service.userShare.UserShareService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
 import cn.com.chinalife.ecdata.utils.DateUtils;
@@ -49,6 +50,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
     UserShareService userShareService;
+
+
+    @Autowired
+    UserRetentionService userRetentionService;
 
     @Scheduled(cron = "0 0 3 * * ?")
     private void scheduledEntryForUpdate() throws InterruptedException, ParseException {
@@ -295,5 +300,19 @@ public class ScheduleServiceImpl implements ScheduleService {
         return effectedRowNum;
     }
 
+    @Scheduled(cron = "0 40 4 * * ?")
+    private void scheduledEntryForUserRetentionUpdate() throws Exception {
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        this.updateUserRetention(queryPara);
+    }
 
+    public int updateUserRetention(QueryPara queryPara) throws Exception{
+        int effectedRowNum = 0;
+        logger.info("开始更新用户留存相关数据");
+        effectedRowNum = userRetentionService.updateUserRetention(queryPara);
+        logger.info("结束更新用户留存相关数据，受影响的条数为 {}", effectedRowNum);
+        return effectedRowNum;
+    }
 }

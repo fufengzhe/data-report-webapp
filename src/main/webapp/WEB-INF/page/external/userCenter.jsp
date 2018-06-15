@@ -45,6 +45,8 @@
                                                   class="btn btn-success btn-xs" target="_blank">点击查看</a></li>
         <li class="list-group-item">8、共享条款签署分布 <a href="/ecdata/userShare/distribute" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
+        <%--<li class="list-group-item">9、用户留存分析 <a href="/ecdata/userRetention/summary" class="btn btn-success btn-xs" target="_blank">点击查看</a>--%>
+        <%--</li>--%>
     </ul>
 </div>
 
