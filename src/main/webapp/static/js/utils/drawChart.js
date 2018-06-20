@@ -34,7 +34,7 @@ function drawPieChart(divId, chartName, legendData, seriesData) {
     };
     myChart.setOption(option);
 }
-function drawTrendChart(divId, chartName, legendData, xData, seriesData) {
+function drawTrendChart(divId, chartName, legendData, xData, seriesData, xName, yName) {
     var myChart = echarts.init(document.getElementById(divId));
     var option = {
         title: {
@@ -58,12 +58,14 @@ function drawTrendChart(divId, chartName, legendData, xData, seriesData) {
             {
                 type: 'category',
                 boundaryGap: false,
-                data: xData
+                data: xData,
+                name: xName
             }
         ],
         yAxis: [
             {
-                type: 'value'
+                type: 'value',
+                name: yName
             }
         ],
         series: seriesData

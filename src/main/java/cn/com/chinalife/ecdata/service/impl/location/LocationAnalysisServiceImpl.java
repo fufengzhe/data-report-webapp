@@ -7,10 +7,7 @@ import cn.com.chinalife.ecdata.entity.combine.AnalysisIndex;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
 import cn.com.chinalife.ecdata.service.location.LocationAnalysisService;
-import cn.com.chinalife.ecdata.utils.CommonConstant;
-import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
-import cn.com.chinalife.ecdata.utils.DateUtils;
-import cn.com.chinalife.ecdata.utils.InvokeUtils;
+import cn.com.chinalife.ecdata.utils.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -338,8 +335,8 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<List<AnalysisIndex>> analysisIndexList = new ArrayList<List<AnalysisIndex>>();
         if (queryPara.getQueryType() == null || "1".equals(queryPara.getQueryType())) {
-            queryPara.setFromUserSource(this.getWhereConditionUsingPara(queryPara.getFromUserSource()));
-            queryPara.setToUserSource(this.getWhereConditionUsingPara(queryPara.getToUserSource()));
+            queryPara.setFromUserSource(CommonUtils.getWhereConditionUsingPara(queryPara.getFromUserSource()));
+            queryPara.setToUserSource(CommonUtils.getWhereConditionUsingPara(queryPara.getToUserSource()));
             queryPara.setDistributeType("6");
             List<AnalysisIndex> migrateCollectionDisList = locationAnalysisDao.getMigrateCollectionDis(queryPara);
             analysisIndexList.add(migrateCollectionDisList);
@@ -393,20 +390,6 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
             queryPara.setUserSource(userSourceCondition.toString());
             queryPara.setFromUserSource(userSourceCondition.toString());
             queryPara.setUserSource(userSourceCondition.toString());
-        }
-    }
-
-    public String getWhereConditionUsingPara(String userSource) {
-        if (userSource != null) {
-            String[] temp = userSource.split(",");
-            StringBuilder userSourceCondition = new StringBuilder("(");
-            for (int i = 0; i < temp.length - 1; i++) {
-                userSourceCondition.append("'").append(temp[i]).append("',");
-            }
-            userSourceCondition.append("'").append(temp[temp.length - 1]).append("')");
-            return userSourceCondition.toString();
-        } else {
-            return null;
         }
     }
 

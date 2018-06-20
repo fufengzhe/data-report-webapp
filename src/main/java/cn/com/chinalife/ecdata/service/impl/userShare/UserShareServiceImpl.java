@@ -4,9 +4,9 @@ import cn.com.chinalife.ecdata.dao.sqlDao.userShare.UserShareDao;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.userShare.UserShare;
 import cn.com.chinalife.ecdata.service.InitService;
-import cn.com.chinalife.ecdata.service.location.LocationAnalysisService;
 import cn.com.chinalife.ecdata.service.userShare.UserShareService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
+import cn.com.chinalife.ecdata.utils.CommonUtils;
 import cn.com.chinalife.ecdata.utils.DateUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
@@ -27,8 +27,6 @@ public class UserShareServiceImpl implements UserShareService {
     UserShareDao userShareDao;
     @Autowired
     InitService initService;
-    @Autowired
-    LocationAnalysisService locationAnalysisService;
 
     public int updateUserShare(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
@@ -57,7 +55,7 @@ public class UserShareServiceImpl implements UserShareService {
 
     public List<UserShare> getUserSourceDisList(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
-        queryPara.setUserSource(locationAnalysisService.getWhereConditionUsingPara(queryPara.getUserSource()));
+        queryPara.setUserSource(CommonUtils.getWhereConditionUsingPara(queryPara.getUserSource()));
         List<UserShare> userSourceDisList = userShareDao.getUserSourceDisList(queryPara);
         logger.info("service返回结果为 {}", JSON.toJSONString(userSourceDisList));
         return userSourceDisList;
@@ -65,7 +63,7 @@ public class UserShareServiceImpl implements UserShareService {
 
     public List<UserShare> getHourDisList(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
-//        queryPara.setUserSource(locationAnalysisService.getWhereConditionUsingPara(queryPara.getUserSource()));
+//        queryPara.setUserSource(CommonUtils.getWhereConditionUsingPara(queryPara.getUserSource()));
         List<UserShare> hourDisList = userShareDao.getHourDisList(queryPara);
         logger.info("service返回结果为 {}", JSON.toJSONString(hourDisList));
         return hourDisList;

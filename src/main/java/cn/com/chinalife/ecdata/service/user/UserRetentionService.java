@@ -13,4 +13,8 @@ public interface UserRetentionService {
     List<UserRetention> getUserRetentionList(QueryPara queryPara);
 
     int updateUserRetention(QueryPara queryPara) throws Exception;
+
+    List<UserRetention> getUserRetentionListForTrendChart(List<UserRetention> userRetentionList,boolean isUserSourceDimension);
+
+    List<String> getxAxisLabel();
 }

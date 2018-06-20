@@ -71,19 +71,19 @@
         pageList: [5, 10],
         columns: [[
             {
-                field: 'label',
+                field: 'registerTime',
                 title: '注册日期',
                 halign : 'center',
                 valign:"middle",
                 rowspan: 2
             }, {
-                field: 'label',
+                field: 'registerNum',
                 title: '注册量',
                 align: 'center',
                 valign:"middle",
                 rowspan: 2,
             }, {
-                field: 'label',
+                field: 'retentionRatio',
                 title: '留存率',
                 align: 'center',
                 colspan: 3,
@@ -91,25 +91,22 @@
             }
         ],[
             {
-                field: 'label',
+                field: 'oneOffset',
                 title: '一天后',
                 align: 'center',
             }, {
-                field: 'orderNum',
+                field: 'twoOffset',
                 title: '两天后',
                 align: 'center',
             }, {
-                field: 'orderNum',
+                field: 'threeOffset',
                 title: '三天后',
                 align: 'center',
             }
         ]]
     });
-        $("#table").bootstrapTable('load', [{"label": "a", "orderNum": 55}, {"label": "b", "orderNum": 66}, {
-        "label": "b",
-        "orderNum": 66
-    }, {"label": "b", "orderNum": 66}
-        , {"label": "b", "orderNum": 66}, {"label": "b", "orderNum": 66}, {"label": "b", "orderNum": 66}]);
+        $("#table").bootstrapTable('load', [{"registerTime": "2018-01-01", "registerNum": 55, "oneOffset": 55.55,"twoOffset": 44.55,"threeOffset": 33.55},
+            {"registerTime": "2018-01-02", "registerNum": 33, "oneOffset": 22.55,"twoOffset": 11.55,"threeOffset": 23.55},]);
 </script>
 
 </body>

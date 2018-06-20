@@ -19,25 +19,31 @@
         ) t1
     </insert>
 
-    <select id="getActiveUserNumOfAllSourcesFromStatResultForTrendOfDate" resultType="ActiveUser"
+    <select id="getUserRetentionList" resultType="UserRetention"
             parameterType="QueryPara">
-        SELECT INDEX_SOURCE userSource,SUM ( CASE WHEN STAT_TIME = to_char(sysdate-7,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf7,
-        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-6,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf6,
-        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-5,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf5,
-        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-4,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf4,
-        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-3,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf3,
-        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-2,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf2,
-        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-1,'yyyy-mm-dd') THEN INDEX_VALUE ELSE 0 END) activeUserNumOf1
-        FROM DMP_SELECT.STAT_RESULT
-        WHERE INDEX_NAME = 'activeNum'
-        AND STAT_TIME_SPAN = 'D'
+        SELECT RR.REGISTER_TIME registerTime,RR.INDEX_SOURCE userSource,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 30 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate30,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 14 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate14,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 7 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate07,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 6 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate06,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 5 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate05,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 4 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate04,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 3 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate03,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 2 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate02,
+        SUM (CASE WHEN TO_DATE (RR.RETENTION_TIME,'yyyy-mm-dd') - TO_DATE (RR.REGISTER_TIME,'yyyy-mm-dd') = 1 THEN NVL (RR.INDEX_VALUE / SR.INDEX_VALUE,0) ELSE NULL END ) retentionRate01
+        FROM DMP_SELECT.RETENTION_RESULT RR LEFT JOIN DMP_SELECT.STAT_RESULT SR ON RR.REGISTER_TIME = SR.STAT_TIME AND RR.INDEX_SOURCE = SR.INDEX_SOURCE
+             AND SR.INDEX_NAME = 'registerNum' AND SR.STAT_TIME_SPAN = 'D'
+        WHERE
         <![CDATA[
-			       and STAT_TIME >= #{startDate}
+			        RR.REGISTER_TIME >= #{startDate}
 		        ]]>
         <![CDATA[
-                    and STAT_TIME <= #{endDate}
+                    and RR.REGISTER_TIME <= #{endDate}
         ]]>
-        GROUP BY INDEX_SOURCE
+        <if test="userSource != null and userSource != ''">
+            AND RR.INDEX_SOURCE in ${userSource}
+        </if>
+        GROUP BY RR.REGISTER_TIME,RR.INDEX_SOURCE ORDER BY RR.REGISTER_TIME,retentionRate01 DESC
     </select>
 
     <select id="getOldUserIdList" resultType="java.lang.String" parameterType="QueryPara">

@@ -32,6 +32,14 @@ public class CommonUtils {
         return bigDecimal.multiply(new BigDecimal("100")).setScale(2) + "%";
     }
 
+    public static String getPercentageStr(BigDecimal bigDecimal, int roundMode) {
+        if (bigDecimal == null) {
+            return null;
+        } else {
+            return bigDecimal.multiply(new BigDecimal("100")).setScale(2, roundMode) + "%";
+        }
+    }
+
     //单位从个转换为万
     public static BigDecimal convertToTenThousandUnit(BigDecimal numToConvert) {
         if (numToConvert == BigDecimal.ZERO || numToConvert.doubleValue() == 0) {
@@ -116,6 +124,20 @@ public class CommonUtils {
         return stringBuilder.toString();
     }
 
+    public static String getWhereConditionUsingPara(String userSource) {
+        if (userSource != null) {
+            String[] temp = userSource.split(",");
+            StringBuilder userSourceCondition = new StringBuilder("(");
+            for (int i = 0; i < temp.length - 1; i++) {
+                userSourceCondition.append("'").append(temp[i]).append("',");
+            }
+            userSourceCondition.append("'").append(temp[temp.length - 1]).append("')");
+            return userSourceCondition.toString();
+        } else {
+            return null;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println(getMD5("222222"));
         System.out.println(convertToTenThousandUnit(new BigDecimal(11565.11)));
@@ -124,16 +146,10 @@ public class CommonUtils {
         a.add("b");
         a.add("c");
         List<String> b = new ArrayList<String>();
-        b.addAll(a);
-        System.out.println(a);
-        System.out.println(b);
-        a.remove(0);
-        System.out.println(a);
-        System.out.println(b);
-        a=null;
+        b.add("d");
         b.retainAll(a);
         System.out.println(a);
         System.out.println(b);
-        System.out.println("2018-06-06".compareTo("2018-06-07"));
+        String s = "MOBLIEPHONE = '\u202D18682128339'";
     }
 }
