@@ -197,7 +197,7 @@
         $("#noDataOfDateTrend").css('display', 'block');
     } else {
         var dates =${dates};
-        trendChart(list[1], dates, "dateTrendChart", "天维度用户留存趋势", "1");
+        trendChart(list[1], dates, "dateTrendChart", "天维度用户留存趋势（最多展示七天注册日期的留存趋势）", "1");
     }
     if (list[3].length == 0) {
         $("#noDataOfDateTrendSourceDimension").css('display', 'block');
@@ -254,7 +254,8 @@
                             echarts.init(document.getElementById('dateTrendChart')).clear();
                         } else {
                             $("#noDataOfDateTrend").css('display', 'none');
-                            trendChart(list[1], dates, "dateTrendChart", "天维度用户留存趋势", "1");
+                            echarts.init(document.getElementById('dateTrendChart')).clear();
+                            trendChart(list[1], dates, "dateTrendChart", "天维度用户留存趋势（最多展示七天注册日期的留存趋势）", "1");
                         }
                         setButtonDisabled('queryDate', false);
                     }
@@ -287,6 +288,7 @@
                             echarts.init(document.getElementById('dateTrendChartSourceDimension')).clear();
                         } else {
                             $("#noDataOfDateTrendSourceDimension").css('display', 'none');
+                            echarts.init(document.getElementById('dateTrendChartSourceDimension')).clear();
                             trendChart(list[1], dates, "dateTrendChartSourceDimension", "渠道维度用户留存趋势", "2");
                         }
                         setButtonDisabled('queryButton', false);

@@ -24,7 +24,13 @@
 <h1 align="center">Hello!Welcome To Data Server For User Center!</h1>
 <h4 align="center">May Your Work Be Driven By Data!</h4>
 <h6 align="center">Powered By Information Technology Department Of CLEC!</h6>
-
+<div class="row">
+    <div class="col-sm-9">
+    </div>
+    <div class="col-sm-3">
+        <iframe width="420" scrolling="no" height="60" frameborder="0" allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=12&icon=1&num=2&site=12"></iframe>
+    </div>
+</div>
 <div class="container">
     <h2><span class="label label-success glyphicon glyphicon-ok"> 已有功能（所有指标秒级响应）:</span></h2>
     <br/>
