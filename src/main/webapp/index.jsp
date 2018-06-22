@@ -29,7 +29,7 @@
     <div class="col-sm-9">
     </div>
     <div class="col-sm-3">
-        <iframe width="420" scrolling="no" height="60" frameborder="0" allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=12&icon=1&num=2&site=12"></iframe>
+        <iframe width="700" scrolling="no" height="70" frameborder="0" allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=2&icon=1&num=2&site=12"></iframe>
     </div>
 </div>
 <div class="container">

@@ -71,8 +71,8 @@
                 success: function (data) {
                     var respCode = data.respCode;
                     if (respCode == 0) {
-                        window.history.go(-1);
-//                        window.location.href = window.location.protocol + "//" + window.location.host + "/ecdata";
+//                        window.history.go(-1);
+                        window.location.href = document.referrer;
                     } else {
                         $('#toLogin').popover('show');
                     }
