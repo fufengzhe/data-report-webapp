@@ -308,13 +308,15 @@
                 title: '注册日期',
                 halign: 'center',
                 valign: "middle",
-                rowspan: 2
+                rowspan: 2,
+                sortable: true,
             }, {
                 field: 'userSource',
                 title: '渠道',
                 align: 'center',
                 valign: "middle",
                 rowspan: 2,
+                sortable: true,
             }, {
                 field: 'retentionRatio',
                 title: '留存率',
@@ -322,45 +324,54 @@
                 halign: 'center',
                 valign: "middle",
                 colspan: 9,
-                rowspan: 1
+                rowspan: 1,
             }
         ], [
             {
                 field: 'retentionRate01',
                 title: '1天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'retentionRate02',
                 title: '2天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'retentionRate03',
                 title: '3天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'retentionRate04',
                 title: '4天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'retentionRate05',
                 title: '5天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'retentionRate06',
                 title: '6天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'retentionRate07',
                 title: '7天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'retentionRate14',
                 title: '14天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'retentionRate30',
                 title: '30天后',
                 align: 'center',
+                sortable: true,
             }
         ]]
     });

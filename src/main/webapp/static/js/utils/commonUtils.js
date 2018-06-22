@@ -84,6 +84,7 @@ function generateDataTable(divId, fieldAndTitleJson) {
                 field: fieldArray[i].field,
                 title: titleArray[i].title,
                 align: 'center',
+                sortable: true,
             }
         );
     }

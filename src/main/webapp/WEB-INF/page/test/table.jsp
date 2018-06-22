@@ -40,7 +40,7 @@
                 </div>
                 <div class="modal-body">
                     <%--<div class='col-sm-6'>--%>
-                        <table id="table"></table>
+                    <table id="table"></table>
                     <%--</div>--%>
                 </div>
                 <div class="modal-footer">
@@ -69,18 +69,20 @@
         pagination: true,
         search: true,
         pageList: [5, 10],
+        sortable: true,
+        sortOrder: 'asc',
         columns: [[
             {
                 field: 'registerTime',
                 title: '注册日期',
-                halign : 'center',
-                valign:"middle",
+                halign: 'center',
+                valign: "middle",
                 rowspan: 2
             }, {
                 field: 'registerNum',
                 title: '注册量',
                 align: 'center',
-                valign:"middle",
+                valign: "middle",
                 rowspan: 2,
             }, {
                 field: 'retentionRatio',
@@ -89,7 +91,7 @@
                 colspan: 3,
                 rowspan: 1
             }
-        ],[
+        ], [
             {
                 field: 'oneOffset',
                 title: '一天后',
@@ -98,15 +100,54 @@
                 field: 'twoOffset',
                 title: '两天后',
                 align: 'center',
+                sortable: true,
             }, {
                 field: 'threeOffset',
                 title: '三天后',
                 align: 'center',
+                sortable: true,
             }
         ]]
     });
-        $("#table").bootstrapTable('load', [{"registerTime": "2018-01-01", "registerNum": 55, "oneOffset": 55.55,"twoOffset": 44.55,"threeOffset": 33.55},
-            {"registerTime": "2018-01-02", "registerNum": 33, "oneOffset": 22.55,"twoOffset": 11.55,"threeOffset": 23.55},]);
+
+    $("#table").bootstrapTable('load', [{
+        "registerTime": "2018-01-01",
+        "registerNum": 55,
+        "oneOffset": 55.55,
+        "twoOffset": 44.55,
+        "threeOffset": 33.55
+    },
+        {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": 23.55
+        }, {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": 1.55
+        }, {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": 44.55
+        }, {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": 66.55
+        }, {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": null,
+        },]);
 </script>
 
 </body>

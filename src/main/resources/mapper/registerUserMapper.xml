@@ -81,7 +81,7 @@
         <![CDATA[
                     and makedate <= TO_DATE(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
         ]]>
-        AND (MOBLIEPHONE IS NOT NULL OR EMAIL IS NOT NULL)
+--         AND (MOBLIEPHONE IS NOT NULL OR EMAIL IS NOT NULL)
         GROUP BY USERSOURCE,TO_CHAR (makedate, 'yyyy-MM-dd')
     </select>
 
