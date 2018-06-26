@@ -179,16 +179,18 @@ public class LocationAnalysisNoSqlDaoImpl implements LocationAnalysisNoSqlDao {
         List<AnalysisIndex> analysisIndexList = new ArrayList<AnalysisIndex>();
         while (cursor.hasNext()) {
             DBObject dbObject = cursor.next();
-            AnalysisIndex analysisIndex = new AnalysisIndex();
-            this.setAnalysisIndexUsingDBObject(analysisIndex, dbObject, "funName", "4");
-            analysisIndexList.add(analysisIndex);
+            AnalysisIndex analysisIndex = this.setAnalysisIndexUsingDBObject(dbObject, "funName", "4");
+            if (analysisIndex != null) {
+                analysisIndexList.add(analysisIndex);
+            }
         }
         cursor = dbCollection.aggregate(stageList2, AggregationOptions.builder().allowDiskUse(true).build());
         while (cursor.hasNext()) {
             DBObject dbObject = cursor.next();
-            AnalysisIndex analysisIndex = new AnalysisIndex();
-            this.setAnalysisIndexUsingDBObject(analysisIndex, dbObject, "logLevel", "5");
-            analysisIndexList.add(analysisIndex);
+            AnalysisIndex analysisIndex = this.setAnalysisIndexUsingDBObject(dbObject, "logLevel", "5");
+            if (analysisIndex != null) {
+                analysisIndexList.add(analysisIndex);
+            }
         }
         return analysisIndexList;
     }
@@ -285,15 +287,21 @@ public class LocationAnalysisNoSqlDaoImpl implements LocationAnalysisNoSqlDao {
         return analysisIndexList;
     }
 
-    private void setAnalysisIndexUsingDBObject(AnalysisIndex analysisIndex, DBObject dbObject, String distributeName, String distributeType) {
+    private AnalysisIndex setAnalysisIndexUsingDBObject(DBObject dbObject, String distributeName, String distributeType) {
         DBObject category = (DBObject) dbObject.get("_id");
-        analysisIndex.setStatDate(category.get("logDate").toString());
-        analysisIndex.setStatDateSpan(CommonConstant.statTimeSpanOfDate);
-        analysisIndex.setIndexName(CommonConstant.distributeIndexNameOfUserCollection);
-        analysisIndex.setIndexSource(category.get("clientSender").toString());
-        analysisIndex.setDistributeType(distributeType);
-        analysisIndex.setDistributeName(category.get(distributeName).toString());
-        analysisIndex.setIndexValue(Integer.parseInt(dbObject.get("invokeTimes").toString()));
+        if (category.get("logDate") == null || category.get("clientSender") == null || category.get(distributeName) == null || dbObject.get("invokeTimes") == null) {
+            return null;
+        } else {
+            AnalysisIndex analysisIndex = new AnalysisIndex();
+            analysisIndex.setStatDate(category.get("logDate").toString());
+            analysisIndex.setStatDateSpan(CommonConstant.statTimeSpanOfDate);
+            analysisIndex.setIndexName(CommonConstant.distributeIndexNameOfUserCollection);
+            analysisIndex.setIndexSource(category.get("clientSender").toString());
+            analysisIndex.setDistributeType(distributeType);
+            analysisIndex.setDistributeName(category.get(distributeName).toString());
+            analysisIndex.setIndexValue(Integer.parseInt(dbObject.get("invokeTimes").toString()));
+            return analysisIndex;
+        }
     }
 
 }
