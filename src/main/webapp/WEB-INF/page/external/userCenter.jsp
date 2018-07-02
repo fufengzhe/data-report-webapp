@@ -53,6 +53,8 @@
         </li>
         <li class="list-group-item">9、用户留存分析 <a href="/ecdata/userRetention/summary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
+        <li class="list-group-item">10、用户属性分析（年龄，性别及等级） <a href="/ecdata/userAttribute/summary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
+        </li>
     </ul>
 </div>
 

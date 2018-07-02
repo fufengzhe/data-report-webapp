@@ -86,13 +86,18 @@ public class DateUtils {
         return dateList;
     }
 
+    public static int getDaySpanBetweenStartAndEnd(String startDate, String endDate) throws ParseException {
+        Calendar start = Calendar.getInstance();
+        start.setTime((new SimpleDateFormat("yyyy-MM-dd")).parse(startDate));
+        Calendar end = Calendar.getInstance();
+        end.setTime((new SimpleDateFormat("yyyy-MM-dd")).parse(endDate));
+        return (int) ((end.getTime().getTime() - start.getTime().getTime()) / (1000 * 60 * 60 * 24));
+    }
+
 
     public static void main(String[] args) throws ParseException {
-        System.out.println(getBeforeXDay(2));
-        System.out.println(getBeforeXDayBasedGivenDate("2018-06-13", 2));
-        System.out.println(getBeforeXDay(30));
-        System.out.println(getDateList(getBeforeXDay(30), getBeforeXDay(2)));
-        System.out.println(addXDateBasedGivenDate("2018-04-30", 2));
+        System.out.println(getDaySpanBetweenStartAndEnd("2018-01-01","2018-01-06"));
+        System.out.println(addXDateBasedGivenDate("2018-01-01",1));
     }
 
 }

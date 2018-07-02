@@ -32,6 +32,14 @@ public class InitServiceImpl implements InitService {
         return userSourceList;
     }
 
+    public List<UserSource> getALLNewUserSource() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<UserSource> userSourceList = initDao.getNewUserSourceOfAll();
+        logger.info("service返回结果为 {}", JSON.toJSONString(userSourceList));
+        return userSourceList;
+    }
+
     public List<UserSource> getOldUserSource() {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
@@ -44,6 +52,14 @@ public class InitServiceImpl implements InitService {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         List<UserSource> userSourceList = initDao.getNewUserSourceOfAll();
+        logger.info("service返回结果为 {}", JSON.toJSONString(userSourceList));
+        return this.getMapUsingList(userSourceList);
+    }
+
+    public Map<String, String> getAllOldUserSourceCodeAndName() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<UserSource> userSourceList = initDao.getOldUserSourceOfAll();
         logger.info("service返回结果为 {}", JSON.toJSONString(userSourceList));
         return this.getMapUsingList(userSourceList);
     }

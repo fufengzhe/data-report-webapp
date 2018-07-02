@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.user.UserAttributeSQLDao">
+
+    <select id="getUserAgeDisInfoList" resultType="UserAttribute" parameterType="QueryPara">
+        SELECT
+        TO_CHAR (MAKEDATE, 'yyyy-mm-dd') statTime,'D' statTimeSpan,'userAge' indexName,USERSOURCE indexSource,'9' distributeType,
+        to_char(TRUNC ((TO_CHAR (SYSDATE, 'yyyymmdd') - SUBSTR (IDENTIFYNUMBER, 7, 8)) / 10000)) category,COUNT (*) categoryNum
+        FROM CHINALIFEEC.GE_USER_PERSONAL
+        WHERE
+        <![CDATA[
+			        makedate >= TO_DATE(concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+        <![CDATA[
+                    and makedate <= TO_DATE(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+        AND IDENTIFYTYPE = '01' AND IDENTIFYNUMBER IS NOT NULL AND length(IDENTIFYNUMBER)=18
+        GROUP BY TO_CHAR (MAKEDATE, 'yyyy-mm-dd'),USERSOURCE,to_char(TRUNC ((TO_CHAR (SYSDATE, 'yyyymmdd') - SUBSTR (IDENTIFYNUMBER, 7, 8)) / 10000))
+    </select>
+
+    <select id="getUserRankDisInfoList" resultType="UserAttribute" parameterType="QueryPara">
+        SELECT
+        TO_CHAR (MAKEDATE, 'yyyy-mm-dd') statTime,'D' statTimeSpan,'userRank' indexName,USERSOURCE indexSource,'10' distributeType,
+        USERRANK category,COUNT (*) categoryNum
+        FROM CHINALIFEEC.GE_USER_PERSONAL
+        WHERE
+        <![CDATA[
+			        makedate >= TO_DATE(concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+        <![CDATA[
+                    and makedate <= TO_DATE(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+        AND USERRANK IS NOT NULL
+        GROUP BY TO_CHAR (MAKEDATE, 'yyyy-mm-dd'),USERSOURCE,USERRANK
+    </select>
+
+    <select id="getUserSexDisInfoList" resultType="UserAttribute" parameterType="QueryPara">
+        SELECT
+        TO_CHAR (MAKEDATE, 'yyyy-mm-dd') statTime,'D' statTimeSpan,'userSex' indexName,USERSOURCE indexSource,'11' distributeType,
+        CASE mod(substr(IDENTIFYNUMBER,17,1),2) WHEN 1 THEN '男' WHEN 0 THEN '女' ELSE substr(IDENTIFYNUMBER,17,1) END category,COUNT (*) categoryNum
+        FROM CHINALIFEEC.GE_USER_PERSONAL
+        WHERE
+        <![CDATA[
+			        makedate >= TO_DATE(concat(#{startDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+        <![CDATA[
+                    and makedate <= TO_DATE(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+        AND IDENTIFYTYPE = '01' AND IDENTIFYNUMBER IS NOT NULL AND length(IDENTIFYNUMBER)=18
+        GROUP BY TO_CHAR (MAKEDATE, 'yyyy-mm-dd'),USERSOURCE,CASE mod(substr(IDENTIFYNUMBER,17,1),2) WHEN 1 THEN '男' WHEN 0 THEN '女' ELSE substr(IDENTIFYNUMBER,17,1) END
+    </select>
+
+    <select id="getUserSexList" resultType="UserAttribute" parameterType="QueryPara">
+        SELECT
+        DISTRIBUTE_NAME category,sum(INDEX_VALUE) categoryNum
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE
+        <![CDATA[
+			        stat_time >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and stat_time <= #{endDate}
+        ]]>
+        <if test="userSource != null and userSource != ''">
+            AND INDEX_SOURCE in ${userSource}
+        </if>
+        AND INDEX_NAME='userSex' AND STAT_TIME_SPAN='D'
+        GROUP BY DISTRIBUTE_NAME
+    </select>
+
+    <select id="getUserRankList" resultType="UserAttribute" parameterType="QueryPara">
+        SELECT
+        DISTRIBUTE_NAME category,sum(INDEX_VALUE) categoryNum
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE
+        <![CDATA[
+			        stat_time >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and stat_time <= #{endDate}
+        ]]>
+        <if test="userSource != null and userSource != ''">
+            AND INDEX_SOURCE in ${userSource}
+        </if>
+        AND INDEX_NAME='userRank' AND STAT_TIME_SPAN='D'
+        GROUP BY DISTRIBUTE_NAME
+    </select>
+
+
+    <select id="getUserAgeList" resultType="UserAttribute" parameterType="QueryPara">
+        SELECT
+        CASE WHEN DISTRIBUTE_NAME BETWEEN 0 AND 10 THEN '0~10'
+        WHEN DISTRIBUTE_NAME BETWEEN 11 AND 15 THEN '11~15'
+        WHEN DISTRIBUTE_NAME BETWEEN 16 AND 20 THEN '16~20'
+        WHEN DISTRIBUTE_NAME BETWEEN 21 AND 25 THEN '21~25'
+        WHEN DISTRIBUTE_NAME BETWEEN 26 AND 30 THEN '26~30'
+        WHEN DISTRIBUTE_NAME BETWEEN 31 AND 35 THEN '31~35'
+        WHEN DISTRIBUTE_NAME BETWEEN 36 AND 40 THEN '36~40'
+        WHEN DISTRIBUTE_NAME BETWEEN 41 AND 45 THEN '41~45'
+        WHEN DISTRIBUTE_NAME BETWEEN 46 AND 50 THEN '46~50'
+        WHEN DISTRIBUTE_NAME BETWEEN 51 AND 55 THEN '51~55'
+        WHEN DISTRIBUTE_NAME BETWEEN 56 AND 60 THEN '56~60'
+        WHEN DISTRIBUTE_NAME BETWEEN 61 AND 65 THEN '61~65'
+        ELSE '65~' END category,sum(INDEX_VALUE) categoryNum
+        FROM DMP_SELECT.DISTRIBUTE_RESULT
+        WHERE
+        <![CDATA[
+			        stat_time >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and stat_time <= #{endDate}
+        ]]>
+        <if test="userSource != null and userSource != ''">
+            AND INDEX_SOURCE in ${userSource}
+        </if>
+        AND INDEX_NAME='userAge' AND STAT_TIME_SPAN='D'
+        GROUP BY CASE WHEN DISTRIBUTE_NAME BETWEEN 0 AND 10 THEN '0~10'
+        WHEN DISTRIBUTE_NAME BETWEEN 11 AND 15 THEN '11~15'
+        WHEN DISTRIBUTE_NAME BETWEEN 16 AND 20 THEN '16~20'
+        WHEN DISTRIBUTE_NAME BETWEEN 21 AND 25 THEN '21~25'
+        WHEN DISTRIBUTE_NAME BETWEEN 26 AND 30 THEN '26~30'
+        WHEN DISTRIBUTE_NAME BETWEEN 31 AND 35 THEN '31~35'
+        WHEN DISTRIBUTE_NAME BETWEEN 36 AND 40 THEN '36~40'
+        WHEN DISTRIBUTE_NAME BETWEEN 41 AND 45 THEN '41~45'
+        WHEN DISTRIBUTE_NAME BETWEEN 46 AND 50 THEN '46~50'
+        WHEN DISTRIBUTE_NAME BETWEEN 51 AND 55 THEN '51~55'
+        WHEN DISTRIBUTE_NAME BETWEEN 56 AND 60 THEN '56~60'
+        WHEN DISTRIBUTE_NAME BETWEEN 61 AND 65 THEN '61~65'
+        ELSE '65~' END ORDER BY sum(INDEX_VALUE) DESC
+    </select>
+
+
+    <delete id="deleteAllExistedRecord" parameterType="java.lang.String">
+        DELETE FROM DMP_SELECT.DISTRIBUTE_RESULT WHERE INDEX_NAME=#{_parameter}
+    </delete>
+
+    <insert id="insertListToDB" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.DISTRIBUTE_RESULT
+        (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME,
+        INDEX_SOURCE,DISTRIBUTE_TYPE,DISTRIBUTE_NAME,INDEX_VALUE,CREATE_TIME,UPDATE_TIME)
+        SELECT
+        t1.statTime,t1.statTimeSpan,t1.indexName,t1.indexSource,t1.distributeType,t1.category,t1.categoryNum,t1.createTime,t1.updateTime
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.statTime,jdbcType=VARCHAR} statTime,
+            #{item.statTimeSpan,jdbcType=VARCHAR} statTimeSpan,
+            #{item.indexName,jdbcType=VARCHAR} indexName,
+            #{item.indexSource,jdbcType=VARCHAR} indexSource,
+            #{item.distributeType,jdbcType=VARCHAR} distributeType,
+            #{item.category,jdbcType=VARCHAR} category,
+            #{item.categoryNum,jdbcType=NUMERIC} categoryNum,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
+
+
+</mapper>

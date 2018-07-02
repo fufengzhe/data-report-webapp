@@ -10,6 +10,7 @@ import cn.com.chinalife.ecdata.service.trade.LifePremiumService;
 import cn.com.chinalife.ecdata.service.trade.PropertyPremiumService;
 import cn.com.chinalife.ecdata.service.user.ActiveUserService;
 import cn.com.chinalife.ecdata.service.user.RegisterUserService;
+import cn.com.chinalife.ecdata.service.user.UserAttributeService;
 import cn.com.chinalife.ecdata.service.user.UserRetentionService;
 import cn.com.chinalife.ecdata.service.userShare.UserShareService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
@@ -54,6 +55,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
     UserRetentionService userRetentionService;
+
+    @Autowired
+    UserAttributeService userAttributeService;
 
     @Scheduled(cron = "0 0 3 * * ?")
     private void scheduledEntryForUpdate() throws InterruptedException, ParseException {
@@ -191,7 +195,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         html.append("<tr><td>").append(HtmlUtils.getTable(tableOfHour)).append("</tr></td>");
         html.append("</table>");
         html.append("</html>");
-        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"344822404@qq.com", "842949135@qq.com"}, "348452440@qq.com", "1635454312@qq.com", "官网活跃数据", html.toString());
+        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"344822404@qq.com"}, "348452440@qq.com", "1635454312@qq.com", "官网活跃数据", html.toString());
 //        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"348452440@qq.com", "348452440@qq.com"}, "348452440@qq.com", "348452440@qq.com", "官网活跃数据", html.toString());
     }
 
@@ -308,11 +312,27 @@ public class ScheduleServiceImpl implements ScheduleService {
         this.updateUserRetention(queryPara);
     }
 
-    public int updateUserRetention(QueryPara queryPara) throws Exception{
+    public int updateUserRetention(QueryPara queryPara) throws Exception {
         int effectedRowNum = 0;
         logger.info("开始更新用户留存相关数据");
         effectedRowNum = userRetentionService.updateUserRetention(queryPara);
         logger.info("结束更新用户留存相关数据，受影响的条数为 {}", effectedRowNum);
+        return effectedRowNum;
+    }
+
+    @Scheduled(cron = "0 01 5 * * ?")
+    private void scheduledEntryForUserAttributeUpdate() throws Exception {
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate("2018-01-01");
+        queryPara.setEndDate(DateUtils.getYesterday());
+        this.updateUserAttribute(queryPara, true);
+    }
+
+    public int updateUserAttribute(QueryPara queryPara, boolean isScheduledRun) throws ParseException {
+        int effectedRowNum = 0;
+        logger.info("开始更新用户属性相关数据");
+        effectedRowNum = userAttributeService.updateUserAttribute(queryPara, isScheduledRun);
+        logger.info("结束更新用户属性相关数据，受影响的条数为 {}", effectedRowNum);
         return effectedRowNum;
     }
 }

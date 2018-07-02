@@ -11,9 +11,13 @@ import java.util.Map;
 public interface InitService {
     List<UserSource> getNewUserSource();
 
+    List<UserSource> getALLNewUserSource();
+
     List<UserSource> getOldUserSource();
 
     Map<String, String> getAllNewUserSourceCodeAndName();
+
+    Map<String, String> getAllOldUserSourceCodeAndName();
 
     Map<String, String> getNewUserSourceCodeAndName();
 }

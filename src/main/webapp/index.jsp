@@ -54,14 +54,16 @@
         </li>
         <li class="list-group-item">9、用户留存分析 <a href="/ecdata/userRetention/summary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">10、寿险保费查询 <a href="/ecdata/life/premiumSummary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
+        <li class="list-group-item">10、用户属性分析（年龄，性别及等级） <a href="/ecdata/userAttribute/summary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">11、财险保费查询 <a href="/ecdata/property/premiumSummary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
+        <li class="list-group-item">11、寿险保费查询 <a href="/ecdata/life/premiumSummary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">12、平台交易规模查询</li>
-        <li class="list-group-item">13、成交客户数查询</li>
-        <li class="list-group-item">14、官网活跃邮件定时发送</li>
-        <li class="list-group-item">15、业务员工号获取对应一账通绑定信息 <a href="/ecdata/salesman/bankAndMobile"
+        <li class="list-group-item">12、财险保费查询 <a href="/ecdata/property/premiumSummary" class="btn btn-success btn-xs" target="_blank">点击查看</a>
+        </li>
+        <li class="list-group-item">13、平台交易规模查询</li>
+        <li class="list-group-item">14、成交客户数查询</li>
+        <li class="list-group-item">15、官网活跃邮件定时发送</li>
+        <li class="list-group-item">16、业务员工号获取对应一账通绑定信息 <a href="/ecdata/salesman/bankAndMobile"
                                                          class="btn btn-success btn-xs" target="_blank">点击使用</a>
         </li>
     </ul>

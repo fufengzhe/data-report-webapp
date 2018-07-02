@@ -35,4 +35,6 @@ public interface ScheduleService {
     int updateUserShare(QueryPara queryPara);
 
     int updateUserRetention(QueryPara queryPara) throws Exception;
+
+    int updateUserAttribute(QueryPara queryPara,boolean isScheduledRun) throws ParseException;
 }
