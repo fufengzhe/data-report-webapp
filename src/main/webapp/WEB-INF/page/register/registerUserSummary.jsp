@@ -25,11 +25,15 @@
 
     <div class="row">
         <div class="row panel-heading">
-            <div class='col-sm-2'></div>
-            <div class='col-sm-2'>
+            <div class='col-sm-1'></div>
+            <div class='col-sm-3'>
                 <div class="form-group">
                     <div class='input-group date text-center'>
                         <input type='text' class="form-control" id="startDate" placeholder="选择时间"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        <input type='text' class="form-control" id="endDate" placeholder="选择时间"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -119,14 +123,14 @@
     </div>
     <%--模态框--%>
     <div class="modal fade" id="dateTrendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true" >
+         aria-hidden="true">
         <div class="modal-dialog" style="width:900px">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">数据表格</h4>
                 </div>
-                <div class="modal-body" >
-                    <table id="dateTrendTable" ></table>
+                <div class="modal-body">
+                    <table id="dateTrendTable"></table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -150,15 +154,16 @@
 <script>
     var list =${registerUserList};
     $("#startDate").val('${startDate}');
-    if(list[0].length==0){
+    $("#endDate").val('${endDate}');
+    if (list[0].length == 0) {
         $("#noDataOfDatePie").css('display', 'block');
-    }else{
+    } else {
         pieChart(list[0], "datePieChart", "天维度各渠道注册数分布");
     }
     $("#startMonth").val('${startMonth}');
-    if(list[1].length==0){
+    if (list[1].length == 0) {
         $("#noDataOfMonthPie").css('display', 'block');
-    }else{
+    } else {
         pieChart(list[1], "monthPieChart", "月维度各渠道注册数分布");
     }
     function pieChart(data, divId, chartName) {
@@ -171,9 +176,9 @@
         drawPieChart(divId, chartName, legendData, seriesData);
     }
     var dateStrs =${dates};
-    if(list[2].length==0){
+    if (list[2].length == 0) {
         $("#noDataOfDateTrend").css('display', 'block');
-    }else{
+    } else {
         trendChart(list[2], dateStrs, "dateTrendChart", "");
     }
     function trendChart(data, dateStrs, divId, chartName) {
@@ -197,11 +202,12 @@
     $(function () {
         $("#queryDate").click(function () {
             var startDate = $("#startDate").val();
-            if ("" != startDate.trim()) {
+            var endDate = $("#endDate").val();
+            if ("" != startDate.trim() && "" != endDate.trim()) {
                 setButtonDisabled('queryDate', true);
                 $.ajax({
                     url: 'numQuery',
-                    data: {"startDate": startDate, "endDate": startDate},
+                    data: {"startDate": startDate, "endDate": endDate},
                     dataType: "json",
                     success: function (data) {
                         var respCode = data.respCode;

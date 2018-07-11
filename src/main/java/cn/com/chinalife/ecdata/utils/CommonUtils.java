@@ -7,6 +7,8 @@ import javax.servlet.http.Cookie;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by xiexiangyu on 2018/3/8.
@@ -139,17 +141,21 @@ public class CommonUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(getMD5("222222"));
-        System.out.println(convertToTenThousandUnit(new BigDecimal(11565.11)));
-        List<String> a = new ArrayList<String>();
-        a.add("a");
-        a.add("b");
-        a.add("c");
-        List<String> b = new ArrayList<String>();
-        b.add("d");
-        b.retainAll(a);
-        System.out.println(a);
-        System.out.println(b);
-        String s = "MOBLIEPHONE = '\u202D18682128339'";
+        String line = "as_@126.com";
+        String pattern = "^([a-zA-Z0-9]+[_|-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|-|.]?)*[a-zA-Z0-9]+.[a-zA-Z]{2,3}$";
+
+        // 创建 Pattern 对象
+        Pattern r = Pattern.compile(pattern);
+
+        // 现在创建 matcher 对象
+        Matcher m = r.matcher(line);
+        if (m.find( )) {
+            System.out.println("Found value: " + m.group(0) );
+            System.out.println("Found value: " + m.group(1) );
+            System.out.println("Found value: " + m.group(2) );
+            System.out.println("Found value: " + m.group(3) );
+        } else {
+            System.out.println("NO MATCH");
+        }
     }
 }
