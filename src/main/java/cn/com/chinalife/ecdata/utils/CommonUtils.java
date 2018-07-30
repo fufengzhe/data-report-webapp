@@ -2,13 +2,13 @@ package cn.com.chinalife.ecdata.utils;
 
 import cn.com.chinalife.ecdata.entity.trade.Premium;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.Cookie;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by xiexiangyu on 2018/3/8.
@@ -141,21 +141,18 @@ public class CommonUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        String line = "as_@126.com";
-        String pattern = "^([a-zA-Z0-9]+[_|-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|-|.]?)*[a-zA-Z0-9]+.[a-zA-Z]{2,3}$";
-
-        // 创建 Pattern 对象
-        Pattern r = Pattern.compile(pattern);
-
-        // 现在创建 matcher 对象
-        Matcher m = r.matcher(line);
-        if (m.find( )) {
-            System.out.println("Found value: " + m.group(0) );
-            System.out.println("Found value: " + m.group(1) );
-            System.out.println("Found value: " + m.group(2) );
-            System.out.println("Found value: " + m.group(3) );
-        } else {
-            System.out.println("NO MATCH");
-        }
+        String s = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
+                "<html>\n" +
+                "<head><title>502 Bad Gateway</title></head>\n" +
+                "<body bgcolor=\"white\"><script>\n" +
+                "with(document)with(body)with(insertBefore(createElement(\"script\"),firstChild))setAttribute(\"exparams\",\"category=&userid=&aplus&yunid=&&trid=0b87a91415326757543271358e&asid=AQAAAACqxlpboAmyUQAAAAA8War16BXvHQ==\",id=\"tb-beacon-aplus\",src=(location>\"https\"?\"//g\":\"//g\")+\".alicdn.com/alilog/mlog/aplus_v2.js\")\n" +
+                "</script>\n" +
+                "\n" +
+                "<h1>502 Bad Gateway</h1>\n" +
+                "<p>The proxy server received an invalid response from an upstream server.</body>\n" +
+                "</html>";
+        System.out.println(s.contains("<!DOCTYPE HTML PUBLIC"));
+        JSONObject jsonObject = JSON.parseObject(s);
+        System.out.println(jsonObject == null);
     }
 }

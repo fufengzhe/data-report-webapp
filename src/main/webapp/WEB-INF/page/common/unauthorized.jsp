@@ -18,7 +18,7 @@
             title="账号帮助" data-html="true"
             data-content="联系人：信息技术部-解翔宇<br/>电话：010-83574831">账号帮助
     </button><br/><br/>
-    <button type="button" style="width:280px;" class="btn btn-primary" id="back">返回上一级
+    <button type="button" style="width:280px;" class="btn btn-danger" id="close">关闭
     </button>
 </div>
 
@@ -29,8 +29,8 @@
         $("[data-toggle='popover']").popover();
     });
     $(function () {
-        $("#back").click(function () {
-            window.history.back(-1);
+        $("#close").click(function () {
+            window.close();
         });
     });
 </script>

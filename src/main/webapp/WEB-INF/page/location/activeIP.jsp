@@ -91,7 +91,7 @@
 
     <div class="row">
         <div class="text-center col-sm-6">
-            <div class="alert alert-warning" style="display:none;" id="noDataOfCompany">无数据，请更改查询条件或联系开发人员。</div>
+            <div class="alert alert-warning" style="display:none;" id="noDataOfCompanyPie">无数据，请更改查询条件或联系开发人员。</div>
             <div id="companyPieChart" style="height:700px"></div>
         </div>
         <div class="text-center col-sm-6">

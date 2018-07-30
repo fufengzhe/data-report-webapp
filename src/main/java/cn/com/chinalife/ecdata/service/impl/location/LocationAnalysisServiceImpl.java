@@ -100,32 +100,34 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
             }
             invokeTimes++;
             String entity = EntityUtils.toString(response.getEntity(), "utf-8");
-            JSONObject jsonObject = JSON.parseObject(entity.replace("__GetZoneResult_ = ", ""));
-            Object locationObject = jsonObject.get("province");
-            Object companyObject = jsonObject.get("catName");
-            String source = codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource());
-            if (locationObject != null) {
-                String location = locationObject.toString();
-                if (location != null && location.length() > 0) {
-                    String keyOfLocation = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
-                            append(CommonConstant.distributeIndexNameOfRegisterMobile).append("&").append(source).append("&").append("2").append("&").append(location).toString();
-                    Integer locationValue = map.get(keyOfLocation);
-                    if (locationValue == null) {
-                        locationValue = 0;
+            if (entity != null && (!entity.contains("<!DOCTYPE HTML PUBLIC"))) {
+                JSONObject jsonObject = JSON.parseObject(entity.replace("__GetZoneResult_ = ", ""));
+                Object locationObject = jsonObject.get("province");
+                Object companyObject = jsonObject.get("catName");
+                String source = codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource());
+                if (locationObject != null) {
+                    String location = locationObject.toString();
+                    if (location != null && location.length() > 0) {
+                        String keyOfLocation = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
+                                append(CommonConstant.distributeIndexNameOfRegisterMobile).append("&").append(source).append("&").append("2").append("&").append(location).toString();
+                        Integer locationValue = map.get(keyOfLocation);
+                        if (locationValue == null) {
+                            locationValue = 0;
+                        }
+                        map.put(keyOfLocation, ++locationValue);
                     }
-                    map.put(keyOfLocation, ++locationValue);
                 }
-            }
-            if (companyObject != null) {
-                String company = companyObject.toString();
-                if (company != null && company.length() > 0) {
-                    String keyOfCompany = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
-                            append(CommonConstant.distributeIndexNameOfRegisterMobile).append("&").append(source).append("&").append("1").append("&").append(company).toString();
-                    Integer companyValue = map.get(keyOfCompany);
-                    if (companyValue == null) {
-                        companyValue = 0;
+                if (companyObject != null) {
+                    String company = companyObject.toString();
+                    if (company != null && company.length() > 0) {
+                        String keyOfCompany = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
+                                append(CommonConstant.distributeIndexNameOfRegisterMobile).append("&").append(source).append("&").append("1").append("&").append(company).toString();
+                        Integer companyValue = map.get(keyOfCompany);
+                        if (companyValue == null) {
+                            companyValue = 0;
+                        }
+                        map.put(keyOfCompany, ++companyValue);
                     }
-                    map.put(keyOfCompany, ++companyValue);
                 }
             }
         }
@@ -143,34 +145,37 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
                 logger.info("调用次数 {}", invokeTimes);
             }
             invokeTimes++;
-            JSONObject jsonObject = JSON.parseObject(EntityUtils.toString(response.getEntity()));
-            if ("0".equals(jsonObject.getString("code"))) {
-                JSONObject data = (JSONObject) jsonObject.get("data");
-                Object locationObject = data.get("region");
-                Object companyObject = data.get("isp");
-                String source = codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource());
-                if (locationObject != null) {
-                    String location = locationObject.toString();
-                    if (location != null && location.length() > 0) {
-                        String keyOfLocation = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
-                                append(CommonConstant.distributeIndexNameOfActiveIP).append("&").append(source).append("&").append("2").append("&").append(location).toString();
-                        Integer locationValue = map.get(keyOfLocation);
-                        if (locationValue == null) {
-                            locationValue = 0;
+            String entity = EntityUtils.toString(response.getEntity());
+            if (entity != null && (!entity.contains("<!DOCTYPE HTML PUBLIC"))) {
+                JSONObject jsonObject = JSON.parseObject(entity);
+                if ("0".equals(jsonObject.getString("code"))) {
+                    JSONObject data = (JSONObject) jsonObject.get("data");
+                    Object locationObject = data.get("region");
+                    Object companyObject = data.get("isp");
+                    String source = codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource());
+                    if (locationObject != null) {
+                        String location = locationObject.toString();
+                        if (location != null && location.length() > 0) {
+                            String keyOfLocation = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
+                                    append(CommonConstant.distributeIndexNameOfActiveIP).append("&").append(source).append("&").append("2").append("&").append(location).toString();
+                            Integer locationValue = map.get(keyOfLocation);
+                            if (locationValue == null) {
+                                locationValue = 0;
+                            }
+                            map.put(keyOfLocation, ++locationValue);
                         }
-                        map.put(keyOfLocation, ++locationValue);
                     }
-                }
-                if (companyObject != null) {
-                    String company = companyObject.toString();
-                    if (company != null && company.length() > 0) {
-                        String keyOfCompany = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
-                                append(CommonConstant.distributeIndexNameOfActiveIP).append("&").append(source).append("&").append("1").append("&").append(company).toString();
-                        Integer companyValue = map.get(keyOfCompany);
-                        if (companyValue == null) {
-                            companyValue = 0;
+                    if (companyObject != null) {
+                        String company = companyObject.toString();
+                        if (company != null && company.length() > 0) {
+                            String keyOfCompany = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
+                                    append(CommonConstant.distributeIndexNameOfActiveIP).append("&").append(source).append("&").append("1").append("&").append(company).toString();
+                            Integer companyValue = map.get(keyOfCompany);
+                            if (companyValue == null) {
+                                companyValue = 0;
+                            }
+                            map.put(keyOfCompany, ++companyValue);
                         }
-                        map.put(keyOfCompany, ++companyValue);
                     }
                 }
             }
