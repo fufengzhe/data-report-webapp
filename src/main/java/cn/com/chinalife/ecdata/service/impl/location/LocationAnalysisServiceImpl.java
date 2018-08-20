@@ -100,7 +100,7 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
             }
             invokeTimes++;
             String entity = EntityUtils.toString(response.getEntity(), "utf-8");
-            if (entity != null && (!entity.contains("<!DOCTYPE HTML PUBLIC"))) {
+            if (entity != null && (!entity.toLowerCase().contains("<!doctype html public"))) {
                 JSONObject jsonObject = JSON.parseObject(entity.replace("__GetZoneResult_ = ", ""));
                 Object locationObject = jsonObject.get("province");
                 Object companyObject = jsonObject.get("catName");
@@ -146,7 +146,7 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
             }
             invokeTimes++;
             String entity = EntityUtils.toString(response.getEntity());
-            if (entity != null && (!entity.contains("<!DOCTYPE HTML PUBLIC"))) {
+            if (entity != null && (!entity.toLowerCase().contains("<!doctype html public"))) {
                 JSONObject jsonObject = JSON.parseObject(entity);
                 if ("0".equals(jsonObject.getString("code"))) {
                     JSONObject data = (JSONObject) jsonObject.get("data");

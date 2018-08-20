@@ -161,9 +161,19 @@
 
     var list =${userShareList};
     $("#startDate").val('${startDate}');
-    pieChart(list[0], "userSourcePieChart", "共享条款签署渠道分布");
+
+    if(list[0].length==0){
+        $("#noDataOfUserSourcePie").css('display', 'block');
+    }else{
+        pieChart(list[0], "userSourcePieChart", "共享条款签署渠道分布");
+    }
     $("#endDate").val('${endDate}');
-    pieChart(list[1], "hourPieChart", "共享条款签署时间段分布");
+
+    if(list[1].length==0){
+        $("#noDataOfHourPie").css('display', 'block');
+    }else{
+        pieChart(list[1], "hourPieChart", "共享条款签署时间段分布");
+    }
     function pieChart(data, divId, chartName) {
         var legendData = [];
         var seriesData = [];
@@ -174,7 +184,11 @@
         drawPieChart(divId, chartName, legendData, seriesData);
     }
     var dateStrs=${dates};
-    trendChart(list[2], dateStrs, "dateTrendChart", "过去七天共享条款签署数趋势");
+    if(list[2].length==0){
+        $("#noDataOfDateTrend").css('display', 'block');
+    }else{
+        trendChart(list[2], dateStrs, "dateTrendChart", "过去七天共享条款签署数趋势");
+    }
     function trendChart(data, dateStrs, divId, chartName) {
         var legendData = [];
         var xData = [];

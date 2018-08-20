@@ -67,22 +67,22 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         logger.info("开始更新注册相关的数据");
         effectedRowNum = this.updateRegister(queryPara);
-        logger.info("结束更新注册相关的数据，受影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新注册相关的数据，影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新活跃相关的天维度数据");
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfDate);
         effectedRowNum = this.updateActive(queryPara);
-        logger.info("结束更新活跃相关的天维度数据，受影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新活跃相关的天维度数据，影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新活跃相关的月维度数据");
         queryPara.setStartDate(DateUtils.getMonthBeginDateUsingYesterday(DateUtils.getYesterday()));
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfMonth);
         effectedRowNum = this.updateActive(queryPara);
-        logger.info("结束更新活跃相关的月维度数据，受影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新活跃相关的月维度数据，影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新寿险保费相关数据");
         effectedRowNum = this.updateLifePremium(queryPara);
-        logger.info("结束更新寿险保费相关数据，受影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新寿险保费相关数据，影响的条数为 {}", effectedRowNum);
     }
 
     // 因为财险保费不是直接依赖镜像库，依赖另一个中间表（文广开发商），所以单独拎出来并把任务开始时间往后挪
@@ -94,7 +94,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         logger.info("开始更新财险保费相关数据");
         effectedRowNum = this.updatePropertyPremium(queryPara);
-        logger.info("结束更新财险保费相关数据，受影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新财险保费相关数据，影响的条数为 {}", effectedRowNum);
     }
 
 
@@ -211,7 +211,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         queryPara.setEndDate(DateUtils.getYesterday());
         logger.info("开始更新运营商及地理位置分布信息");
         int effectedRow = this.updateDistribute(queryPara);
-        logger.info("结束更新运营商及地理位置分布信息,影响条数为 {}", effectedRow);
+        logger.info("结束更新运营商及地理位置分布信息,影响的条数为 {}", effectedRow);
     }
 
     public int updateDistribute(QueryPara queryPara) throws Exception {
@@ -221,13 +221,13 @@ public class ScheduleServiceImpl implements ScheduleService {
             logger.info("开始更新注册手机号相关的运营商及地理位置分布信息");
             temp = locationAnalysisService.updateRegisterMobileDistribute(queryPara);
             effectedRow += temp;
-            logger.info("结束更新注册手机号相关的运营商及地理位置分布信息");
+            logger.info("结束更新注册手机号相关的运营商及地理位置分布信息,影响的条数为 {}", effectedRow);
         }
         if (queryPara.getWhereCondition() == null || CommonConstant.distributeIndexNameOfActiveIP.equals(queryPara.getWhereCondition())) {
             logger.info("开始更新活跃用户IP的运营商及地理位置分布信息");
             temp = locationAnalysisService.updateActiveIPDistribute(queryPara);
             effectedRow += temp;
-            logger.info("结束更新活跃用户IP的运营商及地理位置分布信息");
+            logger.info("结束更新活跃用户IP的运营商及地理位置分布信息,影响的条数为 {}", effectedRow);
         }
         return effectedRow;
     }
@@ -240,7 +240,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         queryPara.setEndDate(DateUtils.getYesterday());
         logger.info("开始更新活跃用户小时分布及用户中心USER集合请求情况信息");
         int effectedRow = this.updateActiveTimeAndUserCollectionInvokeDis(queryPara);
-        logger.info("结束更新活跃用户小时分布及用户中心USER集合请求情况信息,影响条数为 {}", effectedRow);
+        logger.info("结束更新活跃用户小时分布及用户中心USER集合请求情况信息,影响的条数为 {}", effectedRow);
     }
 
     private int updateActiveTimeAndUserCollectionInvokeDis(QueryPara queryPara) throws Exception {
@@ -265,7 +265,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRow;
         logger.info("开始更新USER集合请求情况分布信息");
         effectedRow = locationAnalysisService.updateUserCollectionInvokeDis(queryPara);
-        logger.info("结束更新USER集合请求情况分布信息");
+        logger.info("结束更新USER集合请求情况分布信息,影响的条数为 {}", effectedRow);
         return effectedRow;
     }
 
@@ -283,7 +283,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         logger.info("开始更新migrate集合分布信息");
         temp = locationAnalysisService.updateMigrateCollection(queryPara);
         effectedRow += temp;
-        logger.info("结束更新migrate集合分布信息,受影响行数为 {}", effectedRow);
+        logger.info("结束更新migrate集合分布信息,影响的行数为 {}", effectedRow);
         return effectedRow;
     }
 
@@ -300,7 +300,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRowNum = 0;
         logger.info("开始更新共享条款相关数据");
         effectedRowNum = userShareService.updateUserShare(queryPara);
-        logger.info("结束更新共享条款相关数据，受影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新共享条款相关数据，影响的条数为 {}", effectedRowNum);
         return effectedRowNum;
     }
 
@@ -316,7 +316,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRowNum = 0;
         logger.info("开始更新用户留存相关数据");
         effectedRowNum = userRetentionService.updateUserRetention(queryPara);
-        logger.info("结束更新用户留存相关数据，受影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新用户留存相关数据，影响的条数为 {}", effectedRowNum);
         return effectedRowNum;
     }
 
@@ -332,7 +332,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRowNum = 0;
         logger.info("开始更新用户属性相关数据");
         effectedRowNum = userAttributeService.updateUserAttribute(queryPara, isScheduledRun);
-        logger.info("结束更新用户属性相关数据，受影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新用户属性相关数据，影响的条数为 {}", effectedRowNum);
         return effectedRowNum;
     }
 }

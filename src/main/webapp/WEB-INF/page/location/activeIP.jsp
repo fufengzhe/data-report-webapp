@@ -208,11 +208,11 @@
                         if (respCode == 0) {
                             list = data.detailInfo;
                             if (list[0].length == 0) {
-                                $("#noDataOfCompany").css('display', 'block');
+                                $("#noDataOfCompanyPie").css('display', 'block');
                                 echarts.init(document.getElementById('companyPieChart')).clear();
                                 $("#companyTable").bootstrapTable('load', []);
                             } else {
-                                $("#noDataOfCompany").css('display', 'none');
+                                $("#noDataOfCompanyPie").css('display', 'none');
                                 pieChart(list[0], "companyPieChart", "天维度渠道活跃IP运营商分布");
                                 $("#companyTable").bootstrapTable('load', list[0]);
                             }

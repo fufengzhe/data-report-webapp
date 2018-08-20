@@ -2,8 +2,6 @@ package cn.com.chinalife.ecdata.utils;
 
 import cn.com.chinalife.ecdata.entity.trade.Premium;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.Cookie;
 import java.math.BigDecimal;
@@ -141,18 +139,6 @@ public class CommonUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        String s = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
-                "<html>\n" +
-                "<head><title>502 Bad Gateway</title></head>\n" +
-                "<body bgcolor=\"white\"><script>\n" +
-                "with(document)with(body)with(insertBefore(createElement(\"script\"),firstChild))setAttribute(\"exparams\",\"category=&userid=&aplus&yunid=&&trid=0b87a91415326757543271358e&asid=AQAAAACqxlpboAmyUQAAAAA8War16BXvHQ==\",id=\"tb-beacon-aplus\",src=(location>\"https\"?\"//g\":\"//g\")+\".alicdn.com/alilog/mlog/aplus_v2.js\")\n" +
-                "</script>\n" +
-                "\n" +
-                "<h1>502 Bad Gateway</h1>\n" +
-                "<p>The proxy server received an invalid response from an upstream server.</body>\n" +
-                "</html>";
-        System.out.println(s.contains("<!DOCTYPE HTML PUBLIC"));
-        JSONObject jsonObject = JSON.parseObject(s);
-        System.out.println(jsonObject == null);
+        System.out.println(DateUtils.getBeforeXDayBasedGivenDate("2018-08-12", 30));
     }
 }
