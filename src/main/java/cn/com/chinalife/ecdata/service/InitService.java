@@ -1,5 +1,6 @@
 package cn.com.chinalife.ecdata.service;
 
+import cn.com.chinalife.ecdata.entity.UpdateResult;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
 
 import java.util.List;
@@ -20,4 +21,12 @@ public interface InitService {
     Map<String, String> getAllOldUserSourceCodeAndName();
 
     Map<String, String> getNewUserSourceCodeAndName();
+
+    int updateDataStatus(List<UpdateResult> updateResultList);
+
+    int updateDataStatus(UpdateResult updateResult);
+
+    int updateDataStatus(String statTime, String statTimeSpan, String indexName, String indexDesc, Integer effectedRowNum);
+
+    List<UpdateResult> getUpdateResult();
 }

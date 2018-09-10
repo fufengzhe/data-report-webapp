@@ -1,6 +1,7 @@
 package cn.com.chinalife.ecdata.service.impl;
 
 import cn.com.chinalife.ecdata.dao.sqlDao.InitDao;
+import cn.com.chinalife.ecdata.entity.UpdateResult;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
 import cn.com.chinalife.ecdata.service.InitService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +74,7 @@ public class InitServiceImpl implements InitService {
         return this.getMapUsingList(userSourceList);
     }
 
+
     Map<String, String> getMapUsingList(List<UserSource> userSourceList) {
         Map<String, String> map = new HashMap<String, String>();
         for (UserSource userSource : userSourceList) {
@@ -79,4 +82,38 @@ public class InitServiceImpl implements InitService {
         }
         return map;
     }
+
+    public int updateDataStatus(List<UpdateResult> updateResultList) {
+        if (updateResultList != null && updateResultList.size() > 0) {
+            return initDao.updateDataStatus(updateResultList);
+        } else {
+            return 0;
+        }
+    }
+
+    public int updateDataStatus(UpdateResult updateResult) {
+        List<UpdateResult> list = new ArrayList<UpdateResult>();
+        list.add(updateResult);
+        logger.info("更新数据准备状态，数据状态标识为 {}", JSON.toJSONString(updateResult));
+        return this.updateDataStatus(list);
+    }
+
+    public int updateDataStatus(String statTime, String statTimeSpan, String indexName, String indexDesc, Integer effectedRowNum) {
+        UpdateResult updateResult = new UpdateResult();
+        updateResult.setStatTime(statTime);
+        updateResult.setStatTimeSpan(statTimeSpan);
+        updateResult.setIndexName(indexName);
+        updateResult.setIndexDesc(indexDesc);
+        updateResult.setEffectedRowNum(effectedRowNum);
+        return this.updateDataStatus(updateResult);
+    }
+
+    public List<UpdateResult> getUpdateResult() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<UpdateResult> updateResultList = initDao.getUpdateResult();
+        logger.info("service返回结果为 {}", JSON.toJSONString(updateResultList));
+        return updateResultList;
+    }
 }
+

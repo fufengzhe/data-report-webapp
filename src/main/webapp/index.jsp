@@ -9,6 +9,10 @@
     <link rel="icon" href="${pageContext.request.contextPath}/static/img/logo.ico" type="img/x-ico"/>
     <title>国寿电商数据后台</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
+          type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
+          type="text/css">
 </head>
 <body>
 
@@ -34,7 +38,9 @@
     </div>
 </div>
 <div class="container">
-    <h2><span class="label label-success glyphicon glyphicon-ok"> 已有功能（所有指标秒级响应）:</span></h2>
+    <h2><span class="label label-success glyphicon glyphicon-ok"> 已有功能（所有指标秒级响应）:</span>
+        &nbsp;<span id="dataStatus" class="label label-default glyphicon glyphicon-search"> 数据准备状态</span>
+    </h2>
     <br/>
     <ul class="list-group">
         <li class="list-group-item">1、注册用户数查询 <a href="/ecdata/registerUser/summary" class="btn btn-success btn-xs"
@@ -109,8 +115,35 @@
     </span>
 </div>
 
+<%--模态框--%>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">数据准备状态</h4>
+            </div>
+            <div class="modal-body">
+                <table id="dataStatusTable"></table>
+            </div>
+            <div class="modal-footer">
+                <span class="text-warning"> 请联系信息技术部 解翔宇&nbsp;&nbsp;&nbsp;</span>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <script>
     $(document).ready(function () {
         var cookieStr = document.cookie;
@@ -150,6 +183,52 @@
         });
     });
 
+    $.ajax({
+        url: 'init/getDataStatus',
+        dataType: "json",
+        success: function (data) {
+            var respCode = data.respCode;
+            if (respCode == 0) {
+                list = data.detailInfo;
+                if (list.length == 15) {
+                    $("#dataStatus").html(" 数据准备完成");
+                    $("#dataStatus").attr("class", "label label-success glyphicon glyphicon-ok");
+                } else {
+                    $("#dataStatus").html(" 数据准备失败, <a data-toggle='modal' data-target='#myModal'>点击查看详情。 </a>");
+                    $("#dataStatus").attr("class", "label label-warning glyphicon glyphicon-remove");
+                    generateDataStatusTable(list);
+                }
+                console.log(list);
+            } else {
+                alert("数据准备状态查询失败!");
+            }
+        }
+    });
+
+    function generateDataStatusTable(list) {
+        var itemArray = ['注册用户数查询', '注册用户手机号归属地及运营商分布', '活跃用户数及明细查询', '活跃用户IP归属地分布', '活跃用户时间段及用户中心请求分布',
+            '用户迁徙分布', '注册&活跃综合分布', '共享条款签署分布', '用户留存分析', '用户属性分析（年龄，性别及等级）', '寿险保费查询', '财险保费查询'];
+        var checkIndex = [['registerNum'], ['registerMobile'], ['activeNum'], ['activeIP'], ['activeHour', 'userCollection'], ['migrateCollection', 'migrateCollectionUserNum'],
+            ['registerNum', 'activeNum'], ['userShare'], ['userRetention'], ['userSex', 'userAge', 'userRank'], ['lifePremium'], ['propertyPremium']];
+        generateDataTable("dataStatusTable", [[{"field": "itemChn"}, {"field": "dataStatus"}], [{"title": "功能项"}, {"title": "是否完成"}]]);
+        var dataStatusList = new Array();
+        for (var i = 0; i < itemArray.length; i++) {
+            var status = new Object();
+            status.itemChn = itemArray[i];
+            status.dataStatus = checkDataStatus(checkIndex[i], JSON.stringify(list));
+            dataStatusList.push(status);
+        }
+        $("#dataStatusTable").bootstrapTable('load', dataStatusList);
+    }
+
+    function checkDataStatus(indexArray, preparedArrayStr) {
+        for (var i = 0; i < indexArray.length; i++) {
+            if (preparedArrayStr.indexOf(indexArray[i]) < 0) {
+                return "否";
+            }
+        }
+        return "是";
+    }
 </script>
 </body>
 </html>

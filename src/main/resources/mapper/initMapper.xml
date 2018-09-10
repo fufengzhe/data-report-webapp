@@ -29,4 +29,35 @@
         FROM
         DMP_USRCENTER.T_SYS_SRC
     </select>
+
+    <insert id="updateDataStatus" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.DATA_STATUS
+        (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, INDEX_DESC, EFFECTED_ROW_NUM, CREATE_TIME,UPDATE_TIME)
+        SELECT t1.statTime,t1.statTimeSpan,t1.indexName,t1.indexDesc,t1.effectedRowNum,t1.createTime,t1.updateTime
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.statTime,jdbcType=VARCHAR} statTime,
+            #{item.statTimeSpan,jdbcType=VARCHAR} statTimeSpan,
+            #{item.indexName,jdbcType=VARCHAR} indexName,
+            #{item.indexDesc,jdbcType=VARCHAR} indexDesc,
+            #{item.effectedRowNum,jdbcType=NUMERIC} effectedRowNum,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
+
+    <select id="getUpdateResult" resultType="UpdateResult">
+        SELECT DISTINCT INDEX_NAME indexName FROM DMP_SELECT.DATA_STATUS
+        WHERE EFFECTED_ROW_NUM > 0
+        AND
+        <![CDATA[
+			        CREATE_TIME >= TO_DATE (CONCAT (TO_CHAR (SYSDATE, 'yyyy-mm-dd'),' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+        <![CDATA[
+                    and CREATE_TIME <= TO_DATE (CONCAT (TO_CHAR (SYSDATE, 'yyyy-mm-dd'),' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+    </select>
 </mapper>

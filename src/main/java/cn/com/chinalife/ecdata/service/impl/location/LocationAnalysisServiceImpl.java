@@ -6,6 +6,7 @@ import cn.com.chinalife.ecdata.dao.sqlDao.location.LocationAnalysisDao;
 import cn.com.chinalife.ecdata.entity.combine.AnalysisIndex;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
+import cn.com.chinalife.ecdata.service.InitService;
 import cn.com.chinalife.ecdata.service.location.LocationAnalysisService;
 import cn.com.chinalife.ecdata.utils.*;
 import com.alibaba.fastjson.JSON;
@@ -32,6 +33,8 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
     LocationAnalysisNoSqlDao locationAnalysisNoSqlDao;
     @Autowired
     InitDao initDao;
+    @Autowired
+    InitService initService;
 
 
     public int updateRegisterMobileDistribute(QueryPara queryPara) throws Exception {
@@ -94,44 +97,48 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         logger.info("开始调用第三方接口,需要处理的list大小为 {}", mobileAndSourceList.size());
         int invokeTimes = 0;
         for (AnalysisIndex analysisIndex : mobileAndSourceList) {
-            CloseableHttpResponse response = InvokeUtils.doGetWithProxy(uriBuilder, "tel", analysisIndex.getMobile());
+            try {
+                CloseableHttpResponse response = InvokeUtils.doGetWithProxy(uriBuilder, "tel", analysisIndex.getMobile());
+                String entity = EntityUtils.toString(response.getEntity(), "utf-8");
+                if (entity != null && (!entity.toLowerCase().contains("<!doctype html public"))) {
+                    JSONObject jsonObject = JSON.parseObject(entity.replace("__GetZoneResult_ = ", ""));
+                    if (jsonObject != null) {
+                        Object locationObject = jsonObject.get("province");
+                        Object companyObject = jsonObject.get("catName");
+                        String source = codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource());
+                        if (locationObject != null) {
+                            String location = locationObject.toString();
+                            if (location != null && location.length() > 0) {
+                                String keyOfLocation = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
+                                        append(CommonConstant.distributeIndexNameOfRegisterMobile).append("&").append(source).append("&").append("2").append("&").append(location).toString();
+                                Integer locationValue = map.get(keyOfLocation);
+                                if (locationValue == null) {
+                                    locationValue = 0;
+                                }
+                                map.put(keyOfLocation, ++locationValue);
+                            }
+                        }
+                        if (companyObject != null) {
+                            String company = companyObject.toString();
+                            if (company != null && company.length() > 0) {
+                                String keyOfCompany = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
+                                        append(CommonConstant.distributeIndexNameOfRegisterMobile).append("&").append(source).append("&").append("1").append("&").append(company).toString();
+                                Integer companyValue = map.get(keyOfCompany);
+                                if (companyValue == null) {
+                                    companyValue = 0;
+                                }
+                                map.put(keyOfCompany, ++companyValue);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("注册手机号第三方接口调用异常，异常信息为", e);
+            }
             if (invokeTimes % 100 == 0) {
                 logger.info("调用次数 {}", invokeTimes);
             }
             invokeTimes++;
-            String entity = EntityUtils.toString(response.getEntity(), "utf-8");
-            if (entity != null && (!entity.toLowerCase().contains("<!doctype html public"))) {
-                JSONObject jsonObject = JSON.parseObject(entity.replace("__GetZoneResult_ = ", ""));
-                if (jsonObject != null) {
-                    Object locationObject = jsonObject.get("province");
-                    Object companyObject = jsonObject.get("catName");
-                    String source = codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource());
-                    if (locationObject != null) {
-                        String location = locationObject.toString();
-                        if (location != null && location.length() > 0) {
-                            String keyOfLocation = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
-                                    append(CommonConstant.distributeIndexNameOfRegisterMobile).append("&").append(source).append("&").append("2").append("&").append(location).toString();
-                            Integer locationValue = map.get(keyOfLocation);
-                            if (locationValue == null) {
-                                locationValue = 0;
-                            }
-                            map.put(keyOfLocation, ++locationValue);
-                        }
-                    }
-                    if (companyObject != null) {
-                        String company = companyObject.toString();
-                        if (company != null && company.length() > 0) {
-                            String keyOfCompany = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
-                                    append(CommonConstant.distributeIndexNameOfRegisterMobile).append("&").append(source).append("&").append("1").append("&").append(company).toString();
-                            Integer companyValue = map.get(keyOfCompany);
-                            if (companyValue == null) {
-                                companyValue = 0;
-                            }
-                            map.put(keyOfCompany, ++companyValue);
-                        }
-                    }
-                }
-            }
         }
         logger.info("结束调用第三方接口");
         return this.getDistributeInfoListUsingMap(map);
@@ -142,45 +149,49 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         logger.info("开始调用第三方接口,需要处理的list大小为 {}", ipAndSourceList.size());
         int invokeTimes = 0;
         for (AnalysisIndex analysisIndex : ipAndSourceList) {
-            CloseableHttpResponse response = InvokeUtils.doGetWithProxy(uriBuilder, "ip", analysisIndex.getIp());
+            try {
+                CloseableHttpResponse response = InvokeUtils.doGetWithProxy(uriBuilder, "ip", analysisIndex.getIp());
+                String entity = EntityUtils.toString(response.getEntity());
+                if (entity != null && (!entity.toLowerCase().contains("<!doctype html public"))) {
+                    JSONObject jsonObject = JSON.parseObject(entity);
+                    if (jsonObject != null && ("0".equals(jsonObject.getString("code")))) {
+                        JSONObject data = (JSONObject) jsonObject.get("data");
+                        Object locationObject = data.get("region");
+                        Object companyObject = data.get("isp");
+                        String source = codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource());
+                        if (locationObject != null) {
+                            String location = locationObject.toString();
+                            if (location != null && location.length() > 0) {
+                                String keyOfLocation = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
+                                        append(CommonConstant.distributeIndexNameOfActiveIP).append("&").append(source).append("&").append("2").append("&").append(location).toString();
+                                Integer locationValue = map.get(keyOfLocation);
+                                if (locationValue == null) {
+                                    locationValue = 0;
+                                }
+                                map.put(keyOfLocation, ++locationValue);
+                            }
+                        }
+                        if (companyObject != null) {
+                            String company = companyObject.toString();
+                            if (company != null && company.length() > 0) {
+                                String keyOfCompany = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
+                                        append(CommonConstant.distributeIndexNameOfActiveIP).append("&").append(source).append("&").append("1").append("&").append(company).toString();
+                                Integer companyValue = map.get(keyOfCompany);
+                                if (companyValue == null) {
+                                    companyValue = 0;
+                                }
+                                map.put(keyOfCompany, ++companyValue);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("活跃IP第三方接口调用异常，异常信息为", e);
+            }
             if (invokeTimes % 100 == 0) {
                 logger.info("调用次数 {}", invokeTimes);
             }
             invokeTimes++;
-            String entity = EntityUtils.toString(response.getEntity());
-            if (entity != null && (!entity.toLowerCase().contains("<!doctype html public"))) {
-                JSONObject jsonObject = JSON.parseObject(entity);
-                if (jsonObject != null && ("0".equals(jsonObject.getString("code")))) {
-                    JSONObject data = (JSONObject) jsonObject.get("data");
-                    Object locationObject = data.get("region");
-                    Object companyObject = data.get("isp");
-                    String source = codeAndName.get(analysisIndex.getIndexSource()) == null ? analysisIndex.getIndexSource() : codeAndName.get(analysisIndex.getIndexSource());
-                    if (locationObject != null) {
-                        String location = locationObject.toString();
-                        if (location != null && location.length() > 0) {
-                            String keyOfLocation = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
-                                    append(CommonConstant.distributeIndexNameOfActiveIP).append("&").append(source).append("&").append("2").append("&").append(location).toString();
-                            Integer locationValue = map.get(keyOfLocation);
-                            if (locationValue == null) {
-                                locationValue = 0;
-                            }
-                            map.put(keyOfLocation, ++locationValue);
-                        }
-                    }
-                    if (companyObject != null) {
-                        String company = companyObject.toString();
-                        if (company != null && company.length() > 0) {
-                            String keyOfCompany = new StringBuffer(analysisIndex.getStatDate()).append("&").append(CommonConstant.statTimeSpanOfDate).append("&").
-                                    append(CommonConstant.distributeIndexNameOfActiveIP).append("&").append(source).append("&").append("1").append("&").append(company).toString();
-                            Integer companyValue = map.get(keyOfCompany);
-                            if (companyValue == null) {
-                                companyValue = 0;
-                            }
-                            map.put(keyOfCompany, ++companyValue);
-                        }
-                    }
-                }
-            }
         }
         logger.info("结束调用第三方接口");
         return this.getDistributeInfoListUsingMap(map);
@@ -324,6 +335,7 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         }
         if (migrateDisList != null && migrateDisList.size() > 0) {
             effectedRow = locationAnalysisDao.updateDistributeInfo(migrateDisList);
+            initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfMigrateCollection, "migrate集合分布数据", effectedRow);
         }
         List<AnalysisIndex> migrateUserNumDisList = locationAnalysisNoSqlDao.getMigrateUserNumDisInfo(queryPara);
         for (AnalysisIndex analysisIndex : migrateUserNumDisList) {
@@ -332,6 +344,7 @@ public class LocationAnalysisServiceImpl implements LocationAnalysisService {
         }
         if (migrateUserNumDisList != null && migrateUserNumDisList.size() > 0) {
             int temp = locationAnalysisDao.updateDistributeInfo(migrateUserNumDisList);
+            initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfMigrateCollectionUserNum, "migrate集合分布数据", temp);
             effectedRow += temp;
         }
         logger.info("service更新完成，受影响行数为 {}", effectedRow);

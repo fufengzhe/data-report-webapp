@@ -51,11 +51,13 @@ public class UserAttributeServiceImpl implements UserAttributeService {
                 userAttribute.setIndexSource(oldUserSourceMap.get(userAttribute.getIndexSource()) == null ? userAttribute.getIndexSource() : oldUserSourceMap.get(userAttribute.getIndexSource()));
             }
             effectedRowNum += this.insertListToDB(ageDisList);
+            initService.updateDataStatus(queryPara.getEndDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfUserAge, "用户年龄分布数据", effectedRowNum);
             List<UserAttribute> userRankList = userAttributeSQLDao.getUserRankDisInfoList(temp);
             for (UserAttribute userAttribute : userRankList) {
                 userAttribute.setIndexSource(oldUserSourceMap.get(userAttribute.getIndexSource()) == null ? userAttribute.getIndexSource() : oldUserSourceMap.get(userAttribute.getIndexSource()));
             }
             effectedRowNum += this.insertListToDB(userRankList);
+            initService.updateDataStatus(queryPara.getEndDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfUserRank, "用户等级分布数据", effectedRowNum);
             startDate = DateUtils.addXDateBasedGivenDate(temp.getEndDate(), 1);
         }
         logger.info("完成更新注册用户年龄及等级分布");
@@ -68,6 +70,7 @@ public class UserAttributeServiceImpl implements UserAttributeService {
             userAttribute.setIndexSource(oldUserSourceMap.get(userAttribute.getIndexSource()) == null ? userAttribute.getIndexSource() : oldUserSourceMap.get(userAttribute.getIndexSource()));
         }
         effectedRowNum += this.insertListToDB(userSexList);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfUserSex, "用户性别分布数据", effectedRowNum);
         logger.info("完成更新注册用户性别分布");
         return effectedRowNum;
     }

@@ -1,6 +1,7 @@
 package cn.com.chinalife.ecdata.web.controller;
 
 import cn.com.chinalife.ecdata.entity.ResponseBean;
+import cn.com.chinalife.ecdata.entity.UpdateResult;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
 import cn.com.chinalife.ecdata.service.InitService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
@@ -51,6 +52,24 @@ public class InitController {
         try {
             List<UserSource> userSourceList = initService.getOldUserSource();
             responseBean.setDetailInfo(userSourceList);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
+    @RequestMapping("/getDataStatus")
+    @ResponseBody
+    public String getDataStatus() {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            List<UpdateResult> updateResultList = initService.getUpdateResult();
+            responseBean.setDetailInfo(updateResultList);
         } catch (Exception e) {
             logger.error("异常信息为", e);
             responseBean.setRespCode(1);

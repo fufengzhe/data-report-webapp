@@ -139,6 +139,12 @@ public class CommonUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(DateUtils.getBeforeXDayBasedGivenDate("2018-08-12", 30));
+        try {
+            String s=null;
+            System.out.println(s.length());
+        }catch (Exception e){
+
+        }
+        System.out.println("finish");
     }
 }

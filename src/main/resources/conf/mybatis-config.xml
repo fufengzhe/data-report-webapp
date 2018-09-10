@@ -21,6 +21,7 @@
         <typeAlias alias="UserShare" type="cn.com.chinalife.ecdata.entity.userShare.UserShare" />
         <typeAlias alias="UserRetention" type="cn.com.chinalife.ecdata.entity.user.UserRetention" />
         <typeAlias alias="UserAttribute" type="cn.com.chinalife.ecdata.entity.user.UserAttribute" />
+        <typeAlias alias="UpdateResult" type="cn.com.chinalife.ecdata.entity.UpdateResult" />
     </typeAliases>
 </configuration>
 

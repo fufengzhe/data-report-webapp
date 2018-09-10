@@ -4,6 +4,7 @@ import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.trade.Premium;
 import cn.com.chinalife.ecdata.entity.user.ActiveUser;
 import cn.com.chinalife.ecdata.entity.user.RegisterUser;
+import cn.com.chinalife.ecdata.service.InitService;
 import cn.com.chinalife.ecdata.service.ScheduleService;
 import cn.com.chinalife.ecdata.service.location.LocationAnalysisService;
 import cn.com.chinalife.ecdata.service.trade.LifePremiumService;
@@ -59,6 +60,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     UserAttributeService userAttributeService;
 
+    @Autowired
+    InitService initService;
+
     @Scheduled(cron = "0 0 3 * * ?")
     private void scheduledEntryForUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
@@ -67,21 +71,26 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         logger.info("开始更新注册相关的数据");
         effectedRowNum = this.updateRegister(queryPara);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfRegister, "各渠道注册数据", effectedRowNum);
         logger.info("结束更新注册相关的数据，影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新活跃相关的天维度数据");
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfDate);
         effectedRowNum = this.updateActive(queryPara);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfActive, "各渠道天维度活跃数据", effectedRowNum);
         logger.info("结束更新活跃相关的天维度数据，影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新活跃相关的月维度数据");
         queryPara.setStartDate(DateUtils.getMonthBeginDateUsingYesterday(DateUtils.getYesterday()));
         queryPara.setTimeSpan(CommonConstant.statTimeSpanOfMonth);
         effectedRowNum = this.updateActive(queryPara);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfMonth, CommonConstant.statIndexNameOfActive, "各渠道月维度活跃数据", effectedRowNum);
         logger.info("结束更新活跃相关的月维度数据，影响的条数为 {}", effectedRowNum);
 
         logger.info("开始更新寿险保费相关数据");
         effectedRowNum = this.updateLifePremium(queryPara);
+        // 截止日期
+        initService.updateDataStatus(DateUtils.getYesterday(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfLifePremium, "寿险保费数据", effectedRowNum);
         logger.info("结束更新寿险保费相关数据，影响的条数为 {}", effectedRowNum);
     }
 
@@ -91,9 +100,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = prepareQueryPara();
         int effectedRowNum;
-
         logger.info("开始更新财险保费相关数据");
         effectedRowNum = this.updatePropertyPremium(queryPara);
+        initService.updateDataStatus(DateUtils.getYesterday(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfPropertyPremium, "财险保费数据", effectedRowNum);
         logger.info("结束更新财险保费相关数据，影响的条数为 {}", effectedRowNum);
     }
 
@@ -221,12 +230,14 @@ public class ScheduleServiceImpl implements ScheduleService {
             logger.info("开始更新注册手机号相关的运营商及地理位置分布信息");
             temp = locationAnalysisService.updateRegisterMobileDistribute(queryPara);
             effectedRow += temp;
+            initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfRegisterMobile, "注册手机号运营商及地理位置分布数据", temp);
             logger.info("结束更新注册手机号相关的运营商及地理位置分布信息,影响的条数为 {}", effectedRow);
         }
         if (queryPara.getWhereCondition() == null || CommonConstant.distributeIndexNameOfActiveIP.equals(queryPara.getWhereCondition())) {
             logger.info("开始更新活跃用户IP的运营商及地理位置分布信息");
             temp = locationAnalysisService.updateActiveIPDistribute(queryPara);
             effectedRow += temp;
+            initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfActiveIP, "活跃用户IP运营商及地理位置分布数据", temp);
             logger.info("结束更新活跃用户IP的运营商及地理位置分布信息,影响的条数为 {}", effectedRow);
         }
         return effectedRow;
@@ -257,6 +268,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRow;
         logger.info("开始更新活跃用户小时分布信息");
         effectedRow = locationAnalysisService.updateActiveTimeDis(queryPara);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfActiveHour, "活跃用户小时分布数据", effectedRow);
         logger.info("开始更新活跃用户小时分布信息");
         return effectedRow;
     }
@@ -265,6 +277,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRow;
         logger.info("开始更新USER集合请求情况分布信息");
         effectedRow = locationAnalysisService.updateUserCollectionInvokeDis(queryPara);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfUserCollection, "USER集合请求情况分布数据", effectedRow);
         logger.info("结束更新USER集合请求情况分布信息,影响的条数为 {}", effectedRow);
         return effectedRow;
     }
@@ -300,6 +313,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRowNum = 0;
         logger.info("开始更新共享条款相关数据");
         effectedRowNum = userShareService.updateUserShare(queryPara);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfUserShare, "共享条款数据", effectedRowNum);
         logger.info("结束更新共享条款相关数据，影响的条数为 {}", effectedRowNum);
         return effectedRowNum;
     }
@@ -316,6 +330,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRowNum = 0;
         logger.info("开始更新用户留存相关数据");
         effectedRowNum = userRetentionService.updateUserRetention(queryPara);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, "userRetention", "用户留存数据", effectedRowNum);
         logger.info("结束更新用户留存相关数据，影响的条数为 {}", effectedRowNum);
         return effectedRowNum;
     }

@@ -229,7 +229,7 @@ public class ScheduleController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
         ResponseBean responseBean = new ResponseBean();
         try {
-            int effectedRowsNum = scheduleService.updateUserShare(queryPara);
+                int effectedRowsNum = scheduleService.updateUserShare(queryPara);
             responseBean.setDetailInfo(new StringBuilder("更新行数为").append(effectedRowsNum).toString());
         } catch (Exception e) {
             logger.error("异常信息为", e);
