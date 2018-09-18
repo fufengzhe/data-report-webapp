@@ -77,11 +77,47 @@ public class SurveyIPLocationUtils {
         }
     }
 
+    public static IPInfo getLocationInfoForIPUsingTaoBaoInterface(String ip, boolean useProxy) {
+        try {
+            URIBuilder uriBuilder = new URIBuilder("http://ip.taobao.com/service/getIpInfo2.php");
+            CloseableHttpResponse response = null;
+            if (useProxy) {
+                response = doGetWithProxy(uriBuilder, "ip", ip);
+            } else {
+                response = doGet(uriBuilder, "ip", ip);
+            }
+            String entity = EntityUtils.toString(response.getEntity());
+            if (entity != null && (!entity.toLowerCase().contains("<!doctype html public"))) {
+                JSONObject jsonObject = JSON.parseObject(entity);
+                if (jsonObject != null && ("0".equals(jsonObject.getString("code")))) {
+                    JSONObject data = (JSONObject) jsonObject.get("data");
+                    Object province = data.get("region");
+                    Object city = data.get("city");
+                    IPInfo ipInfo = new IPInfo();
+                    ipInfo.setIp(ip);
+                    if (province == null || city == null) {
+                        return null;
+                    } else {
+                        ipInfo.setProvince(province.toString());
+                        ipInfo.setCity(city.toString());
+                        return ipInfo;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static void printIPLocationInfo() throws Exception {
         List<String> list = getIPListFromFile("IP-List.txt");
         List<IPInfo> ipInfoList = new ArrayList<IPInfo>();
         for (String ip : list) {
-            Thread.sleep(500);
+            Thread.sleep(1000);
             String location = getLocationInfoForIP(ip);
             if (location != null) {
                 System.out.println(ip + "\t" + location);
@@ -102,6 +138,17 @@ public class SurveyIPLocationUtils {
                     ipInfo.setProvince(location.substring(colonIndex + 1, provinceIndex));
                     if (cityIndex < 0) {
                         ipInfo.setCity("未知");
+                        Thread.sleep(1000);
+                        IPInfo ipInfoOfTaoBao = getLocationInfoForIPUsingTaoBaoInterface(ip, false);
+                        if (ipInfoOfTaoBao != null) {
+                            ipInfo = ipInfoOfTaoBao;
+                        } else {
+                            Thread.sleep(1000);
+                            IPInfo ipInfoOfTaoBaoUsingProxy = getLocationInfoForIPUsingTaoBaoInterface(ip, true);
+                            if (ipInfoOfTaoBaoUsingProxy != null) {
+                                ipInfo = ipInfoOfTaoBaoUsingProxy;
+                            }
+                        }
                         failedIPList.add(ip);
                     } else {
                         ipInfo.setCity(location.substring(provinceIndex + 1, cityIndex));

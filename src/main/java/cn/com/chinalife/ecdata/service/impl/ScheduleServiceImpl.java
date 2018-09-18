@@ -204,7 +204,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         html.append("<tr><td>").append(HtmlUtils.getTable(tableOfHour)).append("</tr></td>");
         html.append("</table>");
         html.append("</html>");
-        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"344822404@qq.com"}, "348452440@qq.com", "1635454312@qq.com", "官网活跃数据", html.toString());
+        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"344822404@qq.com","swliux@isoftstone.com"}, "348452440@qq.com", "1635454312@qq.com", "官网活跃数据", html.toString());
 //        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"348452440@qq.com", "348452440@qq.com"}, "348452440@qq.com", "348452440@qq.com", "官网活跃数据", html.toString());
     }
 

@@ -194,7 +194,7 @@
                     $("#dataStatus").html(" 数据准备完成");
                     $("#dataStatus").attr("class", "label label-success glyphicon glyphicon-ok");
                 } else {
-                    $("#dataStatus").html(" 数据准备失败, <a data-toggle='modal' data-target='#myModal'>点击查看详情。 </a>");
+                    $("#dataStatus").html(" 数据准备失败, <a data-toggle='modal' data-target='#myModal' style='cursor:pointer'>点击查看详情。 </a>");
                     $("#dataStatus").attr("class", "label label-warning glyphicon glyphicon-remove");
                     generateDataStatusTable(list);
                 }
