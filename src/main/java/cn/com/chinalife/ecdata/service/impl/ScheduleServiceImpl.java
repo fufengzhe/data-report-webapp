@@ -259,8 +259,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         int temp;
         temp = this.updateActiveTimeDis(queryPara);
         effectedRow += temp;
-        temp = this.updateUserCollectionInvokeDis(queryPara);
-        effectedRow += temp;
+//        temp = this.updateUserCollectionInvokeDis(queryPara);
+//        effectedRow += temp;
         return effectedRow;
     }
 
@@ -269,7 +269,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         logger.info("开始更新活跃用户小时分布信息");
         effectedRow = locationAnalysisService.updateActiveTimeDis(queryPara);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfActiveHour, "活跃用户小时分布数据", effectedRow);
-        logger.info("开始更新活跃用户小时分布信息");
+        logger.info("结束更新活跃用户小时分布信息");
         return effectedRow;
     }
 

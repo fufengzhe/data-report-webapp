@@ -13,6 +13,24 @@
           type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
           type="text/css">
+
+    <!-- GrowingIO Analytics code version 2.1 -->
+    <!-- Copyright 2015-2018 GrowingIO, Inc. More info available at http://www.growingio.com -->
+
+    <script type='text/javascript'>
+        !function(e,t,n,g,i){e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},n=t.createElement("script"),tag=t.getElementsByTagName("script")[0],n.async=1,n.src=('https:'==document.location.protocol?'https://':'http://')+g,tag.parentNode.insertBefore(n,tag)}(window,document,"script","assets.growingio.com/2.1/gio.js","gio");
+        gio('init','935ab9373784460c', {});
+
+        //custom page code begin here
+
+        //custom page code end here
+
+        gio('send');
+
+    </script>
+
+    <!-- End GrowingIO Analytics code version: 2.1 -->
+
 </head>
 <body>
 
@@ -49,7 +67,7 @@
         <li class="list-group-item">2、注册用户手机号归属地及运营商分布 <a href="/ecdata/locationAnalysis/registerMobile"
                                                           class="btn btn-success btn-xs" target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">3、活跃用户数及明细查询 <a href="/ecdata/activeUser/summary" class="btn btn-success btn-xs"
+        <li class="list-group-item">3、活跃用户数及明细查询 <a href="/ecdata/activeUser/summary" class="btn btn-success btn-xs"a
                                                     target="_blank">点击查看</a>
         </li>
         <li class="list-group-item">4、活跃用户IP归属地分布 <a href="/ecdata/locationAnalysis/activeIP"
@@ -190,7 +208,7 @@
             var respCode = data.respCode;
             if (respCode == 0) {
                 list = data.detailInfo;
-                if (list.length == 15) {
+                if (list.length == 14) {
                     $("#dataStatus").html(" 数据准备完成");
                     $("#dataStatus").attr("class", "label label-success glyphicon glyphicon-ok");
                 } else {
@@ -208,7 +226,7 @@
     function generateDataStatusTable(list) {
         var itemArray = ['注册用户数查询', '注册用户手机号归属地及运营商分布', '活跃用户数及明细查询', '活跃用户IP归属地分布', '活跃用户时间段及用户中心请求分布',
             '用户迁徙分布', '注册&活跃综合分布', '共享条款签署分布', '用户留存分析', '用户属性分析（年龄，性别及等级）', '寿险保费查询', '财险保费查询'];
-        var checkIndex = [['registerNum'], ['registerMobile'], ['activeNum'], ['activeIP'], ['activeHour', 'userCollection'], ['migrateCollection', 'migrateCollectionUserNum'],
+        var checkIndex = [['registerNum'], ['registerMobile'], ['activeNum'], ['activeIP'], ['activeHour'], ['migrateCollection', 'migrateCollectionUserNum'],
             ['registerNum', 'activeNum'], ['userShare'], ['userRetention'], ['userSex', 'userAge', 'userRank'], ['lifePremium'], ['propertyPremium']];
         generateDataTable("dataStatusTable", [[{"field": "itemChn"}, {"field": "dataStatus"}], [{"title": "功能项"}, {"title": "是否完成"}]]);
         var dataStatusList = new Array();

@@ -85,7 +85,7 @@
     </div>
     <div class="panel panel-default">
         <div class="panel-heading">
-            用户中心请求分布
+            用户中心请求分布（数据更新截止到2018-09-25）
         </div>
     </div>
 
