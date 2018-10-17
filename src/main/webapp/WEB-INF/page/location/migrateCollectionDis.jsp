@@ -196,8 +196,16 @@
     }
     fromUserSourceDom.selectpicker('refresh');
     toUserSourceDom.selectpicker('refresh');
-    graphChart(list, "migrateGraphChart", "用户迁徙分布");
-    pieChart(list[2], "migrateUserNumPieChart", "用户迁入渠道数分布");
+    if (list[0].length == 0 && list[1].length == 0) {
+        $("#noData").css('display', 'block');
+    } else {
+        graphChart(list, "migrateGraphChart", "用户迁徙分布");
+    }
+    if (list[2].length == 0) {
+        $("#noDataOfUserNum").css('display', 'block');
+    } else {
+        pieChart(list[2], "migrateUserNumPieChart", "用户迁入渠道数分布");
+    }
     function graphChart(data, divId, chartName) {
         if (data[0].length > 23) {
             $("#dataHint").css('display', 'block');
