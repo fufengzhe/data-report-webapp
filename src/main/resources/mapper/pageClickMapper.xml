@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.fupin.PageClickDao">
+
+    <select id="getPageClickListForTimeSpanFromStatTable" resultType="PageClick" parameterType="QueryPara">
+        SELECT PAGE_NAME pageName,sum(VISIT_PV) clickPV,sum(VISIT_UV) clickUV,round(sum(VISIT_PV)/sum(VISIT_UV),2) clickPVPerPerson
+        FROM DMP_SELECT.FUPIN_PAGE_STAT
+        WHERE
+        <![CDATA[
+			        STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY PAGE_NAME ORDER BY SUM (VISIT_PV) DESC
+    </select>
+
+    <select id="getPageClickListForTimeSpanTrendFromStatTable" resultType="PageClick" parameterType="QueryPara">
+        SELECT PAGE_NAME pageName,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-7,'yyyy-mm-dd') THEN VISIT_PV ELSE 0 END) clickPV7,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-6,'yyyy-mm-dd') THEN VISIT_PV ELSE 0 END) clickPV6,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-5,'yyyy-mm-dd') THEN VISIT_PV ELSE 0 END) clickPV5,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-4,'yyyy-mm-dd') THEN VISIT_PV ELSE 0 END) clickPV4,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-3,'yyyy-mm-dd') THEN VISIT_PV ELSE 0 END) clickPV3,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-2,'yyyy-mm-dd') THEN VISIT_PV ELSE 0 END) clickPV2,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-1,'yyyy-mm-dd') THEN VISIT_PV ELSE 0 END) clickPV1,
+
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-7,'yyyy-mm-dd') THEN VISIT_UV ELSE 0 END) clickUV7,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-6,'yyyy-mm-dd') THEN VISIT_UV ELSE 0 END) clickUV6,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-5,'yyyy-mm-dd') THEN VISIT_UV ELSE 0 END) clickUV5,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-4,'yyyy-mm-dd') THEN VISIT_UV ELSE 0 END) clickUV4,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-3,'yyyy-mm-dd') THEN VISIT_UV ELSE 0 END) clickUV3,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-2,'yyyy-mm-dd') THEN VISIT_UV ELSE 0 END) clickUV2,
+        SUM ( CASE WHEN STAT_TIME = to_char(sysdate-1,'yyyy-mm-dd') THEN VISIT_UV ELSE 0 END) clickUV1
+        FROM DMP_SELECT.FUPIN_PAGE_STAT
+        WHERE
+        <![CDATA[
+			      STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        GROUP BY PAGE_NAME
+    </select>
+
+    <select id="getPageClickListForTimeSpan" resultType="PageClick" parameterType="QueryPara">
+        SELECT date(create_time) statDate,'D' statTimeSpan,page_url pageUrl,
+        IF(locate('topicpageId',page_url)>0,SUBSTRING_INDEX(SUBSTRING_INDEX(page_url,'topicpageId=',-1),'&amp;',1),0) pageId,
+        count(*) clickPV,count(DISTINCT member_id) clickUV
+        FROM
+        site_stat
+        WHERE
+        create_time >= concat(#{startDate},' 00:00:00') AND
+        <![CDATA[
+        create_time <= concat(#{endDate},' 23:59:59')
+        ]]>
+        AND (
+	     page_url LIKE 'https://www.emateglobal.com/fupin/fuPinIndex.html%'
+	    OR page_url LIKE 'https://www.emateglobal.com/fupin/queryFupinTuijianProductList.html%'
+	    OR page_url LIKE 'https://www.emateglobal.com/app/topicPageDetail.html?topicpageId=2000313&amp;vercode=3768acfad1b74c559d437d4f209e43b7%'
+	    OR page_url LIKE 'https://www.emateglobal.com/app/topicPageDetail.html?topicpageId=2000310&amp;vercode=eedbc8eb4bd34d6b88cae2283eddae6f%'
+        ) GROUP BY page_url,date(create_time);
+    </select>
+
+    <select id="getTopicPageList" resultType="PageClick">
+        SELECT id pageId,SUBSTRING_INDEX(SUBSTRING_INDEX(data,'"title":"',-1),'","items"',1) pageName
+        FROM
+        app_topicpage
+    </select>
+
+    <select id="getNonTopicPageList" resultType="PageClick">
+        SELECT PAGE_URL pageUrl,PAGE_NAME pageName FROM
+        DMP_SELECT.FUPIN_PAGE_INFO
+    </select>
+
+    <insert id="updatePageClick" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.FUPIN_PAGE_STAT
+        (STAT_TIME,STAT_TIME_SPAN, PAGE_NAME, PAGE_URL, VISIT_PV, VISIT_UV,CREATE_TIME,UPDATE_TIME)
+        SELECT t1.statDate,t1.statTimeSpan,t1.pageName,t1.pageUrl,t1.clickPV,t1.clickUV,t1.createTime,t1.updateTime
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.statDate,jdbcType=VARCHAR} statDate,
+            #{item.statTimeSpan,jdbcType=VARCHAR} statTimeSpan,
+            #{item.pageName,jdbcType=VARCHAR} pageName,
+            #{item.pageUrl,jdbcType=VARCHAR} pageUrl,
+            #{item.clickPV,jdbcType=NUMERIC} clickPV,
+            #{item.clickUV,jdbcType=NUMERIC} clickUV,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
+</mapper>

@@ -56,7 +56,9 @@
             <mvc:exclude-mapping path="/static/**"/>
             <mvc:exclude-mapping path="/init/unauthorized"/>
             <mvc:exclude-mapping path="/init/getDataStatus"/>
+            <mvc:exclude-mapping path="/init/getFupinDataStatus"/>
             <mvc:exclude-mapping path="/external/userCenter"/>
+            <mvc:exclude-mapping path="/external/fupin"/>
             <!--<mvc:exclude-mapping path="/salesman/**"/>-->
             <!--<mvc:exclude-mapping path="/activeUser/summary"/>-->
             <!--<mvc:exclude-mapping path="/registerUser/summary"/>-->

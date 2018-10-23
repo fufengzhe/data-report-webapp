@@ -22,6 +22,7 @@
         <typeAlias alias="UserRetention" type="cn.com.chinalife.ecdata.entity.user.UserRetention" />
         <typeAlias alias="UserAttribute" type="cn.com.chinalife.ecdata.entity.user.UserAttribute" />
         <typeAlias alias="UpdateResult" type="cn.com.chinalife.ecdata.entity.UpdateResult" />
+        <typeAlias alias="PageClick" type="cn.com.chinalife.ecdata.entity.fupin.PageClick" />
     </typeAliases>
 </configuration>
 

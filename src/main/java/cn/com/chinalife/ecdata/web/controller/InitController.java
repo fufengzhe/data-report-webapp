@@ -80,6 +80,25 @@ public class InitController {
         }
     }
 
+    @RequestMapping("/getFupinDataStatus")
+    @ResponseBody
+    public String getFupinDataStatus() {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            List<UpdateResult> updateResultList = initService.getFupinUpdateResult();
+            responseBean.setDetailInfo(updateResultList);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
+
     @RequestMapping("/unauthorized")
     public String bankAndMobile(Model model) {
         return "common/unauthorized";

@@ -32,4 +32,19 @@ public class ExternalController {
         }
     }
 
+    @RequestMapping("/fupin")
+    public String fupin(Model model) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return "external/fupin";
+        }
+    }
+
 }

@@ -89,10 +89,9 @@ public class UserLogController {
     }
 
     @RequestMapping("/toLogin")
-    public String bankAndMobile(Model model) {
+    public String toLogin(Model model) {
         model.addAttribute("jsVersion", CommonConstant.jsVersion);
         return "log/toLogin";
     }
-
 
 }

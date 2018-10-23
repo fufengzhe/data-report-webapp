@@ -29,4 +29,6 @@ public interface InitService {
     int updateDataStatus(String statTime, String statTimeSpan, String indexName, String indexDesc, Integer effectedRowNum);
 
     List<UpdateResult> getUpdateResult();
+
+    List<UpdateResult> getFupinUpdateResult();
 }

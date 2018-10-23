@@ -1,6 +1,5 @@
 package cn.com.chinalife.ecdata.utils;
 
-import cn.com.chinalife.ecdata.entity.IPInfo;
 import cn.com.chinalife.ecdata.entity.trade.Premium;
 import cn.com.chinalife.ecdata.entity.user.UserSource;
 
@@ -140,8 +139,5 @@ public class CommonUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        IPInfo ipInfo=new IPInfo();
-        System.out.println(ipInfo);
-        System.out.println(ipInfo.hashCode());
     }
 }

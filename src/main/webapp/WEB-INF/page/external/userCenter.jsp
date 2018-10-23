@@ -71,7 +71,16 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
 <script>
     $(document).ready(function () {
-        var username = document.cookie.substr(("username".length + 1));
+        var cookieStr = document.cookie;
+        var start = cookieStr.indexOf("username");
+        var username="";
+        if (start >= 0) {
+            username = cookieStr.substring((start + "username".length + 1));
+            var end = username.indexOf(";");
+            if (end > 0) {
+                username = username.substring(0, end);
+            }
+        }
         if (username.length == 0) {
             document.getElementById('log').innerHTML = "登录"
             document.getElementById('log').href = "/ecdata/user/toLogin";

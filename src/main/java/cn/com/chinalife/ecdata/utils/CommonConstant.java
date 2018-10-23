@@ -15,6 +15,7 @@ public class CommonConstant {
     public static String downFailureStr = "下载失败!";
     public static String userAuthDataSource = "userAuthDataSource";
     public static String businessDataSource = "businessDataSource";
+    public static String fupinDataSource = "fupinDataSource";
     public static String notLoggedIn = "notLoggedIn";
     public static String unauthorized = "unauthorized";
     public static String statTimeSpanOfDate = "D";
@@ -35,6 +36,7 @@ public class CommonConstant {
     public static String statIndexNameOfUserAge = "userAge";
     public static String statIndexNameOfUserRank = "userRank";
     public static String statIndexNameOfUserSex = "userSex";
+    public static String statIndexNameOfFupinPageClick = "fupinPageClick";
     public static String userSourceOfAll = "ALL";
     public static int jsVersion = 12;
     public static List<String> statIndexNameListOfPropertyPremium;

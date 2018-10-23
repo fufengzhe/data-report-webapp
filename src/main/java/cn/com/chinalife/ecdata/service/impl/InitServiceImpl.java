@@ -115,5 +115,13 @@ public class InitServiceImpl implements InitService {
         logger.info("service返回结果为 {}", JSON.toJSONString(updateResultList));
         return updateResultList;
     }
+
+    public List<UpdateResult> getFupinUpdateResult() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<UpdateResult> updateResultList = initDao.getFupinUpdateResult();
+        logger.info("service返回结果为 {}", JSON.toJSONString(updateResultList));
+        return updateResultList;
+    }
 }
 

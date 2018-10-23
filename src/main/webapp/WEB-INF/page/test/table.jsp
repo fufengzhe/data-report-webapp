@@ -64,6 +64,13 @@
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <script>
+    $(document).ready(function(){
+        mergeBootstrapCell();
+    });
+    function mergeBootstrapCell() {
+        $("#table").bootstrapTable('mergeCells', {index: 1, field: 'registerTime', rowspan: 3});
+        $("#table").bootstrapTable('mergeCells', {index: 4, field: 'registerTime', rowspan: 3});
+    }
     $('#table').bootstrapTable({
         cache: false,
         pagination: true,
@@ -71,6 +78,9 @@
         pageList: [5, 10],
         sortable: true,
         sortOrder: 'asc',
+        onPageChange: function(number, size) {
+            mergeBootstrapCell();
+        },
         columns: [[
             {
                 field: 'registerTime',
@@ -107,7 +117,7 @@
                 align: 'center',
                 sortable: true,
             }
-        ]]
+        ]],
     });
 
     $("#table").bootstrapTable('load', [{
@@ -147,7 +157,37 @@
             "oneOffset": 22.55,
             "twoOffset": 11.55,
             "threeOffset": null,
-        },]);
+        },{
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": 23.55
+        }, {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": 1.55
+        }, {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": 44.55
+        }, {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": 66.55
+        }, {
+            "registerTime": "2018-01-02",
+            "registerNum": 33,
+            "oneOffset": 22.55,
+            "twoOffset": 11.55,
+            "threeOffset": null,
+        }]);
 </script>
 
 </body>

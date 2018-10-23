@@ -24,4 +24,6 @@ public interface InitDao {
     int updateDataStatus(List<UpdateResult> updateResultList);
 
     List<UpdateResult> getUpdateResult();
+
+    List<UpdateResult> getFupinUpdateResult();
 }
