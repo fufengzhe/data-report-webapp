@@ -37,6 +37,7 @@ public class CommonConstant {
     public static String statIndexNameOfUserRank = "userRank";
     public static String statIndexNameOfUserSex = "userSex";
     public static String statIndexNameOfFupinPageClick = "fupinPageClick";
+    public static String statIndexNameOfFupinOrderStat = "fupinOrderStat";
     public static String userSourceOfAll = "ALL";
     public static int jsVersion = 12;
     public static List<String> statIndexNameListOfPropertyPremium;

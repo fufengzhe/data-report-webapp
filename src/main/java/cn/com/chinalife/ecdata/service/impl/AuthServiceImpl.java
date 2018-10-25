@@ -6,6 +6,7 @@ import cn.com.chinalife.ecdata.entity.ResponseBean;
 import cn.com.chinalife.ecdata.entity.user.LogUser;
 import cn.com.chinalife.ecdata.service.AuthService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
+import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     private String getResourceUsingUsername(LogUser logUser) {
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         LogUser temp = logUserDao.findUserResourcesUsingName(logUser);
         if (temp != null) {
             return temp.getResources();

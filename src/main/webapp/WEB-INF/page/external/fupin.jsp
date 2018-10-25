@@ -46,6 +46,9 @@
         <li class="list-group-item">1、扶贫相关页面点击数查询 <a href="/ecdata/pageClick/summary" class="btn btn-success btn-xs"
                                                  target="_blank">点击查看</a>
         </li>
+        <li class="list-group-item">2、扶贫商品订单数查询 <a href="/ecdata/orderStat/summary" class="btn btn-success btn-xs"
+                                                     target="_blank">点击查看</a>
+        </li>
     </ul>
 </div>
 
@@ -84,8 +87,8 @@
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
-<%--<script type="text/javascript"--%>
-        <%--src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>--%>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
 <script>
     $(document).ready(function () {
         var cookieStr = document.cookie;
@@ -135,7 +138,7 @@
             var respCode = data.respCode;
             if (respCode == 0) {
                 list = data.detailInfo;
-                if (list.length == 1) {
+                if (list.length == 2) {
                     $("#dataStatus").html(" 数据准备完成");
                     $("#dataStatus").attr("class", "label label-success glyphicon glyphicon-ok");
                 } else {
@@ -151,8 +154,8 @@
     });
 
     function generateDataStatusTable(list) {
-        var itemArray = ['扶贫相关页面点击数查询'];
-        var checkIndex = [['fupinPageClick']];
+        var itemArray = ['扶贫相关页面点击数查询','扶贫商品订单数查询'];
+        var checkIndex = [['fupinPageClick'],['fupinOrderStat']];
         generateDataTable("dataStatusTable", [[{"field": "itemChn"}, {"field": "dataStatus"}], [{"title": "功能项"}, {"title": "是否完成"}]]);
         var dataStatusList = new Array();
         for (var i = 0; i < itemArray.length; i++) {

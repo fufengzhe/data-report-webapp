@@ -7,4 +7,6 @@ import cn.com.chinalife.ecdata.entity.query.QueryPara;
  */
 public interface FupinScheduleService {
     int updatePageClick(QueryPara queryPara);
+
+    int updateOrderStat(QueryPara queryPara);
 }

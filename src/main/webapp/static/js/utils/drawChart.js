@@ -1,4 +1,4 @@
-function drawPieChart(divId, chartName, legendData, seriesData) {
+function drawPieChart(divId, chartName, legendData, seriesData,seriesName) {
     var myChart = echarts.init(document.getElementById(divId));
     var option = {
         title: {
@@ -17,7 +17,7 @@ function drawPieChart(divId, chartName, legendData, seriesData) {
         },
         series: [
             {
-                name: '访问来源',
+                name: seriesName==undefined?'访问来源':seriesName,
                 type: 'pie',
                 radius: '55%',
                 center: ['50%', '60%'],

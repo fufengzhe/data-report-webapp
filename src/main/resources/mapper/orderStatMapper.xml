@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.fupin.OrderStatDao">
+
+    <select id="getOrderStatListForTimeSpanFromStatTable" resultType="OrderStat" parameterType="QueryPara">
+        SELECT p.id productId,p.NAME productName,count(*) orderNum,sum(og.number) goodsNum,sum(ob.money_amount) orderAmount,
+        round(sum(ob.money_amount)/count(*),2) orderAverage
+        FROM order_book ob
+        INNER JOIN order_goods og ON ob.order_no = og.order_no
+        AND ob. STATUS IN (3, 4, 5)
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                    AND ob.create_time <= concat(#{endDate},' 23:59:59')
+        ]]>
+        INNER JOIN product p ON og.product_id = p.id AND p.fuping = 1
+        <if test="whereCondition != null and whereCondition != ''">
+            AND p.id IN ${whereCondition}
+        </if>
+        GROUP BY p.id,p. NAME ORDER BY orderNum DESC
+    </select>
+
+    <select id="getOrderStatListForTimeSpanTrendFromStatTable" resultType="OrderStat" parameterType="QueryPara">
+         SELECT '所有商品' productName,
+          count(IF(date(ob.create_time)=date(CURDATE()-7),1,NULL)) orderNum7,
+         count(IF(date(ob.create_time)=date(CURDATE()-6),1,NULL)) orderNum6,
+         count(IF(date(ob.create_time)=date(CURDATE()-5),1,NULL)) orderNum5,
+         count(IF(date(ob.create_time)=date(CURDATE()-4),1,NULL)) orderNum4,
+         count(IF(date(ob.create_time)=date(CURDATE()-3),1,NULL)) orderNum3,
+         count(IF(date(ob.create_time)=date(CURDATE()-2),1,NULL)) orderNum2,
+         count(IF(date(ob.create_time)=date(CURDATE()-1),1,NULL)) orderNum1
+         FROM order_book ob
+        INNER JOIN order_goods og ON ob.order_no = og.order_no
+        AND ob. STATUS IN (3, 4, 5)
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                    AND ob.create_time <= concat(#{endDate},' 23:59:59')
+        ]]>
+        INNER JOIN product p ON og.product_id = p.id AND p.fuping = 1
+        GROUP BY '所有商品'
+    </select>
+
+    <select id="getOrderProductList" resultType="OrderStat">
+        SELECT p.id productId,p.NAME productName
+        FROM order_book ob
+        INNER JOIN order_goods og ON ob.order_no = og.order_no
+        AND ob. STATUS IN (3, 4, 5)
+        INNER JOIN product p ON og.product_id = p.id AND p.fuping = 1
+        GROUP BY p.id,p. NAME
+    </select>
+
+    <select id="getOrderStatListForTimeSpan" resultType="OrderStat" parameterType="QueryPara">
+
+    </select>
+
+    <insert id="updateOrderStat" parameterType="java.util.List">
+    </insert>
+</mapper>

@@ -23,6 +23,7 @@
         <typeAlias alias="UserAttribute" type="cn.com.chinalife.ecdata.entity.user.UserAttribute" />
         <typeAlias alias="UpdateResult" type="cn.com.chinalife.ecdata.entity.UpdateResult" />
         <typeAlias alias="PageClick" type="cn.com.chinalife.ecdata.entity.fupin.PageClick" />
+        <typeAlias alias="OrderStat" type="cn.com.chinalife.ecdata.entity.fupin.OrderStat" />
     </typeAliases>
 </configuration>
 
