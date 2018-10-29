@@ -4,10 +4,7 @@ import cn.com.chinalife.ecdata.dao.sqlDao.fupin.PageClickDao;
 import cn.com.chinalife.ecdata.entity.fupin.PageClick;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.service.fupin.PageClickService;
-import cn.com.chinalife.ecdata.utils.CommonConstant;
-import cn.com.chinalife.ecdata.utils.CommonUtils;
-import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
-import cn.com.chinalife.ecdata.utils.DateUtils;
+import cn.com.chinalife.ecdata.utils.*;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +71,9 @@ public class PageClickServiceImpl implements PageClickService {
 
     public List<PageClick> getPageClickListForTimeSpan(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        List<String> fupinPageUrlList = FileUtils.getStrListFromSpecifiedFile("fupinPageUrlList.txt");
+        String pageUrlFilter = getPageUrlFilterUsingList(fupinPageUrlList);
+        queryPara.setWhereCondition(pageUrlFilter);
         DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
         List<PageClick> pageClickList = pageClickDao.getPageClickListForTimeSpan(queryPara);
         List<PageClick> topicPageList = pageClickDao.getTopicPageList();
@@ -82,6 +82,20 @@ public class PageClickServiceImpl implements PageClickService {
         this.setChnNameForPage(pageClickList, topicPageList, nonTopicPageList);
         logger.info("service返回结果为 {}", JSON.toJSONString(pageClickList));
         return pageClickList;
+    }
+
+    private String getPageUrlFilterUsingList(List<String> fupinPageUrlList) {
+        StringBuilder pageUrlFilter = new StringBuilder(" (");
+        if (fupinPageUrlList != null && fupinPageUrlList.size() > 0) {
+            pageUrlFilter.append(" page_url LIKE '").append(fupinPageUrlList.get(0)).append("'");
+            for (int i = 1; i < fupinPageUrlList.size(); i++) {
+                pageUrlFilter.append(" OR page_url LIKE '").append(fupinPageUrlList.get(i)).append("'");
+            }
+            pageUrlFilter.append(" )");
+            return pageUrlFilter.toString();
+        } else {
+            return null;
+        }
     }
 
     private void setChnNameForPage(List<PageClick> pageClickList, List<PageClick> topicPageList, List<PageClick> nonTopicPageList) {

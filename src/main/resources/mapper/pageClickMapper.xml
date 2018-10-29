@@ -54,12 +54,10 @@
         <![CDATA[
         create_time <= concat(#{endDate},' 23:59:59')
         ]]>
-        AND (
-	     page_url LIKE 'https://www.emateglobal.com/fupin/fuPinIndex.html%'
-	    OR page_url LIKE 'https://www.emateglobal.com/fupin/queryFupinTuijianProductList.html%'
-	    OR page_url LIKE 'https://www.emateglobal.com/app/topicPageDetail.html?topicpageId=2000313&amp;vercode=3768acfad1b74c559d437d4f209e43b7%'
-	    OR page_url LIKE 'https://www.emateglobal.com/app/topicPageDetail.html?topicpageId=2000310&amp;vercode=eedbc8eb4bd34d6b88cae2283eddae6f%'
-        ) GROUP BY page_url,date(create_time);
+        <if test="whereCondition != null and whereCondition != ''">
+            AND ${whereCondition}
+        </if>
+        GROUP BY page_url,date(create_time);
     </select>
 
     <select id="getTopicPageList" resultType="PageClick">
