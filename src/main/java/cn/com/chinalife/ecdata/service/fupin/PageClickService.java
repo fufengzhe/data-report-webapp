@@ -17,4 +17,8 @@ public interface PageClickService {
     List<PageClick> getPageClickListForTimeSpanFromStatTable(QueryPara queryPara);
 
     int updatePageClick(List<PageClick> pageClickList);
+
+    List<PageClick> getPageClickIPInfoList(QueryPara queryPara);
+
+    int updatePageClickIPInfo(List<PageClick> pageClickIPInfoList);
 }

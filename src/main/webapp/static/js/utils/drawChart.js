@@ -1,9 +1,9 @@
-function drawPieChart(divId, chartName, legendData, seriesData,seriesName) {
+function drawPieChart(divId, chartName, legendData, seriesData,seriesName,titleLocation) {
     var myChart = echarts.init(document.getElementById(divId));
     var option = {
         title: {
             text: chartName,
-            x: 'center'
+            x: titleLocation==undefined?'center':titleLocation,
         },
         tooltip: {
             trigger: 'item',

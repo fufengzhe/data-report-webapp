@@ -22,4 +22,8 @@ public interface PageClickDao {
     List<PageClick> getPageClickListForTimeSpanFromStatTable(QueryPara queryPara);
 
     List<PageClick> getPageClickListForTimeSpanTrendFromStatTable(QueryPara queryPara);
+
+    List<PageClick> getPageClickIPInfoList(QueryPara queryPara);
+
+    int updatePageClickIPInfo(List<PageClick> pageClickIPInfoList);
 }

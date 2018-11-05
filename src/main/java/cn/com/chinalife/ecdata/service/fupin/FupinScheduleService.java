@@ -9,4 +9,6 @@ public interface FupinScheduleService {
     int updatePageClick(QueryPara queryPara);
 
     int updateOrderStat(QueryPara queryPara);
+
+    int updatePageClickIPInfo(QueryPara queryPara);
 }

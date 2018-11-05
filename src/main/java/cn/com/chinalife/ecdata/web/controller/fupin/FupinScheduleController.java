@@ -40,6 +40,24 @@ public class FupinScheduleController {
         }
     }
 
+    @RequestMapping("/updatePageClickIPInfo")
+    @ResponseBody
+    public String updatePageClickIPInfo(QueryPara queryPara) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            int effectedRowsNum = fupinScheduleService.updatePageClickIPInfo(queryPara);
+            responseBean.setDetailInfo("更新行数为" + effectedRowsNum);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.updateFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
     @RequestMapping("/updateOrderStat")
     @ResponseBody
     public String updateOrderStat(QueryPara queryPara) {
@@ -57,5 +75,6 @@ public class FupinScheduleController {
             return JSON.toJSONString(responseBean);
         }
     }
+
 
 }

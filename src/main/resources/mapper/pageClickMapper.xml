@@ -60,6 +60,21 @@
         GROUP BY page_url,date(create_time);
     </select>
 
+    <select id="getPageClickIPInfoList" resultType="PageClick" parameterType="QueryPara">
+        SELECT date(create_time) statDate,'D' statTimeSpan,ip_address ip
+        FROM
+        site_stat
+        WHERE
+        create_time >= concat(#{startDate},' 00:00:00') AND
+        <![CDATA[
+        create_time <= concat(#{endDate},' 23:59:59')
+        ]]>
+        <if test="whereCondition != null and whereCondition != ''">
+            AND ${whereCondition}
+        </if>
+    </select>
+
+
     <select id="getTopicPageList" resultType="PageClick">
         SELECT id pageId,SUBSTRING_INDEX(SUBSTRING_INDEX(data,'"title":"',-1),'","items"',1) pageName
         FROM
@@ -84,6 +99,26 @@
             #{item.pageUrl,jdbcType=VARCHAR} pageUrl,
             #{item.clickPV,jdbcType=NUMERIC} clickPV,
             #{item.clickUV,jdbcType=NUMERIC} clickUV,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
+
+    <insert id="updatePageClickIPInfo" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.FUPIN_DISTRIBUTE_RESULT
+        (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, DISTRIBUTE_TYPE, DISTRIBUTE_NAME,INDEX_VALUE,CREATE_TIME,UPDATE_TIME)
+        SELECT t1.statDate,t1.statTimeSpan,t1.indexName,t1.disType,t1.disName,t1.indexValue,t1.createTime,t1.updateTime
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.statDate,jdbcType=VARCHAR} statDate,
+            #{item.statTimeSpan,jdbcType=VARCHAR} statTimeSpan,
+            #{item.indexName,jdbcType=VARCHAR} indexName,
+            #{item.disType,jdbcType=VARCHAR} disType,
+            #{item.disName,jdbcType=VARCHAR} disName,
+            #{item.indexValue,jdbcType=NUMERIC} indexValue,
             sysdate createTime,
             sysdate updateTime
             FROM dual

@@ -7,6 +7,7 @@ public class IPInfo {
     private String ip;
     private String province;
     private String city;
+    private String company;
 
     public String getIp() {
         return ip;
@@ -32,12 +33,21 @@ public class IPInfo {
         this.city = city;
     }
 
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
     @Override
     public String toString() {
         return "IPInfo{" +
                 "ip='" + ip + '\'' +
                 ", province='" + province + '\'' +
                 ", city='" + city + '\'' +
+                ", company='" + company + '\'' +
                 '}';
     }
 }

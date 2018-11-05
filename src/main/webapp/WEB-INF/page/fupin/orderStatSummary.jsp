@@ -23,7 +23,7 @@
 <div class="container-fluid text-center">
     <div class="panel panel-default">
         <div class="panel-heading">
-            扶贫商品订单数查询
+            扶贫商品订单数查询(饼图只展示订单数top10订单，所有订单相关信息见表格)
         </div>
     </div>
 
@@ -160,7 +160,8 @@
         var legendData = [];
         var seriesData1 = [];
         var seriesData2 = [];
-        for (var i = 0; i < data.length; i++) {
+        var maxLoop = 10 < data.length ? 10 : data.length;
+        for (var i = 0; i < maxLoop; i++) {
             legendData.push(data[i].productName);
             seriesData1.push({value: data[i].orderNum, name: data[i].productName});
             seriesData2.push({value: data[i].orderAmount, name: data[i].productName});

@@ -56,11 +56,30 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         logger.info("结束更新扶贫订单相关数据，影响的条数为 {}", effectedRowNum);
     }
 
+    @Scheduled(cron = "0 0 2 * * ?")
+    private void scheduledEntryForPageClickIPInfoUpdate() throws InterruptedException, ParseException {
+        // 默认更新昨天所有渠道的数据
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        int effectedRowNum;
+        logger.info("开始扶贫相关页面的点击IP分布数据");
+        effectedRowNum = this.updatePageClickIPInfo(queryPara);
+        logger.info("结束扶贫相关页面的点击IP分布数据，影响的条数为 {}", effectedRowNum);
+    }
+
     // 根据前端传入的日期及渠道更新相应的数据，如无渠道相关信息则更新改日期区间内所有渠道的数据
     public int updatePageClick(QueryPara queryPara) {
         List<PageClick> pageClickList = pageClickService.getPageClickListForTimeSpan(queryPara);
         int effectedRowNum = pageClickService.updatePageClick(pageClickList);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfFupinPageClick, "扶贫相关页面点击数据", effectedRowNum);
+        return effectedRowNum;
+    }
+
+    public int updatePageClickIPInfo(QueryPara queryPara) {
+        List<PageClick> pageClickIPInfoList = pageClickService.getPageClickIPInfoList(queryPara);
+        int effectedRowNum = pageClickService.updatePageClickIPInfo(pageClickIPInfoList);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfFupinPageClickIPInfo, "扶贫相关页面点击IP分布数据", effectedRowNum);
         return effectedRowNum;
     }
 
@@ -72,4 +91,5 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfFupinOrderStat, "扶贫商品订单数据", effectedRowNum);
         return effectedRowNum;
     }
+
 }

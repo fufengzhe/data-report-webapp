@@ -21,13 +21,13 @@
 
     <select id="getOrderStatListForTimeSpanTrendFromStatTable" resultType="OrderStat" parameterType="QueryPara">
          SELECT '所有商品' productName,
-          count(IF(date(ob.create_time)=date(CURDATE()-7),1,NULL)) orderNum7,
-         count(IF(date(ob.create_time)=date(CURDATE()-6),1,NULL)) orderNum6,
-         count(IF(date(ob.create_time)=date(CURDATE()-5),1,NULL)) orderNum5,
-         count(IF(date(ob.create_time)=date(CURDATE()-4),1,NULL)) orderNum4,
-         count(IF(date(ob.create_time)=date(CURDATE()-3),1,NULL)) orderNum3,
-         count(IF(date(ob.create_time)=date(CURDATE()-2),1,NULL)) orderNum2,
-         count(IF(date(ob.create_time)=date(CURDATE()-1),1,NULL)) orderNum1
+          count(IF(date(ob.create_time)=DATE_SUB(CURDATE(),INTERVAL 7 DAY),1,NULL)) orderNum7,
+         count(IF(date(ob.create_time)=DATE_SUB(CURDATE(),INTERVAL 6 DAY),1,NULL)) orderNum6,
+         count(IF(date(ob.create_time)=DATE_SUB(CURDATE(),INTERVAL 5 DAY),1,NULL)) orderNum5,
+         count(IF(date(ob.create_time)=DATE_SUB(CURDATE(),INTERVAL 4 DAY),1,NULL)) orderNum4,
+         count(IF(date(ob.create_time)=DATE_SUB(CURDATE(),INTERVAL 3 DAY),1,NULL)) orderNum3,
+         count(IF(date(ob.create_time)=DATE_SUB(CURDATE(),INTERVAL 2 DAY),1,NULL)) orderNum2,
+         count(IF(date(ob.create_time)=DATE_SUB(CURDATE(),INTERVAL 1 DAY),1,NULL)) orderNum1
          FROM order_book ob
         INNER JOIN order_goods og ON ob.order_no = og.order_no
         AND ob. STATUS IN (3, 4, 5)

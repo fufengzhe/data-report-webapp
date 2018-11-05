@@ -36,6 +36,14 @@ public class PageClick {
     private BigDecimal clickPVPerPerson5;
     private BigDecimal clickPVPerPerson6;
     private BigDecimal clickPVPerPerson7;
+    private String ip;
+    private String province;
+    private String city;
+    private String company;
+    private String indexName;
+    private String disType;
+    private String disName;
+    private Integer indexValue;
 
     public String getStatDate() {
         return statDate;
@@ -277,6 +285,70 @@ public class PageClick {
         this.clickPVPerPerson7 = clickPVPerPerson7;
     }
 
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
+    public String getDisType() {
+        return disType;
+    }
+
+    public void setDisType(String disType) {
+        this.disType = disType;
+    }
+
+    public Integer getIndexValue() {
+        return indexValue;
+    }
+
+    public void setIndexValue(Integer indexValue) {
+        this.indexValue = indexValue;
+    }
+
+    public String getDisName() {
+        return disName;
+    }
+
+    public void setDisName(String disName) {
+        this.disName = disName;
+    }
+
     @Override
     public String toString() {
         return "PageClick{" +
@@ -310,6 +382,14 @@ public class PageClick {
                 ", clickPVPerPerson5=" + clickPVPerPerson5 +
                 ", clickPVPerPerson6=" + clickPVPerPerson6 +
                 ", clickPVPerPerson7=" + clickPVPerPerson7 +
+                ", ip='" + ip + '\'' +
+                ", province='" + province + '\'' +
+                ", city='" + city + '\'' +
+                ", company='" + company + '\'' +
+                ", indexName='" + indexName + '\'' +
+                ", disType='" + disType + '\'' +
+                ", disName='" + disName + '\'' +
+                ", indexValue=" + indexValue +
                 '}';
     }
 }

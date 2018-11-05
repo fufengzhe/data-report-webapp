@@ -1,6 +1,7 @@
 package cn.com.chinalife.ecdata.service.impl.fupin;
 
 import cn.com.chinalife.ecdata.dao.sqlDao.fupin.PageClickDao;
+import cn.com.chinalife.ecdata.entity.IPInfo;
 import cn.com.chinalife.ecdata.entity.fupin.PageClick;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.service.fupin.PageClickService;
@@ -84,6 +85,65 @@ public class PageClickServiceImpl implements PageClickService {
         return pageClickList;
     }
 
+    public List<PageClick> getPageClickIPInfoList(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        List<String> fupinPageUrlList = FileUtils.getStrListFromSpecifiedFile("fupinPageUrlList.txt");
+        String pageUrlFilter = getPageUrlFilterUsingList(fupinPageUrlList);
+        queryPara.setWhereCondition(pageUrlFilter);
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
+        List<PageClick> pageClickIPList = pageClickDao.getPageClickIPInfoList(queryPara);
+        List<PageClick> pageClickList = this.getDistributeInfoUsingIPList(pageClickIPList);
+        logger.info("service返回结果为 {}", JSON.toJSONString(pageClickList));
+        return pageClickList;
+    }
+
+    private List<PageClick> getDistributeInfoUsingIPList(List<PageClick> pageClickIPList) {
+        List<PageClick> ipDistributeInfoList = new ArrayList<PageClick>();
+        Map<String, Integer> keyAndValue = new HashMap<String, Integer>();
+        logger.info("开始调用第三方接口,需要处理的list大小为 {}", pageClickIPList.size());
+        for (int i = 0; i < pageClickIPList.size(); i++) {
+            PageClick pageIP = pageClickIPList.get(i);
+            IPInfo ipInfo = IPInfoUtils.getIPInfoList(pageIP.getIp(), 1);
+            if (ipInfo != null) {
+                StringBuilder keyOfLocation = new StringBuilder(pageIP.getStatDate()).append("&").append(pageIP.getStatTimeSpan()).append("&").
+                        append(CommonConstant.statIndexNameOfFupinPageClickIPInfo).append("&").append(1).append("&").append(ipInfo.getProvince());
+                StringBuilder keyOfCompany = new StringBuilder(pageIP.getStatDate()).append("&").append(pageIP.getStatTimeSpan()).append("&").
+                        append(CommonConstant.statIndexNameOfFupinPageClickIPInfo).append("&").append(2).append("&").append(ipInfo.getCompany());
+                Integer locationValue = keyAndValue.get(keyOfLocation.toString());
+                if (locationValue == null) {
+                    locationValue = 0;
+                }
+                keyAndValue.put(keyOfLocation.toString(), ++locationValue);
+                Integer companyValue = keyAndValue.get(keyOfCompany.toString());
+                if (companyValue == null) {
+                    companyValue = 0;
+                }
+                keyAndValue.put(keyOfCompany.toString(), ++companyValue);
+            }
+            if (i % 100 == 0) {
+                logger.info("第三方接口调用中，调用次数为 {}", i);
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                logger.error("线程暂停异常，异常信息为", e);
+            }
+        }
+        for (Map.Entry<String, Integer> entry : keyAndValue.entrySet()) {
+            String[] key = entry.getKey().split("&");
+            Integer value = entry.getValue();
+            PageClick pageClick = new PageClick();
+            pageClick.setStatDate(key[0]);
+            pageClick.setStatTimeSpan(key[1]);
+            pageClick.setIndexName(key[2]);
+            pageClick.setDisType(key[3]);
+            pageClick.setDisName(key[4]);
+            pageClick.setIndexValue(value);
+            ipDistributeInfoList.add(pageClick);
+        }
+        return ipDistributeInfoList;
+    }
+
     private String getPageUrlFilterUsingList(List<String> fupinPageUrlList) {
         StringBuilder pageUrlFilter = new StringBuilder(" (");
         if (fupinPageUrlList != null && fupinPageUrlList.size() > 0) {
@@ -132,10 +192,22 @@ public class PageClickServiceImpl implements PageClickService {
     }
 
     public int updatePageClick(List<PageClick> pageClickList) {
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         if (pageClickList != null && pageClickList.size() > 0) {
             return pageClickDao.updatePageClick(pageClickList);
         } else {
             return 0;
         }
     }
+
+
+    public int updatePageClickIPInfo(List<PageClick> pageClickIPInfoList) {
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        if (pageClickIPInfoList != null && pageClickIPInfoList.size() > 0) {
+            return pageClickDao.updatePageClickIPInfo(pageClickIPInfoList);
+        } else {
+            return 0;
+        }
+    }
+
 }
