@@ -20,7 +20,7 @@
 <div class="container-fluid text-center">
     <div class="panel panel-default">
         <div class="panel-heading">
-            扶贫相关页面点击数分布(数据从2018-10-14日起)
+            扶贫相关页面点击数分布(数据从2018-10-13日起)
         </div>
     </div>
 

@@ -21,4 +21,6 @@ public interface PageClickService {
     List<PageClick> getPageClickIPInfoList(QueryPara queryPara);
 
     int updatePageClickIPInfo(List<PageClick> pageClickIPInfoList);
+
+    List<List<PageClick>> getPageClickDistributeAnalysisList(QueryPara queryPara);
 }

@@ -97,6 +97,18 @@ public class PageClickServiceImpl implements PageClickService {
         return pageClickList;
     }
 
+    public List<List<PageClick>> getPageClickDistributeAnalysisList(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<List<PageClick>> pageClickList = new ArrayList<List<PageClick>>();
+        List<PageClick> pageClickCompanyDistributeList = pageClickDao.getPageClickCompanyDistributeList(queryPara);
+        pageClickList.add(pageClickCompanyDistributeList);
+        List<PageClick> pageClickLocationDistributeList = pageClickDao.getPageClickLocationDistributeList(queryPara);
+        pageClickList.add(pageClickLocationDistributeList);
+        logger.info("service返回结果为 {}", JSON.toJSONString(pageClickList));
+        return pageClickList;
+    }
+
     private List<PageClick> getDistributeInfoUsingIPList(List<PageClick> pageClickIPList) {
         List<PageClick> ipDistributeInfoList = new ArrayList<PageClick>();
         Map<String, Integer> keyAndValue = new HashMap<String, Integer>();

@@ -26,4 +26,8 @@ public interface PageClickDao {
     List<PageClick> getPageClickIPInfoList(QueryPara queryPara);
 
     int updatePageClickIPInfo(List<PageClick> pageClickIPInfoList);
+
+    List<PageClick> getPageClickCompanyDistributeList(QueryPara queryPara);
+
+    List<PageClick> getPageClickLocationDistributeList(QueryPara queryPara);
 }

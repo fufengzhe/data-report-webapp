@@ -56,7 +56,7 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         logger.info("结束更新扶贫订单相关数据，影响的条数为 {}", effectedRowNum);
     }
 
-    @Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 0 8 * * ?")
     private void scheduledEntryForPageClickIPInfoUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = new QueryPara();

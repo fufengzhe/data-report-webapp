@@ -86,6 +86,33 @@
         DMP_SELECT.FUPIN_PAGE_INFO
     </select>
 
+    <select id="getPageClickCompanyDistributeList" resultType="PageClick" parameterType="QueryPara">
+        SELECT DISTRIBUTE_NAME disName,sum(INDEX_VALUE) indexValue
+        FROM DMP_SELECT.FUPIN_DISTRIBUTE_RESULT
+        WHERE
+        <![CDATA[
+			        STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        AND DISTRIBUTE_TYPE='2'
+        GROUP BY DISTRIBUTE_NAME ORDER BY sum(index_value) DESC
+    </select>
+
+    <select id="getPageClickLocationDistributeList" resultType="PageClick" parameterType="QueryPara">
+        SELECT DISTRIBUTE_NAME disName,sum(INDEX_VALUE) indexValue
+        FROM DMP_SELECT.FUPIN_DISTRIBUTE_RESULT
+        WHERE
+        <![CDATA[
+			        STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        AND DISTRIBUTE_TYPE='1'
+        GROUP BY DISTRIBUTE_NAME ORDER BY sum(index_value) DESC
+    </select>
     <insert id="updatePageClick" parameterType="java.util.List">
         INSERT INTO DMP_SELECT.FUPIN_PAGE_STAT
         (STAT_TIME,STAT_TIME_SPAN, PAGE_NAME, PAGE_URL, VISIT_PV, VISIT_UV,CREATE_TIME,UPDATE_TIME)

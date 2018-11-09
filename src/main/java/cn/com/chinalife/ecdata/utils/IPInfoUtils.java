@@ -33,6 +33,7 @@ public class IPInfoUtils {
         } else {
             ipInfo = IPInfoUtils.getIpInfoUsingTaoBaoInterface(taoBaoUriBuilder, ip, infoType);
             if (ipInfo == null) {
+                logger.info("调用淘宝接口错误，开始调用maTools接口获取归属地及运营商信息");
                 ipInfo = IPInfoUtils.getIpInfoUsingMaToolsInterface(maToolsUriBuilder, ip, infoType);
             }
             return ipInfo;
@@ -53,18 +54,20 @@ public class IPInfoUtils {
                         if (jsonObject != null && ("0".equals(jsonObject.getString("code")))) {
                             JSONObject data = (JSONObject) jsonObject.get("data");
                             if (data != null) {
+                                logger.info("淘宝接口返回地址信息为 {}", data);
                                 Object provinceObject = data.get("region");
-                                Object cityObject = data.get("city");
+//                                Object cityObject = data.get("city");
                                 Object companyObject = data.get("isp");
-                                if (provinceObject != null && cityObject != null && companyObject != null) {
+                                if (provinceObject != null && companyObject != null) {
+                                    logger.info("淘宝接口返回地址信息解析结果为省={},运营商={}", provinceObject.toString(), companyObject.toString());
                                     ipInfo = new IPInfo();
                                     if (1 == infoType) {
                                         ipInfo.setProvince(provinceObject.toString());
-                                        ipInfo.setCity(cityObject.toString());
+//                                        ipInfo.setCity(cityObject.toString());
                                         ipInfo.setCompany(companyObject.toString());
                                     } else if (2 == infoType) {
                                         ipInfo.setProvince(provinceObject.toString());
-                                        ipInfo.setCity(cityObject.toString());
+//                                        ipInfo.setCity(cityObject.toString());
                                     } else if (3 == infoType) {
                                         ipInfo.setCompany(companyObject.toString());
                                     }
@@ -109,19 +112,30 @@ public class IPInfoUtils {
                                         provinceIndex = addressStr.indexOf("区");
                                     }
                                 }
-                                String province = addressStr.substring(colonIndex + 1, provinceIndex);
-                                String company = addressStr.substring(spaceIndex + 1);
-                                logger.info("matools接口返回地址信息解析结果为省={},运营商={}", province, company);
-                                ipInfo = new IPInfo();
-                                if (1 == infoType) {
-                                    ipInfo.setProvince(province);
-                                    ipInfo.setCompany(company);
-                                } else if (2 == infoType) {
-                                    ipInfo.setProvince(province);
-                                } else if (3 == infoType) {
-                                    ipInfo.setCompany(company);
+                                if (colonIndex >= 0 && provinceIndex >= 0 && spaceIndex >= 0) {
+                                    String province = addressStr.substring(colonIndex + 1, provinceIndex);
+                                    if (province != null && province.length() > 3) {
+                                        if (province.contains("内蒙古") || province.contains("黑龙江")) {
+                                            province = province.substring(0, 3);
+                                        } else {
+                                            province = province.substring(0, 2);
+                                        }
+                                    }
+                                    String company = addressStr.substring(spaceIndex + 1);
+                                    logger.info("matools接口返回地址信息解析结果为省={},运营商={}", province, company);
+                                    ipInfo = new IPInfo();
+                                    if (1 == infoType) {
+                                        ipInfo.setProvince(province);
+                                        ipInfo.setCompany(company);
+                                    } else if (2 == infoType) {
+                                        ipInfo.setProvince(province);
+                                    } else if (3 == infoType) {
+                                        ipInfo.setCompany(company);
+                                    }
+                                    return ipInfo;
+                                } else {
+                                    return null;
                                 }
-                                return ipInfo;
                             }
                         }
                     }
