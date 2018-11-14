@@ -7,6 +7,7 @@ import java.math.BigDecimal;
  */
 public class OrderStat {
     private String statDate;
+    private String statDateSpan;
     private String productId;
     private String productName;
     private Integer goodsNum;
@@ -20,6 +21,13 @@ public class OrderStat {
     private Integer orderNum7;
     private BigDecimal orderAmount;
     private BigDecimal orderAverage;
+    private String ip;
+    private String province;
+    private String company;
+    private String indexName;
+    private String disType;
+    private String disName;
+    private Integer indexValue;
 
     public String getStatDate() {
         return statDate;
@@ -27,6 +35,14 @@ public class OrderStat {
 
     public void setStatDate(String statDate) {
         this.statDate = statDate;
+    }
+
+    public String getStatDateSpan() {
+        return statDateSpan;
+    }
+
+    public void setStatDateSpan(String statDateSpan) {
+        this.statDateSpan = statDateSpan;
     }
 
     public String getProductId() {
@@ -133,10 +149,67 @@ public class OrderStat {
         this.orderAverage = orderAverage;
     }
 
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
+    public String getDisType() {
+        return disType;
+    }
+
+    public void setDisType(String disType) {
+        this.disType = disType;
+    }
+
+    public String getDisName() {
+        return disName;
+    }
+
+    public void setDisName(String disName) {
+        this.disName = disName;
+    }
+
+    public Integer getIndexValue() {
+        return indexValue;
+    }
+
+    public void setIndexValue(Integer indexValue) {
+        this.indexValue = indexValue;
+    }
+
     @Override
     public String toString() {
         return "OrderStat{" +
                 "statDate='" + statDate + '\'' +
+                ", statDateSpan='" + statDateSpan + '\'' +
                 ", productId='" + productId + '\'' +
                 ", productName='" + productName + '\'' +
                 ", goodsNum=" + goodsNum +
@@ -150,6 +223,13 @@ public class OrderStat {
                 ", orderNum7=" + orderNum7 +
                 ", orderAmount=" + orderAmount +
                 ", orderAverage=" + orderAverage +
+                ", ip='" + ip + '\'' +
+                ", province='" + province + '\'' +
+                ", company='" + company + '\'' +
+                ", indexName='" + indexName + '\'' +
+                ", disType='" + disType + '\'' +
+                ", disName='" + disName + '\'' +
+                ", indexValue=" + indexValue +
                 '}';
     }
 }

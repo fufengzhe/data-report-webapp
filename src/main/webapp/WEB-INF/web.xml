@@ -33,4 +33,18 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
+    <error-page>
+        <!-- 当服务器发生了404 -->
+        <error-code>404</error-code>
+        <!-- 指定异常了，跳转的页面 -->
+        <location>/WEB-INF/page/error/404.jsp</location>
+    </error-page>
+
+    <error-page>
+        <!-- 当服务器发生了404 -->
+        <error-code>500</error-code>
+        <!-- 指定异常了，跳转的页面 -->
+        <location>/WEB-INF/page/error/500.jsp</location>
+    </error-page>
+
 </web-app>

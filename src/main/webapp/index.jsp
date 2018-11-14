@@ -49,11 +49,11 @@
 <h4 align="center">May Your Work Be Driven By Data!</h4>
 <h6 align="center">Powered By Information Technology Department Of CLEC!</h6>
 <div class="row">
-    <div class="col-sm-9">
+    <div class="col-sm-8">
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <iframe width="700" scrolling="no" height="70" frameborder="0" allowtransparency="true"
-                src="http://i.tianqi.com/index.php?c=code&id=2&icon=1&num=2&site=12"></iframe>
+                src="http://i.tianqi.com/index.php?c=code&id=38&icon=1&num=2"></iframe>
     </div>
 </div>
 <div class="container">

@@ -96,7 +96,7 @@
         <![CDATA[
                     and STAT_TIME <= #{endDate}
         ]]>
-        AND DISTRIBUTE_TYPE='2'
+        AND DISTRIBUTE_TYPE='2' AND INDEX_NAME='fupinPageClickIPInfo'
         GROUP BY DISTRIBUTE_NAME ORDER BY sum(index_value) DESC
     </select>
 
@@ -110,7 +110,7 @@
         <![CDATA[
                     and STAT_TIME <= #{endDate}
         ]]>
-        AND DISTRIBUTE_TYPE='1'
+        AND DISTRIBUTE_TYPE='1' AND INDEX_NAME='fupinPageClickIPInfo'
         GROUP BY DISTRIBUTE_NAME ORDER BY sum(index_value) DESC
     </select>
     <insert id="updatePageClick" parameterType="java.util.List">

@@ -1,5 +1,6 @@
 package cn.com.chinalife.ecdata.service.impl.fupin;
 
+import cn.com.chinalife.ecdata.entity.fupin.OrderStat;
 import cn.com.chinalife.ecdata.entity.fupin.PageClick;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.service.InitService;
@@ -63,9 +64,21 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         queryPara.setStartDate(DateUtils.getYesterday());
         queryPara.setEndDate(DateUtils.getYesterday());
         int effectedRowNum;
-        logger.info("开始扶贫相关页面的点击IP分布数据");
+        logger.info("开始更新扶贫相关页面的点击IP分布数据");
         effectedRowNum = this.updatePageClickIPInfo(queryPara);
-        logger.info("结束扶贫相关页面的点击IP分布数据，影响的条数为 {}", effectedRowNum);
+        logger.info("结束更新扶贫相关页面的点击IP分布数据，影响的条数为 {}", effectedRowNum);
+    }
+
+    @Scheduled(cron = "0 30 8 * * ?")
+    private void scheduledEntryForOrderIPInfoUpdate() throws InterruptedException, ParseException {
+        // 默认更新昨天所有渠道的数据
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        int effectedRowNum;
+        logger.info("开始更新扶贫相关订单的下单IP分布数据");
+        effectedRowNum = this.updateOrderIPInfo(queryPara);
+        logger.info("结束更新扶贫相关订单的下单IP分布数据，影响的条数为 {}", effectedRowNum);
     }
 
     // 根据前端传入的日期及渠道更新相应的数据，如无渠道相关信息则更新改日期区间内所有渠道的数据
@@ -80,6 +93,13 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         List<PageClick> pageClickIPInfoList = pageClickService.getPageClickIPInfoList(queryPara);
         int effectedRowNum = pageClickService.updatePageClickIPInfo(pageClickIPInfoList);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfFupinPageClickIPInfo, "扶贫相关页面点击IP分布数据", effectedRowNum);
+        return effectedRowNum;
+    }
+
+    public int updateOrderIPInfo(QueryPara queryPara) {
+        List<OrderStat> orderIPInfoList = orderStatService.getPageClickIPInfoList(queryPara);
+        int effectedRowNum = orderStatService.updateOrderIPInfo(orderIPInfoList);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfFupinOrderIPInfo, "扶贫相关订单下单IP分布数据", effectedRowNum);
         return effectedRowNum;
     }
 

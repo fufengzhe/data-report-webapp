@@ -39,6 +39,7 @@ public class CommonConstant {
     public static String statIndexNameOfFupinPageClick = "fupinPageClick";
     public static String statIndexNameOfFupinPageClickIPInfo = "fupinPageClickIPInfo";
     public static String statIndexNameOfFupinOrderStat = "fupinOrderStat";
+    public static String statIndexNameOfFupinOrderIPInfo = "fupinOrderIPInfo";
     public static String userSourceOfAll = "ALL";
     public static int jsVersion = 12;
     public static List<String> statIndexNameListOfPropertyPremium;

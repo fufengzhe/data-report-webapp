@@ -19,4 +19,10 @@ public interface OrderStatService {
     List<OrderStat> getOrderStatListForTimeSpanFromStatTable(QueryPara queryPara);
 
     List<OrderStat> getOrderProductList();
+
+    List<OrderStat> getPageClickIPInfoList(QueryPara queryPara);
+
+    int updateOrderIPInfo(List<OrderStat> orderIPInfoList);
+
+    List<List<OrderStat>> getOrderStatIPDistributeList(QueryPara queryPara);
 }

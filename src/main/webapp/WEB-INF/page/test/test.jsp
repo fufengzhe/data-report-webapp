@@ -16,14 +16,11 @@
 </head>
 <body>
 
-<div class="col-xs-2 col-md-2" style="width:268px">
-    <div class="input-group">
-        <div class="input-group-addon">
-            <i class="fa fa-calendar"></i>
-        </div>
-        <input type="text" class="form-control" placeholder="时间范围" id="daterange-btn"/>
-    </div>
+<div class="container">
+    <br/><br/><br/><br/><br/><br/><br/><br/>
+    <h1 align="center">500错误，请联系扶贫项目组 解翔宇</h1>
 </div>
+
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/moment.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/date_compare.js"></script>

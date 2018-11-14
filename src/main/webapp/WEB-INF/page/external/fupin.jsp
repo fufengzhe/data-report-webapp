@@ -30,11 +30,11 @@
 <h4 align="center">May Your Work Be Driven By Data!</h4>
 <h6 align="center">Powered By Poverty Alleviation Team Of CLEC!</h6>
 <div class="row">
-    <div class="col-sm-9">
+    <div class="col-sm-8">
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <iframe width="700" scrolling="no" height="70" frameborder="0" allowtransparency="true"
-                src="http://i.tianqi.com/index.php?c=code&id=2&icon=1&num=2&site=12"></iframe>
+                src="http://i.tianqi.com/index.php?c=code&id=38&icon=1&num=2"></iframe>
     </div>
 </div>
 <div class="container">
@@ -46,11 +46,15 @@
         <li class="list-group-item">1、扶贫相关页面点击数查询 <a href="/ecdata/pageClick/summary" class="btn btn-success btn-xs"
                                                      target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">2、扶贫相关页面活跃用户分析查询（IP运营商及归属地） <a href="/ecdata/pageClick/distributeAnalysis"
-                                                        class="btn btn-success btn-xs"
-                                                        target="_blank">点击查看</a>
+        <li class="list-group-item">2、扶贫相关页面活跃用户分析查询（活跃IP运营商及归属地） <a href="/ecdata/pageClick/distributeAnalysis"
+                                                                     class="btn btn-success btn-xs"
+                                                                     target="_blank">点击查看</a>
         </li>
-        <li class="list-group-item">3、扶贫商品订单数查询 <a href="/ecdata/orderStat/summary" class="btn btn-success btn-xs"
+        <li class="list-group-item">3、扶贫商品成单用户分析查询（下单IP运营商及归属地） <a href="/ecdata/orderStat/IPSummary"
+                                                                   class="btn btn-success btn-xs"
+                                                                   target="_blank">点击查看</a>
+        </li>
+        <li class="list-group-item">4、扶贫商品订单数查询 <a href="/ecdata/orderStat/summary" class="btn btn-success btn-xs"
                                                    target="_blank">点击查看</a>
         </li>
     </ul>
@@ -142,7 +146,7 @@
             var respCode = data.respCode;
             if (respCode == 0) {
                 list = data.detailInfo;
-                if (list.length == 3) {
+                if (list.length == 4) {
                     $("#dataStatus").html(" 数据准备完成");
                     $("#dataStatus").attr("class", "label label-success glyphicon glyphicon-ok");
                 } else {
@@ -158,8 +162,8 @@
     });
 
     function generateDataStatusTable(list) {
-        var itemArray = ['扶贫相关页面点击数查询', '扶贫商品订单数查询', '扶贫相关页面活跃用户分析查询（IP运营商及归属地）'];
-        var checkIndex = [['fupinPageClick'], ['fupinOrderStat'], ['fupinPageClickIPInfo']];
+        var itemArray = ['扶贫相关页面点击数查询', '扶贫相关页面活跃用户分析查询（IP运营商及归属地）', '扶贫商品成单用户分析查询（下单IP运营商及归属地）', '扶贫商品订单数查询'];
+        var checkIndex = [['fupinPageClick'], ['fupinPageClickIPInfo'], ['fupinOrderIPInfo'],['fupinOrderStat']];
         generateDataTable("dataStatusTable", [[{"field": "itemChn"}, {"field": "dataStatus"}], [{"title": "功能项"}, {"title": "是否完成"}]]);
         var dataStatusList = new Array();
         for (var i = 0; i < itemArray.length; i++) {

@@ -21,4 +21,16 @@ public interface OrderStatDao {
     List<OrderStat> getOrderStatListForTimeSpanTrendFromStatTable(QueryPara queryPara);
 
     List<OrderStat> getOrderProductList();
+
+    List<String> getFuPinSellerIDList();
+
+    List<OrderStat> getOnlineRetailOrderIPList(QueryPara queryPara);
+
+    List<OrderStat> getOnlineGroupBuyOrderIPList(QueryPara queryPara);
+
+    int updateOrderIPInfo(List<OrderStat> orderIPInfoList);
+
+    List<OrderStat> getOrderStatCompanyDistributeList(QueryPara queryPara);
+
+    List<OrderStat> getOrderStatLocationDistributeList(QueryPara queryPara);
 }
