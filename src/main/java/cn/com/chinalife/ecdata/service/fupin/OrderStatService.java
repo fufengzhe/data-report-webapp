@@ -14,7 +14,7 @@ public interface OrderStatService {
 
     int updateOrderStat(List<OrderStat> orderStatList);
 
-    List<List<OrderStat>> getOrderStatList();
+    List<List<OrderStat>> getOrderStatList(QueryPara queryPara);
 
     List<OrderStat> getOrderStatListForTimeSpanFromStatTable(QueryPara queryPara);
 

@@ -103,8 +103,63 @@
         SELECT SELLER_ID FROM FUPIN_SELLER_INFO
     </select>
 
+    <select id="getFuPinSellerNameList" resultType="java.lang.String">
+        SELECT trim(SELLER_NAME) FROM FUPIN_SELLER_INFO
+    </select>
+
     <select id="getOrderStatListForTimeSpan" resultType="OrderStat" parameterType="QueryPara">
 
+    </select>
+
+    <select id="getOrderAmountListForSellerDimension" resultType="OrderStat" parameterType="QueryPara">
+        select t.sellerName sellerName,sum(t.orderNum) orderNum,sum(t.orderAmount) orderAmount
+        FROM
+        ( SELECT trim(onlineRetail.seller_name) sellerName,count(*) orderNum,sum(onlineRetail.money_amount) orderAmount FROM
+          (
+            SELECT ob.order_no ,s.seller_name,ob.money_amount
+            FROM order_book ob INNER JOIN seller s ON ob.seller_id = s.id
+            AND ob.create_time >= concat(#{startDate},' 00:00:00')
+            <![CDATA[
+                        AND ob.create_time <= concat(#{endDate},' 23:59:59')
+            ]]>
+            AND ob.STATUS NOT IN (6, 7, 8)
+            AND ob.seller_id IN ${whereCondition} INNER JOIN order_goods og ON ob.order_no=og.order_no AND og.product_name  NOT LIKE '%国寿丹泉%'
+            GROUP BY ob.order_no
+          ) onlineRetail GROUP BY trim(onlineRetail.seller_name)
+        UNION ALL
+        SELECT trim(onlineJiCai.seller_name) sellerName,count(*) orderNum,sum(onlineJiCai.money_amount) orderAmount
+        FROM
+        (
+            SELECT jicaio.order_no,s.seller_name,jicaio.money_amount
+            FROM jicai_order jicaio INNER JOIN seller s ON jicaio.seller_id = s.id
+            AND jicaio.order_type = 0
+            AND jicaio. STATUS IN (3, 4, 5, 6, 7)
+            AND jicaio.create_time >= concat(#{startDate},' 00:00:00')
+            <![CDATA[
+                        AND jicaio.create_time <= concat(#{endDate},' 23:59:59')
+            ]]>
+            AND jicaio.seller_id IN ${whereCondition}
+            INNER JOIN jicai_order_goods jicaiog ON jicaio.order_no = jicaiog.jicai_order_no AND jicaiog.product_name  NOT LIKE '%国寿丹泉%'
+            AND jicaiog. STATUS IN (0, 2)
+            GROUP BY jicaio.order_no
+        ) onlineJiCai
+        GROUP BY trim(onlineJiCai.seller_name)
+        UNION ALL
+        select
+        trim(seller_name) sellerName,count(DISTINCT seq) orderNum,sum(money_amount) orderAmount
+        FROM
+        offline_fupin WHERE status=0
+        AND order_date >= #{startDate}
+        <![CDATA[
+                    AND order_date <= #{endDate}
+        ]]>
+        AND seller_name IN ${whereCondition1} AND product_name NOT LIKE '%国寿丹泉%'
+        GROUP BY trim(seller_name)
+        ) t GROUP BY t.sellerName
+    </select>
+
+    <select id="getFuPinSellerAreaList" resultType="OrderStat">
+        SELECT seller_name sellerName,area area FROM FUPIN_SELLER_INFO
     </select>
 
     <insert id="updateOrderStat" parameterType="java.util.List">

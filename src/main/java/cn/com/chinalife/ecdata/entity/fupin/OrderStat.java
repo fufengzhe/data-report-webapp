@@ -28,7 +28,9 @@ public class OrderStat {
     private String disType;
     private String disName;
     private Integer indexValue;
-
+    private String sellerName;
+    private String area;
+    private String completeRatio;
     public String getStatDate() {
         return statDate;
     }
@@ -205,6 +207,30 @@ public class OrderStat {
         this.indexValue = indexValue;
     }
 
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getCompleteRatio() {
+        return completeRatio;
+    }
+
+    public void setCompleteRatio(String completeRatio) {
+        this.completeRatio = completeRatio;
+    }
+
     @Override
     public String toString() {
         return "OrderStat{" +
@@ -230,6 +256,9 @@ public class OrderStat {
                 ", disType='" + disType + '\'' +
                 ", disName='" + disName + '\'' +
                 ", indexValue=" + indexValue +
+                ", sellerName='" + sellerName + '\'' +
+                ", area='" + area + '\'' +
+                ", completeRatio='" + completeRatio + '\'' +
                 '}';
     }
 }

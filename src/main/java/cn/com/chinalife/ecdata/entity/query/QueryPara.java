@@ -13,6 +13,7 @@ public class QueryPara {
     private String password;
     private String queryDate;
     private String whereCondition;
+    private String whereCondition1;
     private String timeSpan;
     private String distributeType;
     private String queryType;
@@ -89,6 +90,14 @@ public class QueryPara {
         this.whereCondition = whereCondition;
     }
 
+    public String getWhereCondition1() {
+        return whereCondition1;
+    }
+
+    public void setWhereCondition1(String whereCondition1) {
+        this.whereCondition1 = whereCondition1;
+    }
+
     public String getTimeSpan() {
         return timeSpan;
     }
@@ -125,6 +134,7 @@ public class QueryPara {
                 ", password='" + password + '\'' +
                 ", queryDate='" + queryDate + '\'' +
                 ", whereCondition='" + whereCondition + '\'' +
+                ", whereCondition1='" + whereCondition1 + '\'' +
                 ", timeSpan='" + timeSpan + '\'' +
                 ", distributeType='" + distributeType + '\'' +
                 ", queryType='" + queryType + '\'' +

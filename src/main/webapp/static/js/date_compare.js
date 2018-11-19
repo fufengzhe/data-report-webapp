@@ -23,8 +23,8 @@ $(function () {
             format: 'YYYY-MM-DD',
 //			startDate:moment(),
 //			endDate: moment()
-            startDate: moment().subtract(1, 'days'),
-            endDate: moment().subtract(1, 'days')
+            startDate: $("#dateRange").val().substr(0, 10),
+            endDate: $("#dateRange").val().substr(13)
         }
     );
     // $('#compare-dateselect').daterangepicker(

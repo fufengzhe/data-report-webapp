@@ -5,17 +5,18 @@ import cn.com.chinalife.ecdata.entity.IPInfo;
 import cn.com.chinalife.ecdata.entity.fupin.OrderStat;
 import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.service.fupin.OrderStatService;
-import cn.com.chinalife.ecdata.utils.*;
+import cn.com.chinalife.ecdata.utils.CommonConstant;
+import cn.com.chinalife.ecdata.utils.CommonUtils;
+import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
+import cn.com.chinalife.ecdata.utils.IPInfoUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Created by xiexiangyu on 2018/3/1.
@@ -43,22 +44,87 @@ public class OrderStatServiceImpl implements OrderStatService {
         }
     }
 
-    public List<List<OrderStat>> getOrderStatList() {
-        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+    public List<List<OrderStat>> getOrderStatList(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<List<OrderStat>> lists = new ArrayList<List<OrderStat>>();
-        QueryPara queryPara = new QueryPara();
-        queryPara.setStartDate(DateUtils.getYesterday());
-        queryPara.setEndDate(DateUtils.getYesterday());
-        List<OrderStat> orderStatListOfDate = this.getOrderStatListForTimeSpanFromStatTable(queryPara);
-        lists.add(orderStatListOfDate);
-
-        queryPara.setStartDate(DateUtils.getBeforeXDay(7));
-        queryPara.setEndDate(DateUtils.getBeforeXDay(1));
-        List<OrderStat> orderStatListForTrendOfDate = this.getOrderStatListForTimeSpanTrendFromStatTable(queryPara);
-        lists.add(orderStatListForTrendOfDate);
+        List<OrderStat> orderAmountAreaDimensionList = this.getOrderAmountListForAreaDimension(queryPara);
+        lists.add(orderAmountAreaDimensionList);
         logger.info("service返回结果为 {}", JSON.toJSONString(lists));
         return lists;
     }
+
+    private List<OrderStat> getOrderAmountListForAreaDimension(QueryPara queryPara) {
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<String> sellerIDList = orderStatDao.getFuPinSellerIDList();
+        String sellerIDFilter = getSellerFilterUsingList(sellerIDList);
+        queryPara.setWhereCondition(sellerIDFilter);
+        List<String> sellerNameList = orderStatDao.getFuPinSellerNameList();
+        String sellerNameFilter = getSellerFilterUsingList(sellerNameList);
+        queryPara.setWhereCondition1(sellerNameFilter);
+        List<OrderStat> sellerList = orderStatDao.getFuPinSellerAreaList();
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
+        List<OrderStat> orderAmountSellerDimensionList = orderStatDao.getOrderAmountListForSellerDimension(queryPara);
+        Map<String, String> sellerNameAndAreaMap = new HashMap<String, String>();
+        for (OrderStat orderStat : sellerList) {
+            sellerNameAndAreaMap.put(orderStat.getSellerName(), orderStat.getArea());
+        }
+        Map<String, OrderStat> areaStatMap = new HashMap<String, OrderStat>();
+        for (OrderStat orderStat : orderAmountSellerDimensionList) {
+            String sellerName = orderStat.getSellerName();
+            String area = sellerNameAndAreaMap.get(sellerName) == null ? sellerName : sellerNameAndAreaMap.get(sellerName);
+            OrderStat temp = areaStatMap.get(area);
+            if (temp == null) {
+                temp = new OrderStat();
+                temp.setArea(area);
+                temp.setOrderNum(orderStat.getOrderNum());
+                temp.setOrderAmount(orderStat.getOrderAmount());
+                areaStatMap.put(area, temp);
+            } else {
+                temp.setOrderNum(orderStat.getOrderNum() + temp.getOrderNum());
+                temp.setOrderAmount(orderStat.getOrderAmount().add(temp.getOrderAmount()));
+            }
+        }
+        List<OrderStat> orderAmountAreaDimensionList = new ArrayList<OrderStat>();
+        OrderStat sumAmount = new OrderStat();
+        sumAmount.setArea("总计");
+        sumAmount.setOrderNum(0);
+        sumAmount.setOrderAmount(new BigDecimal("0.00"));
+        OrderStat neiMengAmount = new OrderStat();
+        Set<String> fupinSpecifiedAreaSet = this.getFupinSpecifiedArea();
+        for (Map.Entry<String, OrderStat> entry : areaStatMap.entrySet()) {
+            String key = entry.getKey();
+            OrderStat value = entry.getValue();
+            if (fupinSpecifiedAreaSet.contains(key)) {
+                orderAmountAreaDimensionList.add(value);
+                sumAmount.setOrderNum(value.getOrderNum() + sumAmount.getOrderNum());
+                sumAmount.setOrderAmount(value.getOrderAmount().add(sumAmount.getOrderAmount()));
+            } else if ("乌兰察布".equals(key)) {
+                neiMengAmount = value;
+            }
+        }
+        Collections.sort(orderAmountAreaDimensionList, new Comparator<OrderStat>() {
+            public int compare(OrderStat o1, OrderStat o2) {
+                return o2.getOrderAmount().subtract(o1.getOrderAmount()).compareTo(new BigDecimal("0.00"));
+            }
+        });
+        orderAmountAreaDimensionList.add(0, sumAmount);
+        orderAmountAreaDimensionList.add(neiMengAmount);
+        for (OrderStat orderStat : orderAmountAreaDimensionList) {
+            orderStat.setOrderAmount(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmount()));
+        }
+        sumAmount.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(sumAmount.getOrderAmount(), new BigDecimal("1800"), 2)));
+        return orderAmountAreaDimensionList;
+    }
+
+    private Set<String> getFupinSpecifiedArea() {
+        Set<String> fuPinSpecifiedSet = new HashSet<String>();
+        fuPinSpecifiedSet.add("龙州");
+        fuPinSpecifiedSet.add("郧西");
+        fuPinSpecifiedSet.add("天等");
+        fuPinSpecifiedSet.add("丹江口");
+        return fuPinSpecifiedSet;
+    }
+
 
     public List<OrderStat> getOrderStatListForTimeSpanFromStatTable(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
@@ -144,14 +210,14 @@ public class OrderStatServiceImpl implements OrderStatService {
         return ipDistributeInfoList;
     }
 
-    private String getSellerFilterUsingList(List<String> sellerIDList) {
-        StringBuilder sellerIDFilter = new StringBuilder(" (");
-        if (sellerIDList != null && sellerIDList.size() > 0) {
-            for (int i = 0; i < sellerIDList.size() - 1; i++) {
-                sellerIDFilter.append(sellerIDList.get(i)).append(",");
+    private String getSellerFilterUsingList(List<String> sellerList) {
+        StringBuilder sellerFilter = new StringBuilder(" (");
+        if (sellerList != null && sellerList.size() > 0) {
+            for (int i = 0; i < sellerList.size() - 1; i++) {
+                sellerFilter.append("'").append(sellerList.get(i)).append("'").append(",");
             }
-            sellerIDFilter.append(sellerIDList.get(sellerIDList.size() - 1)).append(")");
-            return sellerIDFilter.toString();
+            sellerFilter.append("'").append(sellerList.get(sellerList.size() - 1)).append("'").append(")");
+            return sellerFilter.toString();
         } else {
             return null;
         }

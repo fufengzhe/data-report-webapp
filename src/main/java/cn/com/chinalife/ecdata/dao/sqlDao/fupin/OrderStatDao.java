@@ -33,4 +33,10 @@ public interface OrderStatDao {
     List<OrderStat> getOrderStatCompanyDistributeList(QueryPara queryPara);
 
     List<OrderStat> getOrderStatLocationDistributeList(QueryPara queryPara);
+
+    List<OrderStat> getOrderAmountListForSellerDimension(QueryPara queryPara);
+
+    List<String> getFuPinSellerNameList();
+
+    List<OrderStat> getFuPinSellerAreaList();
 }

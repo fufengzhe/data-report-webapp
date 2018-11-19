@@ -32,14 +32,13 @@ public class OrderStatController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
         ResponseBean responseBean = new ResponseBean();
         try {
-            List<List<OrderStat>> orderStatList = orderStatService.getOrderStatList();
+            QueryPara queryPara = new QueryPara();
+            queryPara.setStartDate("2018-01-01");
+            queryPara.setEndDate(DateUtils.getYesterday());
+            List<List<OrderStat>> orderStatList = orderStatService.getOrderStatList(queryPara);
             model.addAttribute("orderStatList", JSON.toJSONString(orderStatList));
-            List<OrderStat> orderProductList = orderStatService.getOrderProductList();
-            model.addAttribute("orderProductList", JSON.toJSONString(orderProductList));
-            List<String> dateList = DateUtils.getDateList(DateUtils.getBeforeXDay(7), DateUtils.getBeforeXDay(1));
-            model.addAttribute("startDate", DateUtils.getYesterday());
-            model.addAttribute("endDate", DateUtils.getYesterday());
-            model.addAttribute("dates", JSON.toJSONString(dateList));
+            model.addAttribute("startDate", queryPara.getStartDate());
+            model.addAttribute("endDate", queryPara.getEndDate());
             model.addAttribute("jsVersion", CommonConstant.jsVersion);
             responseBean.setDetailInfo(model);
         } catch (Exception e) {
@@ -82,7 +81,7 @@ public class OrderStatController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
         ResponseBean responseBean = new ResponseBean();
         try {
-            List<OrderStat> orderStatList = orderStatService.getOrderStatListForTimeSpanFromStatTable(queryPara);
+            List<List<OrderStat>> orderStatList = orderStatService.getOrderStatList(queryPara);
             responseBean.setDetailInfo(orderStatList);
         } catch (Exception e) {
             logger.error("异常信息为", e);
