@@ -167,7 +167,7 @@
         graphChart(list, "migrateGraphChart", "扶贫商品订单下单及收货地域分析");
     }
     function graphChart(data, divId, chartName) {
-        if (data[0].length > 30) {
+        if (data[0].length > 23) {
             $("#dataHint").css('display', 'block');
             echarts.init(document.getElementById('migrateGraphChart')).clear();
             return;
