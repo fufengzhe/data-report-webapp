@@ -8,6 +8,7 @@ import cn.com.chinalife.ecdata.service.fupin.FupinScheduleService;
 import cn.com.chinalife.ecdata.service.fupin.OrderStatService;
 import cn.com.chinalife.ecdata.service.fupin.PageClickService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
+import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
 import cn.com.chinalife.ecdata.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +82,18 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         logger.info("结束更新扶贫相关订单的下单IP分布数据，影响的条数为 {}", effectedRowNum);
     }
 
+    @Scheduled(cron = "0 40 8 * * ?")
+    private void scheduledEntryForOrderFromToAreaInfoUpdate() throws InterruptedException, ParseException {
+        // 默认更新昨天所有渠道的数据
+        QueryPara queryPara = new QueryPara();
+        queryPara.setStartDate(DateUtils.getYesterday());
+        queryPara.setEndDate(DateUtils.getYesterday());
+        int effectedRowNum;
+        logger.info("开始更新扶贫相关订单的下单及收货地区分布数据");
+        effectedRowNum = this.updateOrderFromToAreaInfo(queryPara);
+        logger.info("结束更新扶贫相关订单的下单及收货地区分布数据，影响的条数为 {}", effectedRowNum);
+    }
+
     // 根据前端传入的日期及渠道更新相应的数据，如无渠道相关信息则更新改日期区间内所有渠道的数据
     public int updatePageClick(QueryPara queryPara) {
         List<PageClick> pageClickList = pageClickService.getPageClickListForTimeSpan(queryPara);
@@ -100,6 +113,14 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         List<OrderStat> orderIPInfoList = orderStatService.getPageClickIPInfoList(queryPara);
         int effectedRowNum = orderStatService.updateOrderIPInfo(orderIPInfoList);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfFupinOrderIPInfo, "扶贫相关订单下单IP分布数据", effectedRowNum);
+        return effectedRowNum;
+    }
+
+    public int updateOrderFromToAreaInfo(QueryPara queryPara) {
+        List<OrderStat> orderFromToAreaInfoList = orderStatService.getOrderFromToAreaInfoList(queryPara);
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        int effectedRowNum = orderStatService.updateOrderFromToAreaInfo(orderFromToAreaInfoList);
+        initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfFupinOrderFromToAreaInfo, "扶贫相关订单下单及收货地区分布数据", effectedRowNum);
         return effectedRowNum;
     }
 

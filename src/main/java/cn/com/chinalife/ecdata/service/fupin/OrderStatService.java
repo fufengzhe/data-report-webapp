@@ -25,4 +25,14 @@ public interface OrderStatService {
     int updateOrderIPInfo(List<OrderStat> orderIPInfoList);
 
     List<List<OrderStat>> getOrderStatIPDistributeList(QueryPara queryPara);
+
+    List<OrderStat> getOrderFromToAreaInfoList(QueryPara queryPara);
+
+    int updateOrderFromToAreaInfo(List<OrderStat> orderFromToAreaInfoList);
+
+    List<List<OrderStat>> getOrderFromToAreaFlowInfo(QueryPara queryPara);
+
+    List<OrderStat> getFromList(QueryPara queryPara);
+
+    List<OrderStat> getToList(QueryPara queryPara);
 }

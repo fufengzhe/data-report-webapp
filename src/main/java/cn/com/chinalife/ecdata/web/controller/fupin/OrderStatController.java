@@ -75,6 +75,34 @@ public class OrderStatController {
         }
     }
 
+    @RequestMapping("/fromToInfoSummary")
+    public String queryOrderStatFromToInfoSummary(Model model) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            QueryPara queryPara = new QueryPara();
+            queryPara.setStartDate(DateUtils.getYesterday());
+            queryPara.setEndDate(DateUtils.getYesterday());
+            List<List<OrderStat>> orderFromToInfoList = orderStatService.getOrderFromToAreaFlowInfo(queryPara);
+            List<OrderStat> fromList = orderStatService.getFromList(queryPara);
+            List<OrderStat> toList = orderStatService.getToList(queryPara);
+            model.addAttribute("orderStatList", JSON.toJSONString(orderFromToInfoList));
+            model.addAttribute("fromList", JSON.toJSONString(fromList));
+            model.addAttribute("toList", JSON.toJSONString(toList));
+            model.addAttribute("startDate", queryPara.getStartDate());
+            model.addAttribute("endDate", queryPara.getEndDate());
+            model.addAttribute("jsVersion", CommonConstant.jsVersion);
+            responseBean.setDetailInfo(model);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return "fupin/orderStatFromToInfoSummary";
+        }
+    }
+
     @RequestMapping(value = "/numQuery", produces = {"text/html;charset=UTF-8;"})
     @ResponseBody
     public String queryOrderStatNum(QueryPara queryPara) {
@@ -111,5 +139,24 @@ public class OrderStatController {
             return JSON.toJSONString(responseBean);
         }
     }
+
+    @RequestMapping(value = "/fromToInfoNumQuery", produces = {"text/html;charset=UTF-8;"})
+    @ResponseBody
+    public String queryOrderStatFromToInfoNum(QueryPara queryPara) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            List<List<OrderStat>> orderStatList = orderStatService.getOrderFromToAreaFlowInfo(queryPara);
+            responseBean.setDetailInfo(orderStatList);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
 
 }

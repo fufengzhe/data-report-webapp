@@ -39,4 +39,18 @@ public interface OrderStatDao {
     List<String> getFuPinSellerNameList();
 
     List<OrderStat> getFuPinSellerAreaList();
+
+    List<OrderStat> getOnlineOrderFromToAreaList(QueryPara queryPara);
+
+    int updateOrderFromToAreaInfo(List<OrderStat> orderFromToAreaInfoList);
+
+    List<OrderStat> getOrderFromToInfoList(QueryPara queryPara);
+
+    List<OrderStat> getOrderFromInfoList(QueryPara queryPara);
+
+    List<OrderStat> getOrderToInfoList(QueryPara queryPara);
+
+    List<OrderStat> getFromList(QueryPara queryPara);
+
+    List<OrderStat> getToList(QueryPara queryPara);
 }

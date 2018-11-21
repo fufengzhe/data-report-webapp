@@ -57,6 +57,10 @@
         <li class="list-group-item">4、扶贫商品订单数查询 <a href="/ecdata/orderStat/summary" class="btn btn-success btn-xs"
                                                    target="_blank">点击查看</a>
         </li>
+        <li class="list-group-item">5、扶贫商品订单下单及收货地域分析查询 <a href="/ecdata/orderStat/fromToInfoSummary"
+                                                           class="btn btn-success btn-xs"
+                                                           target="_blank">点击查看</a>
+        </li>
     </ul>
 </div>
 
@@ -146,7 +150,7 @@
             var respCode = data.respCode;
             if (respCode == 0) {
                 list = data.detailInfo;
-                if (list.length == 4) {
+                if (list.length == 5) {
                     $("#dataStatus").html(" 数据准备完成");
                     $("#dataStatus").attr("class", "label label-success glyphicon glyphicon-ok");
                 } else {
@@ -162,8 +166,8 @@
     });
 
     function generateDataStatusTable(list) {
-        var itemArray = ['扶贫相关页面点击数查询', '扶贫相关页面活跃用户分析查询（IP运营商及归属地）', '扶贫商品成单用户分析查询（下单IP运营商及归属地）', '扶贫商品订单数查询'];
-        var checkIndex = [['fupinPageClick'], ['fupinPageClickIPInfo'], ['fupinOrderIPInfo'],['fupinOrderStat']];
+        var itemArray = ['扶贫相关页面点击数查询', '扶贫相关页面活跃用户分析查询（IP运营商及归属地）', '扶贫商品成单用户分析查询（下单IP运营商及归属地）', '扶贫商品订单数查询', '扶贫商品订单下单及收货地域分析查询'];
+        var checkIndex = [['fupinPageClick'], ['fupinPageClickIPInfo'], ['fupinOrderIPInfo'], ['fupinOrderStat'], ['fupinOrderFromToAreaInfo']];
         generateDataTable("dataStatusTable", [[{"field": "itemChn"}, {"field": "dataStatus"}], [{"title": "功能项"}, {"title": "是否完成"}]]);
         var dataStatusList = new Array();
         for (var i = 0; i < itemArray.length; i++) {

@@ -31,6 +31,11 @@ public class OrderStat {
     private String sellerName;
     private String area;
     private String completeRatio;
+    private String from;
+    private String to;
+    private String source;
+    private String target;
+
     public String getStatDate() {
         return statDate;
     }
@@ -231,6 +236,39 @@ public class OrderStat {
         this.completeRatio = completeRatio;
     }
 
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
     @Override
     public String toString() {
         return "OrderStat{" +
@@ -259,6 +297,10 @@ public class OrderStat {
                 ", sellerName='" + sellerName + '\'' +
                 ", area='" + area + '\'' +
                 ", completeRatio='" + completeRatio + '\'' +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", source='" + source + '\'' +
+                ", target='" + target + '\'' +
                 '}';
     }
 }

@@ -244,6 +244,61 @@ public class OrderStatServiceImpl implements OrderStatService {
         return orderStatList;
     }
 
+    public List<OrderStat> getOrderFromToAreaInfoList(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<String> sellerIDList = orderStatDao.getFuPinSellerIDList();
+        String sellerIDFilter = getSellerFilterUsingList(sellerIDList);
+        queryPara.setWhereCondition(sellerIDFilter);
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
+        List<OrderStat> onlineOrderFromToAreaList = orderStatDao.getOnlineOrderFromToAreaList(queryPara);
+        List<OrderStat> orderStatList = this.getDistributeInfoUsingOrderFromToAreaList(onlineOrderFromToAreaList);
+        logger.info("service返回结果为 {}", JSON.toJSONString(orderStatList));
+        return orderStatList;
+    }
+
+
+    private List<OrderStat> getDistributeInfoUsingOrderFromToAreaList(List<OrderStat> onlineOrderFromToAreaList) {
+        List<OrderStat> fromToAreaDistributeInfoList = new ArrayList<OrderStat>();
+        Map<String, Integer> keyAndValue = new HashMap<String, Integer>();
+        logger.info("开始调用第三方接口,需要处理的list大小为 {}", onlineOrderFromToAreaList.size());
+        for (int i = 0; i < onlineOrderFromToAreaList.size(); i++) {
+            OrderStat orderStat = onlineOrderFromToAreaList.get(i);
+            IPInfo ipInfo = IPInfoUtils.getIPInfoList(orderStat.getIp(), 2);
+            if (ipInfo != null) {
+                StringBuilder keyOfLocation = new StringBuilder(orderStat.getStatDate()).append("&").append("D").append("&").
+                        append(CommonConstant.statIndexNameOfFupinOrderFromToAreaInfo).append("&").append(ipInfo.getProvince()).append("&").
+                        append(orderStat.getProvince());
+                Integer locationValue = keyAndValue.get(keyOfLocation.toString());
+                if (locationValue == null) {
+                    locationValue = 0;
+                }
+                keyAndValue.put(keyOfLocation.toString(), ++locationValue);
+            }
+            if (i % 100 == 0) {
+                logger.info("第三方接口调用中，调用次数为 {}", i);
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                logger.error("线程暂停异常，异常信息为", e);
+            }
+        }
+        for (Map.Entry<String, Integer> entry : keyAndValue.entrySet()) {
+            String[] key = entry.getKey().split("&");
+            Integer value = entry.getValue();
+            OrderStat orderStat = new OrderStat();
+            orderStat.setStatDate(key[0]);
+            orderStat.setStatDateSpan(key[1]);
+            orderStat.setIndexName(key[2]);
+            orderStat.setFrom(key[3]);
+            orderStat.setTo(key[4]);
+            orderStat.setIndexValue(value);
+            fromToAreaDistributeInfoList.add(orderStat);
+        }
+        return fromToAreaDistributeInfoList;
+    }
+
     private List<OrderStat> getOrderStatListForTimeSpanTrendFromStatTable(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
@@ -252,4 +307,68 @@ public class OrderStatServiceImpl implements OrderStatService {
         return orderStatList;
     }
 
+    public int updateOrderFromToAreaInfo(List<OrderStat> orderFromToAreaInfoList) {
+        if (orderFromToAreaInfoList != null && orderFromToAreaInfoList.size() > 0) {
+            return orderStatDao.updateOrderFromToAreaInfo(orderFromToAreaInfoList);
+        } else {
+            return 0;
+        }
+    }
+
+    public List<List<OrderStat>> getOrderFromToAreaFlowInfo(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<List<OrderStat>> orderStatList = new ArrayList<List<OrderStat>>();
+        queryPara.setWhereCondition(CommonUtils.getWhereConditionUsingPara(queryPara.getWhereCondition()));
+        queryPara.setWhereCondition1(CommonUtils.getWhereConditionUsingPara(queryPara.getWhereCondition1()));
+        List<OrderStat> fromToList = orderStatDao.getOrderFromToInfoList(queryPara);
+        orderStatList.add(fromToList);
+        List<OrderStat> fromList = orderStatDao.getOrderFromInfoList(queryPara);
+        List<OrderStat> toList = orderStatDao.getOrderToInfoList(queryPara);
+        List<OrderStat> fromToSumList = this.mergeUsingList(fromList, toList);
+        orderStatList.add(fromToSumList);
+        logger.info("service返回结果为 {}", JSON.toJSONString(orderStatList));
+        return orderStatList;
+    }
+
+    private List<OrderStat> mergeUsingList(List<OrderStat> fromList, List<OrderStat> toList) {
+        List<OrderStat> orderStatList = new ArrayList<OrderStat>();
+        Set<String> set = new HashSet<String>();
+        Map<String, Integer> fromMap = new HashMap<String, Integer>();
+        Map<String, Integer> toMap = new HashMap<String, Integer>();
+        for (OrderStat orderStat : fromList) {
+            set.add(orderStat.getSource());
+            fromMap.put(orderStat.getSource(), orderStat.getIndexValue());
+        }
+        for (OrderStat orderStat : toList) {
+            set.add(orderStat.getTarget());
+            toMap.put(orderStat.getTarget(), orderStat.getIndexValue());
+        }
+        for (String area : set) {
+            OrderStat orderStat = new OrderStat();
+            orderStat.setSource(area);
+            Integer fromIndex = fromMap.get(area);
+            orderStat.setIndexValue(fromIndex == null ? 0 : fromIndex);
+            Integer toIndex = toMap.get(area);
+            orderStat.setOrderNum(toIndex == null ? 0 : toIndex);
+            orderStatList.add(orderStat);
+        }
+        return orderStatList;
+    }
+
+    public List<OrderStat> getFromList(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<OrderStat> fromToList = orderStatDao.getFromList(queryPara);
+        logger.info("service返回结果为 {}", JSON.toJSONString(fromToList));
+        return fromToList;
+    }
+
+    public List<OrderStat> getToList(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<OrderStat> fromToList = orderStatDao.getToList(queryPara);
+        logger.info("service返回结果为 {}", JSON.toJSONString(fromToList));
+        return fromToList;
+    }
 }

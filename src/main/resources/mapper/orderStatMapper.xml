@@ -162,8 +162,128 @@
         SELECT seller_name sellerName,area area FROM FUPIN_SELLER_INFO
     </select>
 
+    <select id="getOnlineOrderFromToAreaList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT
+        date(ob.create_time) statDate,ob.create_ip ip,ma.province_name province
+        FROM
+        order_book ob
+        INNER JOIN member_address ma ON ob.member_address_id = ma.id
+        AND ob.jd_order_id = 0
+        AND LENGTH(ob.create_ip) > 0
+        AND ob. STATUS NOT IN (6, 7, 8)
+        AND ob.seller_id IN ${whereCondition}
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                        AND ob.create_time <= concat(#{endDate},' 23:59:59')
+        ]]>
+        UNION ALL
+        SELECT
+        date(ob.create_time) statDate,ob.create_ip ip,mak.province_name province
+        FROM
+        order_book ob
+        INNER JOIN member_address_kpl mak ON ob.member_address_id = mak.id
+        AND ob.jd_order_id > 0
+        AND LENGTH(ob.create_ip) > 0
+        AND ob. STATUS NOT IN (6, 7, 8)
+        AND ob.seller_id IN ${whereCondition}
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                    AND ob.create_time <= concat(#{endDate},' 23:59:59')
+        ]]>
+        UNION ALL
+        SELECT
+        GROUP_CONCAT(DISTINCT date(jicaio.create_time)) statDate,GROUP_CONCAT(DISTINCT jicaio.create_ip) ip, group_concat(DISTINCT jicaima.province_name) province
+        FROM
+        jicai_order jicaio
+        INNER JOIN jicai_member_address jicaima ON jicaio.address_id = jicaima.id
+        AND LENGTH(jicaio.create_ip) > 0
+        AND jicaio. STATUS IN (3, 4, 5, 6, 7)
+        AND jicaio.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+        AND jicaio.create_time <= concat(#{endDate},' 23:59:59')
+        ]]>
+        AND jicaio.seller_id IN ${whereCondition}
+        INNER JOIN jicai_order_goods jicaiog ON jicaio.order_no = jicaiog.jicai_order_no
+        AND jicaiog. STATUS IN (0, 2)
+        GROUP BY
+        jicaio.order_no
+    </select>
+
     <insert id="updateOrderStat" parameterType="java.util.List">
     </insert>
+
+    <select id="getOrderFromToInfoList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT SOURCE source,TARGET target,sum(INDEX_VALUE) indexValue
+        FROM DMP_SELECT.FUPIN_FLOW_STAT
+        WHERE
+        <![CDATA[
+			        STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        AND STAT_TIME_SPAN='D' AND INDEX_NAME='fupinOrderFromToAreaInfo'
+        <if test="whereCondition != null and whereCondition != ''">
+            AND SOURCE IN ${whereCondition}
+        </if>
+        <if test="whereCondition1 != null and whereCondition1 != ''">
+            AND TARGET IN ${whereCondition1}
+        </if>
+        AND SOURCE!=TARGET
+        GROUP BY SOURCE,TARGET ORDER BY sum(index_value) DESC
+    </select>
+
+    <select id="getOrderFromInfoList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT SOURCE source,sum(INDEX_VALUE) indexValue
+        FROM DMP_SELECT.FUPIN_FLOW_STAT
+        WHERE
+        <![CDATA[
+			        STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        AND STAT_TIME_SPAN='D' AND INDEX_NAME='fupinOrderFromToAreaInfo'
+        <if test="whereCondition != null and whereCondition != ''">
+            AND SOURCE IN ${whereCondition}
+        </if>
+        <if test="whereCondition1 != null and whereCondition1 != ''">
+            AND TARGET IN ${whereCondition1}
+        </if>
+        GROUP BY SOURCE
+    </select>
+
+    <select id="getOrderToInfoList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT TARGET target,sum(INDEX_VALUE) indexValue
+        FROM DMP_SELECT.FUPIN_FLOW_STAT
+        WHERE
+        <![CDATA[
+			        STAT_TIME >= #{startDate}
+		        ]]>
+        <![CDATA[
+                    and STAT_TIME <= #{endDate}
+        ]]>
+        AND STAT_TIME_SPAN='D' AND INDEX_NAME='fupinOrderFromToAreaInfo'
+        <if test="whereCondition != null and whereCondition != ''">
+            AND SOURCE IN ${whereCondition}
+        </if>
+        <if test="whereCondition1 != null and whereCondition1 != ''">
+            AND TARGET IN ${whereCondition1}
+        </if>
+        GROUP BY TARGET
+    </select>
+
+    <select id="getFromList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT DISTINCT SOURCE source
+        FROM
+        DMP_SELECT.FUPIN_FLOW_STAT
+    </select>
+
+    <select id="getToList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT DISTINCT target target
+        FROM
+        DMP_SELECT.FUPIN_FLOW_STAT
+    </select>
 
     <insert id="updateOrderIPInfo" parameterType="java.util.List">
         INSERT INTO DMP_SELECT.FUPIN_DISTRIBUTE_RESULT
@@ -177,6 +297,26 @@
             #{item.indexName,jdbcType=VARCHAR} indexName,
             #{item.disType,jdbcType=VARCHAR} disType,
             #{item.disName,jdbcType=VARCHAR} disName,
+            #{item.indexValue,jdbcType=NUMERIC} indexValue,
+            sysdate createTime,
+            sysdate updateTime
+            FROM dual
+        </foreach>
+        ) t1
+    </insert>
+
+    <insert id="updateOrderFromToAreaInfo" parameterType="java.util.List">
+        INSERT INTO DMP_SELECT.FUPIN_FLOW_STAT
+        (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, SOURCE, TARGET,INDEX_VALUE,CREATE_TIME,UPDATE_TIME)
+        SELECT t1.statDate,t1.statDateSpan,t1.indexName,t1.from1,t1.to1,t1.indexValue,t1.createTime,t1.updateTime
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.statDate,jdbcType=VARCHAR} statDate,
+            #{item.statDateSpan,jdbcType=VARCHAR} statDateSpan,
+            #{item.indexName,jdbcType=VARCHAR} indexName,
+            #{item.from,jdbcType=VARCHAR} from1,
+            #{item.to,jdbcType=VARCHAR} to1,
             #{item.indexValue,jdbcType=NUMERIC} indexValue,
             sysdate createTime,
             sysdate updateTime
