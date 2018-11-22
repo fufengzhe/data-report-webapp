@@ -37,7 +37,7 @@
     <br/>
     <div class="panel panel-default">
         <div class="panel-heading">
-            扶贫商品订单下单及收货地域分析查询（xx>yy表示xx地域下单，yy地域收件）
+            扶贫商品订单下单及收货地域分析查询（xx>yy表示xx地域下单，yy地域收件；独立的小红点表示该地域所有订单的下单和收件地域都相同）
         </div>
     </div>
     <div class="row panel-heading">

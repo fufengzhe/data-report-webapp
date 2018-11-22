@@ -53,4 +53,6 @@ public interface OrderStatDao {
     List<OrderStat> getFromList(QueryPara queryPara);
 
     List<OrderStat> getToList(QueryPara queryPara);
+
+    List<OrderStat> getOrderAmountListForAreaOfOfflineMail(QueryPara queryPara);
 }

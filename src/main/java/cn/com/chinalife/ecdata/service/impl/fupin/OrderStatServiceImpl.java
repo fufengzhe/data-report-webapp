@@ -63,13 +63,16 @@ public class OrderStatServiceImpl implements OrderStatService {
         queryPara.setWhereCondition1(sellerNameFilter);
         List<OrderStat> sellerList = orderStatDao.getFuPinSellerAreaList();
         DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
-        List<OrderStat> orderAmountSellerDimensionList = orderStatDao.getOrderAmountListForSellerDimension(queryPara);
+        //只包含线上零售和线上集采的部分，因为线下邮件所用供应商因人工录入可能会导致问题，所以线下邮件部分直接取地区维度的
+        List<OrderStat> orderAmountSellerDimensionOfOnlineList = orderStatDao.getOrderAmountListForSellerDimension(queryPara);
+        List<OrderStat> orderAmountAreaOfOfflineMailList = orderStatDao.getOrderAmountListForAreaOfOfflineMail(queryPara);
         Map<String, String> sellerNameAndAreaMap = new HashMap<String, String>();
         for (OrderStat orderStat : sellerList) {
             sellerNameAndAreaMap.put(orderStat.getSellerName(), orderStat.getArea());
         }
         Map<String, OrderStat> areaStatMap = new HashMap<String, OrderStat>();
-        for (OrderStat orderStat : orderAmountSellerDimensionList) {
+        //将线上零售和线上集采部分统计到地区维度
+        for (OrderStat orderStat : orderAmountSellerDimensionOfOnlineList) {
             String sellerName = orderStat.getSellerName();
             String area = sellerNameAndAreaMap.get(sellerName) == null ? sellerName : sellerNameAndAreaMap.get(sellerName);
             OrderStat temp = areaStatMap.get(area);
@@ -82,6 +85,16 @@ public class OrderStatServiceImpl implements OrderStatService {
             } else {
                 temp.setOrderNum(orderStat.getOrderNum() + temp.getOrderNum());
                 temp.setOrderAmount(orderStat.getOrderAmount().add(temp.getOrderAmount()));
+            }
+        }
+        for (OrderStat orderStat : orderAmountAreaOfOfflineMailList) {
+            String area = orderStat.getArea();
+            OrderStat temp = areaStatMap.get(area);
+            if (temp != null) {
+                temp.setOrderNum(orderStat.getOrderNum() + temp.getOrderNum());
+                temp.setOrderAmount(orderStat.getOrderAmount().add(temp.getOrderAmount()));
+            } else {
+                areaStatMap.put(area, orderStat);
             }
         }
         List<OrderStat> orderAmountAreaDimensionList = new ArrayList<OrderStat>();
@@ -100,6 +113,10 @@ public class OrderStatServiceImpl implements OrderStatService {
                 sumAmount.setOrderAmount(value.getOrderAmount().add(sumAmount.getOrderAmount()));
             } else if ("乌兰察布".equals(key)) {
                 neiMengAmount = value;
+            } else {
+                orderAmountAreaDimensionList.add(value);
+                sumAmount.setOrderNum(value.getOrderNum() + sumAmount.getOrderNum());
+                sumAmount.setOrderAmount(value.getOrderAmount().add(sumAmount.getOrderAmount()));
             }
         }
         Collections.sort(orderAmountAreaDimensionList, new Comparator<OrderStat>() {

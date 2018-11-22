@@ -24,7 +24,9 @@
     <div class="container">
         <h2>数据概览(线下订单核对中，数据仅供参考)</h2>
         <p><h4>截止今天凌晨2018年<abbr title="只计算四县及非丹泉水订单">扶贫订单</abbr>数为<kbd id="sumOrderNum">xx</kbd>件，销售额为<kbd
-            id="sumOrderAmount">xx</kbd>万元，全年销售目标达成率为<kbd id="completeRatio">xx.xx%</kbd>。</h4></p>
+            id="sumOrderAmount">xx</kbd>万元。
+        <%--全年销售目标达成率为<kbd id="completeRatio">xx.xx%</kbd>。--%>
+    </h4></p>
     </div>
 
     <div class="row panel-heading">
@@ -145,29 +147,29 @@
     if (list[0].length == 0) {
         $("#sumOrderNum").text("无数据");
         $("#sumOrderAmount").text("无数据");
-        $("#completeRatio").text("无数据");
+//        $("#completeRatio").text("无数据");
         $("#noDataOfDateOrderNumPie").css('display', 'block');
         $("#noDataOfDateOrderAmountPie").css('display', 'block');
     } else {
         areaList = list[0];
         $("#sumOrderNum").text(areaList[0].orderNum);
         $("#sumOrderAmount").text(areaList[0].orderAmount);
-        $("#completeRatio").text(areaList[0].completeRatio);
-        pieChart(list[0], "dateOrderNumPieChart", "dateOrderAmountPieChart", "订单数分布", "订单金额分布");
+//        $("#completeRatio").text(areaList[0].completeRatio);
+        pieChart(list[0], "dateOrderNumPieChart", "dateOrderAmountPieChart", "订单数（件）分布", "订单金额（万）分布");
     }
     function pieChart(data, divId1, divId2, chartName1, chartName2) {
         var legendData = [];
         var seriesData1 = [];
         var seriesData2 = [];
-        for (var i = 1; i <= 4; i++) {
+        for (var i = 1; i < data.length-1; i++) {
             legendData.push(data[i].area);
             window.listForTable.push(data[i]);
             seriesData1.push({value: data[i].orderNum, name: data[i].area});
             seriesData2.push({value: data[i].orderAmount, name: data[i].area});
         }
         window.listForTable.push(data[0]);
-        drawPieChart(divId1, chartName1, legendData, seriesData1, "单量及占比");
-        drawPieChart(divId2, chartName2, legendData, seriesData2, "金额及占比");
+        drawPieChart(divId1, chartName1, legendData, seriesData1, "单量（件）及占比");
+        drawPieChart(divId2, chartName2, legendData, seriesData2, "金额（万）及占比");
     }
     $(function () {
         $("#queryDate").click(function () {
@@ -195,7 +197,7 @@
                                 $("#noDataOfDateOrderNumPie").css('display', 'none');
                                 $("#noDataOfDateOrderAmountPie").css('display', 'none');
                                 window.listForTable.length = 0;
-                                pieChart(list[0], "dateOrderNumPieChart", "dateOrderAmountPieChart", "订单数分布", "订单金额分布");
+                                pieChart(list[0], "dateOrderNumPieChart", "dateOrderAmountPieChart", "订单数（件）分布", "订单金额（万）分布");
                                 $("#datePieTable").bootstrapTable('load', window.listForTable);
                             }
                         }
@@ -206,7 +208,7 @@
         });
     });
     generateDataTable("datePieTable", [[{"field": "area"}, {"field": "orderNum"}, {"field": "orderAmount"}],
-        [{"title": "地区"}, {"title": "订单数"}, {"title": "订单总金额"}]])
+        [{"title": "地区"}, {"title": "订单数（件）"}, {"title": "订单总金额（万）"}]])
     $("#datePieTable").bootstrapTable('load', window.listForTable);
 </script>
 

@@ -147,9 +147,13 @@
         GROUP BY jicaio.order_no
         ) onlineJiCai
         GROUP BY trim(onlineJiCai.seller_name)
-        UNION ALL
+        ) t GROUP BY t.sellerName
+    </select>
+
+    <select id="getOrderAmountListForAreaOfOfflineMail" resultType="OrderStat" parameterType="QueryPara">
         select
-        trim(seller_name) sellerName,count(DISTINCT seq) orderNum,sum(money_amount) orderAmount
+        CASE seller_area WHEN '内蒙乌兰察布' THEN '乌兰察布' WHEN '广西省天等' THEN '天等' WHEN '广西省龙州' THEN '龙州' WHEN '湖北省丹江口' THEN '丹江口' WHEN '湖北省郧西' THEN '郧西'
+        ELSE '线下邮件未知地区' END  area,count(DISTINCT seq) orderNum,sum(money_amount) orderAmount
         FROM
         offline_fupin WHERE status=0
         AND
@@ -162,9 +166,8 @@
         <![CDATA[
                     AND order_date <= #{endDate}
         ]]>
-        AND trim(seller_name) IN ${whereCondition1} AND product_name NOT LIKE '%国寿丹泉%'
-        GROUP BY trim(seller_name)
-        ) t GROUP BY t.sellerName
+        AND product_name NOT LIKE '%国寿丹泉%'
+        GROUP BY seller_area
     </select>
 
     <select id="getFuPinSellerAreaList" resultType="OrderStat">

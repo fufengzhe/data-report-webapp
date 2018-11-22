@@ -9,6 +9,9 @@
     <link rel="icon" href="${pageContext.request.contextPath}/static/img/logo.ico" type="img/x-ico"/>
     <title>国寿电商扶贫数据后台</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/translate.css" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
+          type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
           type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
@@ -26,7 +29,7 @@
         </div>
     </div>
 </nav>
-<h1 align="center">Hello!Welcome To Data Server!</h1>
+<h2 align="center">Hello!Welcome To Data Server!</h2>
 <h4 align="center">May Your Work Be Driven By Data!</h4>
 <h6 align="center">Powered By Poverty Alleviation Team Of CLEC!</h6>
 <div class="row">
@@ -43,24 +46,80 @@
     </h2>
     <br/>
     <ul class="list-group">
-        <li class="list-group-item">1、扶贫相关页面点击数查询 <a href="/ecdata/pageClick/summary" class="btn btn-success btn-xs"
-                                                     target="_blank">点击查看</a>
+        <li class="list-group-item">
+            <div class="service-box">
+                <div class="service-icon orange">
+                    <div class="front-content">
+                        <h3 class="fa fa-tablet">&nbsp;扶贫相关页面点击数查询 </h3>
+                    </div>
+                </div>
+                <div class="service-content">
+                    <p>扶贫相关页面点击次数、点击人数分布及过去七天点击次数趋势展示，支持时间维度的交互查询 <a href="/ecdata/pageClick/summary" class="btn btn-success btn-xs"
+                                                                     target="_blank">点击查看</a></p>
+                </div>
+            </div>
         </li>
-        <li class="list-group-item">2、扶贫相关页面活跃用户分析查询（活跃IP运营商及归属地） <a href="/ecdata/pageClick/distributeAnalysis"
-                                                                     class="btn btn-success btn-xs"
-                                                                     target="_blank">点击查看</a>
+
+        <li class="list-group-item">
+            <div class="service-box">
+                <div class="service-icon orange">
+                    <div class="front-content">
+                        <h3 class="fa fa-map-marker">&nbsp;扶贫相关页面活跃用户分析查询（活跃IP运营商及归属地） </h3>
+                    </div>
+                </div>
+                <div class="service-content">
+                    <p>扶贫相关页面活跃用户访问IP运营商及归属地分布展示，支持时间维度的交互查询 <a href="/ecdata/pageClick/distributeAnalysis" class="btn btn-success btn-xs"
+                                                                     target="_blank">点击查看</a></p>
+                </div>
+            </div>
         </li>
-        <li class="list-group-item">3、扶贫商品成单用户分析查询（下单IP运营商及归属地） <a href="/ecdata/orderStat/IPSummary"
-                                                                   class="btn btn-success btn-xs"
-                                                                   target="_blank">点击查看</a>
+
+        <li class="list-group-item">
+            <div class="service-box">
+                <div class="service-icon orange">
+                    <div class="front-content">
+                        <h3 class="fa fa-map-marker">&nbsp;扶贫商品成单用户分析查询（下单IP运营商及归属地） </h3>
+                    </div>
+                </div>
+                <div class="service-content">
+                    <p>扶贫商品成单用户下单IP运营商及归属地分布展示，支持时间维度的交互查询 <a href="/ecdata/orderStat/IPSummary" class="btn btn-success btn-xs"
+                                                                target="_blank">点击查看</a></p>
+                </div>
+            </div>
         </li>
-        <li class="list-group-item">4、扶贫商品订单数查询 <a href="/ecdata/orderStat/summary" class="btn btn-success btn-xs"
-                                                   target="_blank">点击查看</a>
+
+        <li class="list-group-item">
+            <div class="service-box">
+                <div class="service-icon orange">
+                    <div class="front-content">
+                        <h3 class="fa fa-shopping-cart">&nbsp;扶贫商品订单查询 </h3>
+                    </div>
+                </div>
+                <div class="service-content">
+                    <p>扶贫商品地区、公司维度的成交单量及成交额展示，支持时间维度的交互查询 <a href="/ecdata/orderStat/summary" class="btn btn-success btn-xs"
+                                                              target="_blank">点击查看</a></p>
+                </div>
+            </div>
         </li>
-        <li class="list-group-item">5、扶贫商品订单下单及收货地域分析查询 <a href="/ecdata/orderStat/fromToInfoSummary"
-                                                           class="btn btn-success btn-xs"
-                                                           target="_blank">点击查看</a>
+
+        <li class="list-group-item">
+            <div class="service-box">
+                <div class="service-icon orange">
+                    <div class="front-content">
+                        <h3 class="fa fa-truck">&nbsp;扶贫商品订单下单及收货地域分析查询 </h3>
+                    </div>
+                </div>
+                <div class="service-content">
+                    <p>扶贫商品订单下单地域及收件地域展示，支持时间维度、下单地域及收件地域的交互查询 <a href="/ecdata/orderStat/fromToInfoSummary" class="btn btn-success btn-xs"
+                                                             target="_blank">点击查看</a></p>
+                </div>
+            </div>
         </li>
+
+        <%--<li class="list-group-item">5、扶贫商品订单下单及收货地域分析查询 <a href="/ecdata/orderStat/fromToInfoSummary"--%>
+                                                           <%--class="btn btn-success btn-xs"--%>
+                                                           <%--target="_blank">点击查看</a>--%>
+        <%--</li>--%>
     </ul>
 </div>
 
@@ -90,6 +149,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
+
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
