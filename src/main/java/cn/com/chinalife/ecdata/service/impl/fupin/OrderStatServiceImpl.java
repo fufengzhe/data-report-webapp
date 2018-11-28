@@ -48,9 +48,120 @@ public class OrderStatServiceImpl implements OrderStatService {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<List<OrderStat>> lists = new ArrayList<List<OrderStat>>();
         List<OrderStat> orderAmountAreaDimensionList = this.getOrderAmountListForAreaDimension(queryPara);
+        OrderStat danQuanWater = this.getDanQuanWaterOrderAmount(queryPara);
+        danQuanWater.setOrderAmount(CommonUtils.convertToTenThousandUnit(danQuanWater.getOrderAmount()));
+        orderAmountAreaDimensionList.add(danQuanWater);
         lists.add(orderAmountAreaDimensionList);
+        List<OrderStat> orderAmountCompanyDimensionList = this.getOrderAmountListForCompanyDimension(queryPara);
+        lists.add(orderAmountCompanyDimensionList);
         logger.info("service返回结果为 {}", JSON.toJSONString(lists));
         return lists;
+    }
+
+    private List<OrderStat> getOrderAmountListForCompanyDimension(QueryPara queryPara) {
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<String> sellerIDList = orderStatDao.getFuPinSellerIDList();
+        String sellerIDFilter = getSellerFilterUsingList(sellerIDList);
+        queryPara.setWhereCondition(sellerIDFilter);
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
+        List<OrderStat> onlineRetailAndJiCaiList = orderStatDao.getOnlineRetailAndJiCaiList(queryPara);
+        List<OrderStat> offlineMailList = orderStatDao.getOfflineMailList(queryPara);
+        List<OrderStat> companyOrderAmountList = this.dealMemberTileAndCompanyRelationUsingLists(onlineRetailAndJiCaiList, offlineMailList);
+        return companyOrderAmountList;
+    }
+
+    private List<OrderStat> dealMemberTileAndCompanyRelationUsingLists(List<OrderStat> onlineRetailAndJiCaiList, List<OrderStat> offlineMailList) {
+        List<OrderStat> originalCompanyList = new ArrayList<OrderStat>();
+        originalCompanyList.addAll(onlineRetailAndJiCaiList);
+        originalCompanyList.addAll(offlineMailList);
+        List<OrderStat> companyList = new ArrayList<OrderStat>();
+        Map<String, OrderStat> companyKeyWordAndOrderStatMap = this.generateCompanyKeyWordAndOrderStatMap();
+        List<OrderStat> notIncludedList = new ArrayList<OrderStat>();
+        for (OrderStat orderStat : originalCompanyList) {
+            boolean isChinaLife = false;
+            for (Map.Entry<String, OrderStat> entry : companyKeyWordAndOrderStatMap.entrySet()) {
+                if (orderStat.getCompany().contains(entry.getKey())) {
+                    isChinaLife = true;
+                    OrderStat value = entry.getValue();
+                    value.setOrderNum(value.getOrderNum() + orderStat.getOrderNum());
+                    value.setOrderAmount(value.getOrderAmount().add(orderStat.getOrderAmount()));
+                    break;
+                }
+            }
+            if (!isChinaLife) {
+                notIncludedList.add(orderStat);
+            }
+        }
+        Map<String, OrderStat> companyAndOrderStatMap = new LinkedHashMap<String, OrderStat>();
+        for (Map.Entry<String, OrderStat> entry : companyKeyWordAndOrderStatMap.entrySet()) {
+            OrderStat orderStat = entry.getValue();
+            OrderStat addedOrderStat = companyAndOrderStatMap.get(orderStat.getCompany());
+            if (addedOrderStat == null) {
+                companyAndOrderStatMap.put(orderStat.getCompany(), orderStat);
+            } else {
+                addedOrderStat.setOrderNum(orderStat.getOrderNum() + addedOrderStat.getOrderNum());
+                addedOrderStat.setOrderAmount(orderStat.getOrderAmount().add(addedOrderStat.getOrderAmount()));
+            }
+        }
+        OrderStat sum = new OrderStat("总计", 0, new BigDecimal(0.00), new BigDecimal("18000000"), "0.00%");
+        for (Map.Entry<String, OrderStat> entry : companyAndOrderStatMap.entrySet()) {
+            OrderStat orderStat = entry.getValue();
+            if (orderStat.getOrderAmountGoal() != null) {
+                orderStat.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(orderStat.getOrderAmount(), orderStat.getOrderAmountGoal(), 2)));
+                orderStat.setOrderAmountGoal(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmountGoal()));
+            }
+            sum.setOrderAmount(sum.getOrderAmount().add(orderStat.getOrderAmount()));
+            sum.setOrderNum(sum.getOrderNum() + orderStat.getOrderNum());
+            orderStat.setOrderAmount(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmount()));
+            companyList.add(orderStat);
+        }
+        sum.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(sum.getOrderAmount(), sum.getOrderAmountGoal(), 2)));
+        sum.setOrderAmount(CommonUtils.convertToTenThousandUnit(sum.getOrderAmount()));
+        companyList.add(sum);
+        companyList.addAll(notIncludedList);
+        return companyList;
+    }
+
+    private Map<String, OrderStat> generateCompanyKeyWordAndOrderStatMap() {
+        Map<String, OrderStat> orderStatMap = new LinkedHashMap<String, OrderStat>();
+        orderStatMap.put("中国人寿保险（集团）公司", new OrderStat("集团公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
+        orderStatMap.put("中国人寿保险股份", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
+        orderStatMap.put("中国人寿股份", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
+        orderStatMap.put("中国人寿保险（海外）股份", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
+        orderStatMap.put("中国人寿绵阳市分公司工会", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
+        orderStatMap.put("中国人寿无锡市分公司", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
+        orderStatMap.put("中国共产党中国人寿四川省分公司机关委员会", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
+        orderStatMap.put("广东荔湾大厦", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
+        orderStatMap.put("中国人寿资产管理", new OrderStat("资产公司", 0, new BigDecimal("0.00"), new BigDecimal("1000000"), "0.00%"));
+        orderStatMap.put("人寿财产保险", new OrderStat("财险公司", 0, new BigDecimal("0.00"), new BigDecimal("3800000"), "0.00%"));
+        orderStatMap.put("人寿财险保险", new OrderStat("财险公司", 0, new BigDecimal("0.00"), new BigDecimal("3800000"), "0.00%"));
+        orderStatMap.put("养老", new OrderStat("养老险公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
+        orderStatMap.put("电子商务", new OrderStat("电商公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
+        orderStatMap.put("投资", new OrderStat("国寿投资公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
+        orderStatMap.put("保险职业学院", new OrderStat("保险职业学院", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("安保基金", new OrderStat("安保基金", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("财富管理", new OrderStat("财富管理", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("广发银行", new OrderStat("广发银行", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("绿洲", new OrderStat("绿洲酒店", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("远通置业", new OrderStat("远通置业", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("中保大厦", new OrderStat("中保大厦", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("审计中心", new OrderStat("审计中心", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("物业管理", new OrderStat("物业管理", 0, new BigDecimal("0.00"), null, null));
+        orderStatMap.put("柠檬树", new OrderStat("集团餐厅", 0, new BigDecimal("0.00"), null, null));
+        return orderStatMap;
+    }
+
+    private OrderStat getDanQuanWaterOrderAmount(QueryPara queryPara) {
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
+        List<OrderStat> danQuanWater = orderStatDao.getDanQuanWaterOrderAmount(queryPara);
+        if (danQuanWater != null && danQuanWater.size() > 0) {
+            return danQuanWater.get(0);
+        } else {
+            OrderStat orderStat = new OrderStat();
+            orderStat.setOrderNum(0);
+            orderStat.setOrderAmount(new BigDecimal("0.00"));
+            return orderStat;
+        }
     }
 
     private List<OrderStat> getOrderAmountListForAreaDimension(QueryPara queryPara) {
@@ -103,6 +214,9 @@ public class OrderStatServiceImpl implements OrderStatService {
         sumAmount.setOrderNum(0);
         sumAmount.setOrderAmount(new BigDecimal("0.00"));
         OrderStat neiMengAmount = new OrderStat();
+        neiMengAmount.setArea("乌兰察布");
+        neiMengAmount.setOrderNum(0);
+        neiMengAmount.setOrderAmount(new BigDecimal("0.00"));
         Set<String> fupinSpecifiedAreaSet = this.getFupinSpecifiedArea();
         for (Map.Entry<String, OrderStat> entry : areaStatMap.entrySet()) {
             String key = entry.getKey();

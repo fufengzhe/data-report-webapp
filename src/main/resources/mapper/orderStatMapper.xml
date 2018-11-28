@@ -152,8 +152,9 @@
 
     <select id="getOrderAmountListForAreaOfOfflineMail" resultType="OrderStat" parameterType="QueryPara">
         select
-        CASE seller_area WHEN '内蒙乌兰察布' THEN '乌兰察布' WHEN '广西省天等' THEN '天等' WHEN '广西省龙州' THEN '龙州' WHEN '湖北省丹江口' THEN '丹江口' WHEN '湖北省郧西' THEN '郧西'
-        ELSE '线下邮件未知地区' END  area,count(DISTINCT seq) orderNum,sum(money_amount) orderAmount
+        CASE seller_area WHEN '内蒙乌兰察布' THEN '乌兰察布' WHEN '广西省天等' THEN '天等' WHEN '广西省龙州' THEN '龙州' WHEN '湖北省丹江口' THEN
+        '丹江口' WHEN '湖北省郧西' THEN '郧西'
+        ELSE '线下邮件未知地区' END area,count(DISTINCT seq) orderNum,sum(money_amount) orderAmount
         FROM
         offline_fupin WHERE status=0
         AND
@@ -168,6 +169,117 @@
         ]]>
         AND product_name NOT LIKE '%国寿丹泉%'
         GROUP BY seller_area
+    </select>
+
+    <select id="getDanQuanWaterOrderAmount" resultType="OrderStat" parameterType="QueryPara">
+        select sum(t.orderNum) orderNum,IFNULL(sum(t.orderAmount),0.00) orderAmount
+        FROM
+        ( SELECT count(*) orderNum,sum(onlineRetail.money_amount) orderAmount
+        FROM
+        (
+        SELECT ob.order_no ,s.seller_name,ob.money_amount
+        FROM order_book ob INNER JOIN seller s ON ob.seller_id = s.id
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                        AND ob.create_time <= concat(#{endDate},' 23:59:59')
+            ]]>
+        AND ob.STATUS NOT IN (6, 7, 8)
+        AND ob.seller_id IN ${whereCondition} INNER JOIN order_goods og ON ob.order_no=og.order_no AND og.product_name
+        LIKE '%国寿丹泉%'
+        GROUP BY ob.order_no
+        ) onlineRetail
+        UNION ALL
+        SELECT count(*) orderNum,sum(onlineJiCai.money_amount) orderAmount
+        FROM
+        (
+        SELECT jicaio.order_no,s.seller_name,jicaio.money_amount
+        FROM jicai_order jicaio INNER JOIN seller s ON jicaio.seller_id = s.id
+        AND jicaio.order_type = 0
+        AND jicaio. STATUS IN (3, 4, 5, 6, 7)
+        AND jicaio.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                        AND jicaio.create_time <= concat(#{endDate},' 23:59:59')
+            ]]>
+        AND jicaio.seller_id IN ${whereCondition}
+        INNER JOIN jicai_order_goods jicaiog ON jicaio.order_no = jicaiog.jicai_order_no AND jicaiog.product_name LIKE
+        '%国寿丹泉%'
+        AND jicaiog. STATUS IN (0, 2)
+        GROUP BY jicaio.order_no
+        ) onlineJiCai
+        UNION ALL
+        select
+        count(DISTINCT seq) orderNum,sum(money_amount) orderAmount
+        FROM
+        offline_fupin WHERE status=0
+        AND
+        <if test="startDate != null and startDate != '' and startDate == '2018-01-01'">
+            order_date >= '2017-12-29'
+        </if>
+        <if test="startDate != null and startDate != '' and startDate != '2018-01-01'">
+            order_date >= #{startDate}
+        </if>
+        <![CDATA[
+                    AND order_date <= #{endDate}
+        ]]>
+        AND product_name LIKE '%国寿丹泉%'
+        ) t
+    </select>
+
+    <select id="getOnlineRetailAndJiCaiList" resultType="OrderStat" parameterType="QueryPara">
+        select t.company company,sum(t.orderNum) orderNum,sum(t.orderAmount) orderAmount
+        FROM
+        ( SELECT trim(onlineRetail.company) company,count(*) orderNum,sum(onlineRetail.money_amount) orderAmount
+        FROM
+        (
+        SELECT ob.order_no ,mb.title company,ob.money_amount
+        FROM order_book ob
+        INNER JOIN order_goods og ON ob.order_no=og.order_no AND og.product_name NOT LIKE '%国寿丹泉%'
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                        AND ob.create_time <= concat(#{endDate},' 23:59:59')
+            ]]>
+        AND ob.STATUS NOT IN (6, 7, 8)
+        AND ob.seller_id IN ${whereCondition}
+        INNER JOIN member_bill mb ON ob.member_bill_id=mb.id
+        GROUP BY ob.order_no
+        ) onlineRetail GROUP BY trim(onlineRetail.company)
+        UNION ALL
+        SELECT trim(onlineJiCai.company) sellerName,count(*) orderNum,sum(onlineJiCai.money_amount) orderAmount
+        FROM
+        (
+        SELECT jicaio.order_no,	jicaimb.title company,jicaio.money_amount
+        FROM jicai_order jicaio
+        INNER JOIN jicai_order_goods jicaiog ON jicaio.order_no = jicaiog.jicai_order_no AND jicaiog.product_name NOT LIKE '%国寿丹泉%'
+        AND jicaiog. STATUS IN (0, 2)
+        AND jicaio.order_type = 0
+        AND jicaio. STATUS IN (3, 4, 5, 6, 7)
+        AND jicaio.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                        AND jicaio.create_time <= concat(#{endDate},' 23:59:59')
+            ]]>
+        AND jicaio.seller_id IN ${whereCondition}
+        INNER JOIN jicai_member_bill jicaimb ON jicaio.bill_id=jicaimb.id
+        GROUP BY jicaio.order_no
+        ) onlineJiCai GROUP BY trim(onlineJiCai.company)
+        ) t GROUP BY t.company
+    </select>
+
+    <select id="getOfflineMailList" resultType="OrderStat" parameterType="QueryPara">
+        select member_name company,count(DISTINCT seq) orderNum,sum(money_amount) orderAmount
+        FROM
+        offline_fupin WHERE status=0
+        AND
+        <if test="startDate != null and startDate != '' and startDate == '2018-01-01'">
+            order_date >= '2017-12-29'
+        </if>
+        <if test="startDate != null and startDate != '' and startDate != '2018-01-01'">
+            order_date >= #{startDate}
+        </if>
+        <![CDATA[
+                    AND order_date <= #{endDate}
+        ]]>
+        AND product_name NOT LIKE '%国寿丹泉%'
+        GROUP BY member_name
     </select>
 
     <select id="getFuPinSellerAreaList" resultType="OrderStat">

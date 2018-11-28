@@ -20,6 +20,7 @@ public class OrderStat {
     private Integer orderNum6;
     private Integer orderNum7;
     private BigDecimal orderAmount;
+    private BigDecimal orderAmountGoal;
     private BigDecimal orderAverage;
     private String ip;
     private String province;
@@ -35,6 +36,7 @@ public class OrderStat {
     private String to;
     private String source;
     private String target;
+
 
     public String getStatDate() {
         return statDate;
@@ -146,6 +148,14 @@ public class OrderStat {
 
     public void setOrderAmount(BigDecimal orderAmount) {
         this.orderAmount = orderAmount;
+    }
+
+    public BigDecimal getOrderAmountGoal() {
+        return orderAmountGoal;
+    }
+
+    public void setOrderAmountGoal(BigDecimal orderAmountGoal) {
+        this.orderAmountGoal = orderAmountGoal;
     }
 
     public BigDecimal getOrderAverage() {
@@ -286,6 +296,7 @@ public class OrderStat {
                 ", orderNum6=" + orderNum6 +
                 ", orderNum7=" + orderNum7 +
                 ", orderAmount=" + orderAmount +
+                ", orderAmountGoal=" + orderAmountGoal +
                 ", orderAverage=" + orderAverage +
                 ", ip='" + ip + '\'' +
                 ", province='" + province + '\'' +
@@ -302,5 +313,16 @@ public class OrderStat {
                 ", source='" + source + '\'' +
                 ", target='" + target + '\'' +
                 '}';
+    }
+
+    public OrderStat(String company, Integer orderNum, BigDecimal orderAmount, BigDecimal orderAmountGoal, String completeRatio) {
+        this.company = company;
+        this.orderNum = orderNum;
+        this.orderAmount = orderAmount;
+        this.orderAmountGoal = orderAmountGoal;
+        this.completeRatio = completeRatio;
+    }
+
+    public OrderStat() {
     }
 }
