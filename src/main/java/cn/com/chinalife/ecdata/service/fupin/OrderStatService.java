@@ -35,4 +35,6 @@ public interface OrderStatService {
     List<OrderStat> getFromList(QueryPara queryPara);
 
     List<OrderStat> getToList(QueryPara queryPara);
+
+    List<OrderStat> getOrderExpressInfo(QueryPara queryPara);
 }

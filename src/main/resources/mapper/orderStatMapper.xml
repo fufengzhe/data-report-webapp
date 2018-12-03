@@ -103,6 +103,10 @@
         SELECT SELLER_ID FROM FUPIN_SELLER_INFO
     </select>
 
+    <select id="getFuPinSellerIDListForSpecifiedArea" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT SELLER_ID FROM FUPIN_SELLER_INFO WHERE AREA IN ${_parameter}
+    </select>
+
     <select id="getFuPinSellerNameList" resultType="java.lang.String">
         SELECT trim(SELLER_NAME) FROM FUPIN_SELLER_INFO
     </select>
@@ -247,7 +251,7 @@
         SELECT trim(onlineJiCai.company) sellerName,count(*) orderNum,sum(onlineJiCai.money_amount) orderAmount
         FROM
         (
-        SELECT jicaio.order_no,	jicaimb.title company,jicaio.money_amount
+        SELECT jicaio.order_no,	jicaim.group_name company,jicaio.money_amount
         FROM jicai_order jicaio
         INNER JOIN jicai_order_goods jicaiog ON jicaio.order_no = jicaiog.jicai_order_no AND jicaiog.product_name NOT LIKE '%国寿丹泉%'
         AND jicaiog. STATUS IN (0, 2)
@@ -258,7 +262,7 @@
                         AND jicaio.create_time <= concat(#{endDate},' 23:59:59')
             ]]>
         AND jicaio.seller_id IN ${whereCondition}
-        INNER JOIN jicai_member_bill jicaimb ON jicaio.bill_id=jicaimb.id
+        INNER JOIN jicai_member jicaim ON jicaio.jicai_member_id=jicaim.id
         GROUP BY jicaio.order_no
         ) onlineJiCai GROUP BY trim(onlineJiCai.company)
         ) t GROUP BY t.company
@@ -278,7 +282,7 @@
         <![CDATA[
                     AND order_date <= #{endDate}
         ]]>
-        AND product_name NOT LIKE '%国寿丹泉%'
+        AND product_name NOT LIKE '%国寿丹泉%' AND seller_area IN ('湖北省郧西','湖北省丹江口','广西省龙州','广西省天等')
         GROUP BY member_name
     </select>
 
@@ -407,6 +411,37 @@
         SELECT DISTINCT target target
         FROM
         DMP_SELECT.FUPIN_FLOW_STAT
+    </select>
+
+    <select id="getExpressDisList" resultType="OrderStat" parameterType="QueryPara">
+        select t.company company,sum(t.orderNum) orderNum
+        FROM
+        (
+            SELECT e.express_name company,count(*) orderNum
+            FROM order_book ob
+            INNER JOIN express e ON ob.express_code = e.express_code
+            AND ob.create_time >= concat(#{startDate},' 00:00:00')
+            <![CDATA[
+                            AND ob.create_time <= concat(#{endDate},' 23:59:59')
+                ]]>
+            AND ob.STATUS NOT IN (6, 7, 8)
+            AND ob.seller_id IN ${whereCondition}
+            AND ob.jd_order_id = 0 AND ob.virtual_order = 0 AND ob.recharge_order = 0 AND ob.express_code!='qtkd'
+            GROUP BY e.express_name
+        UNION ALL
+            SELECT e.express_name company,count(DISTINCT jicaio.order_no) orderNum
+            FROM jicai_order jicaio
+            INNER JOIN express e ON jicaio.express_code = e.express_code
+            AND jicaio.order_type = 0
+            AND jicaio. STATUS IN (3, 4, 5, 6, 7) AND jicaio.express_code != 'qtkd'
+            AND jicaio.create_time >= concat(#{startDate},' 00:00:00')
+            <![CDATA[
+                            AND jicaio.create_time <= concat(#{endDate},' 23:59:59')
+                ]]>
+            AND jicaio.seller_id IN ${whereCondition}
+            INNER JOIN jicai_order_goods jicaiog ON jicaio.order_no = jicaiog.jicai_order_no AND jicaiog.STATUS IN (0, 2)
+            GROUP BY e.express_name
+        ) t GROUP BY t.company ORDER BY orderNum DESC
     </select>
 
     <insert id="updateOrderIPInfo" parameterType="java.util.List">

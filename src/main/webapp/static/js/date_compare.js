@@ -27,6 +27,34 @@ $(function () {
             endDate: $("#dateRange").val().substr(13)
         }
     );
+
+    $('#dateRangeExpress').daterangepicker(
+        {
+            ranges: {
+//              '今天': [moment(), moment()],
+                '昨天': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                '最近7天': [moment().subtract(7, 'days'), moment().subtract(1, 'days')],
+                '最近30天': [moment().subtract(30, 'days'), moment().subtract(1, 'days')],
+//              '当月': [moment().startOf('month'), moment().endOf('month')],
+                '上个月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            locale: {
+                applyLabel: '确定',
+                cancelLabel: '取消',
+                fromLabel: '从',
+                toLabel: '到',
+                customRangeLabel: '自定义时间段',
+                daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+                monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                firstDay: 1
+            },
+            format: 'YYYY-MM-DD',
+//			startDate:moment(),
+//			endDate: moment()
+            startDate: $("#dateRange").val().substr(0, 10),
+            endDate: $("#dateRange").val().substr(13)
+        }
+    );
     // $('#compare-dateselect').daterangepicker(
     //     {
     //         ranges: {

@@ -60,7 +60,7 @@ public class OrderStatServiceImpl implements OrderStatService {
 
     private List<OrderStat> getOrderAmountListForCompanyDimension(QueryPara queryPara) {
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
-        List<String> sellerIDList = orderStatDao.getFuPinSellerIDList();
+        List<String> sellerIDList = orderStatDao.getFuPinSellerIDListForSpecifiedArea(" ('丹江口','龙州','郧西','天等') ");
         String sellerIDFilter = getSellerFilterUsingList(sellerIDList);
         queryPara.setWhereCondition(sellerIDFilter);
         DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
@@ -112,13 +112,14 @@ public class OrderStatServiceImpl implements OrderStatService {
             }
             sum.setOrderAmount(sum.getOrderAmount().add(orderStat.getOrderAmount()));
             sum.setOrderNum(sum.getOrderNum() + orderStat.getOrderNum());
-            orderStat.setOrderAmount(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmount()));
             companyList.add(orderStat);
         }
         sum.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(sum.getOrderAmount(), sum.getOrderAmountGoal(), 2)));
-        sum.setOrderAmount(CommonUtils.convertToTenThousandUnit(sum.getOrderAmount()));
         companyList.add(sum);
         companyList.addAll(notIncludedList);
+        for (OrderStat orderStat : companyList) {
+            orderStat.setOrderAmount(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmount()));
+        }
         return companyList;
     }
 
@@ -136,7 +137,7 @@ public class OrderStatServiceImpl implements OrderStatService {
         orderStatMap.put("人寿财产保险", new OrderStat("财险公司", 0, new BigDecimal("0.00"), new BigDecimal("3800000"), "0.00%"));
         orderStatMap.put("人寿财险保险", new OrderStat("财险公司", 0, new BigDecimal("0.00"), new BigDecimal("3800000"), "0.00%"));
         orderStatMap.put("养老", new OrderStat("养老险公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
-        orderStatMap.put("电子商务", new OrderStat("电商公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
+        orderStatMap.put("中国人寿电子商务", new OrderStat("电商公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
         orderStatMap.put("投资", new OrderStat("国寿投资公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
         orderStatMap.put("保险职业学院", new OrderStat("保险职业学院", 0, new BigDecimal("0.00"), null, null));
         orderStatMap.put("安保基金", new OrderStat("安保基金", 0, new BigDecimal("0.00"), null, null));
@@ -458,6 +459,12 @@ public class OrderStatServiceImpl implements OrderStatService {
         List<OrderStat> toList = orderStatDao.getOrderToInfoList(queryPara);
         List<OrderStat> fromToSumList = this.mergeUsingList(fromList, toList);
         orderStatList.add(fromToSumList);
+        List<String> sellerIDList = orderStatDao.getFuPinSellerIDList();
+        String sellerIDFilter = getSellerFilterUsingList(sellerIDList);
+        queryPara.setWhereCondition(sellerIDFilter);
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
+        List<OrderStat> expressDisList = orderStatDao.getExpressDisList(queryPara);
+        orderStatList.add(expressDisList);
         logger.info("service返回结果为 {}", JSON.toJSONString(orderStatList));
         return orderStatList;
     }
@@ -501,5 +508,17 @@ public class OrderStatServiceImpl implements OrderStatService {
         List<OrderStat> fromToList = orderStatDao.getToList(queryPara);
         logger.info("service返回结果为 {}", JSON.toJSONString(fromToList));
         return fromToList;
+    }
+
+    public List<OrderStat> getOrderExpressInfo(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<String> sellerIDList = orderStatDao.getFuPinSellerIDList();
+        String sellerIDFilter = getSellerFilterUsingList(sellerIDList);
+        queryPara.setWhereCondition(sellerIDFilter);
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
+        List<OrderStat> expressDisList = orderStatDao.getExpressDisList(queryPara);
+        logger.info("service返回结果为 {}", JSON.toJSONString(expressDisList));
+        return expressDisList;
     }
 }

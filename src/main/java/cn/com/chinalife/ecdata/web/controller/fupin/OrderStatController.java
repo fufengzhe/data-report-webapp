@@ -158,5 +158,23 @@ public class OrderStatController {
         }
     }
 
+    @RequestMapping(value = "/expressNumQuery", produces = {"text/html;charset=UTF-8;"})
+    @ResponseBody
+    public String queryExpressNum(QueryPara queryPara) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            List<OrderStat> orderStatList = orderStatService.getOrderExpressInfo(queryPara);
+            responseBean.setDetailInfo(orderStatList);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
+
 
 }

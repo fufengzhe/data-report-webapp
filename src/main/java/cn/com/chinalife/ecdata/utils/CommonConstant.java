@@ -42,7 +42,7 @@ public class CommonConstant {
     public static String statIndexNameOfFupinOrderIPInfo = "fupinOrderIPInfo";
     public static String statIndexNameOfFupinOrderFromToAreaInfo = "fupinOrderFromToAreaInfo";
     public static String userSourceOfAll = "ALL";
-    public static int jsVersion = 12;
+    public static int jsVersion = 13;
     public static List<String> statIndexNameListOfPropertyPremium;
 
     static {

@@ -24,6 +24,8 @@ public interface OrderStatDao {
 
     List<String> getFuPinSellerIDList();
 
+    List<String> getFuPinSellerIDListForSpecifiedArea(String specifiedArea);
+
     List<OrderStat> getOnlineRetailOrderIPList(QueryPara queryPara);
 
     List<OrderStat> getOnlineGroupBuyOrderIPList(QueryPara queryPara);
@@ -61,4 +63,6 @@ public interface OrderStatDao {
     List<OrderStat> getOnlineRetailAndJiCaiList(QueryPara queryPara);
 
     List<OrderStat> getOfflineMailList(QueryPara queryPara);
+
+    List<OrderStat> getExpressDisList(QueryPara queryPara);
 }

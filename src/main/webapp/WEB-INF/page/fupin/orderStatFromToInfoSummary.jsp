@@ -10,11 +10,13 @@
         html {
             height: 100%
         }
+
         body {
             height: 100%;
             margin: 0px;
             padding: 0px
         }
+
         #container {
             height: 100%
         }
@@ -85,8 +87,45 @@
     </div>
     <div class="alert alert-warning" style="display:none;" id="noData">无数据，请更改查询条件或联系开发人员。</div>
     <div class="alert alert-warning" style="display:none;" id="dataHint">地域太多，不予展示，请选择特定的下单地域和收货地域查询（支持多选）。</div>
-    <div class="container-fluid text-center" id="migrateGraphChart" style="height:1200px;">
+    <div class="container-fluid text-center" id="migrateGraphChart" style="height:800px;">
     </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            物流快递分布
+        </div>
+    </div>
+    <div class="row panel-heading">
+        <div class='col-sm-3'></div>
+        <div class='col-sm-3'>
+            <div class="form-group">
+                <div class='input-group date text-center'>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    <input type="text" class="form-control" placeholder="时间范围" id="dateRangeExpress"/>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-1'>
+            <div class="form-group">
+                <div class='input-group text-center'>
+                        <span class="select-group-btn">
+                            <button type="button" class="btn btn-primary" id="queryDateExpress">开始查询</button>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-2'>
+            <button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图
+            </button>
+        </div>
+        <div class='col-sm-3'></div>
+    </div>
+    <div class="alert alert-warning" style="display:none;" id="noDataExpress">无数据，请更改查询条件或联系开发人员。</div>
+    <div class="container-fluid text-center" id="expressPieChart" style="height:800px;">
+    </div>
+
     <%--模态框--%>
     <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
@@ -135,14 +174,15 @@
         src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/moment.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/date_compare.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/daterangepicker.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/moment.js?ver=${jsVersion}"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/date_compare.js?ver=${jsVersion}"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/daterangepicker.js?ver=${jsVersion}"></script>
 <%--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZjFuwSnrpwicUzxIxguxFRQEXbWiwxjO"></script>--%>
 <script type="text/javascript">
     var list =${orderStatList};
     var dateRange = '${startDate}' + " ~ " + '${endDate}';
     $("#dateRange").val(dateRange);
+    $("#dateRangeExpress").val(dateRange);
     var fromList =${fromList};
     var toList =${toList};
     var fromDom = $("#source");
@@ -165,6 +205,11 @@
         $("#noData").css('display', 'block');
     } else {
         graphChart(list, "migrateGraphChart", "扶贫商品订单下单及收货地域分析");
+    }
+    if (list[2].length == 0) {
+        $("#noDataExpress").css('display', 'block');
+    } else {
+        pieChart(list[2], "expressPieChart", "扶贫商品订单物流快递分布");
     }
     function graphChart(data, divId, chartName) {
         if (data[0].length > 13) {
@@ -208,6 +253,16 @@
         }
         drawGraphChart(divId, chartName, formatterFunction, seriesData, linksData);
     }
+
+    function pieChart(data, divId, chartName) {
+        var legendData = [];
+        var seriesData = [];
+        for (var i = 0; i < data.length; i++) {
+            legendData.push(data[i].company);
+            seriesData.push({value: data[i].orderNum, name: data[i].company});
+        }
+        drawPieChart(divId, chartName, legendData, seriesData);
+    }
     $(function () {
         $("#queryDate").click(function () {
             var dateRange = $("#dateRange").val();
@@ -248,11 +303,47 @@
                 });
             }
         });
+
+        $("#queryDateExpress").click(function () {
+            var dateRange = $("#dateRangeExpress").val();
+            var startDate = dateRange.substr(0, 10);
+            var endDate = dateRange.substr(13);
+            if ("" != startDate.trim() && "" != endDate.trim()) {
+                setButtonDisabled('queryDateExpress', true);
+                $.ajax({
+                    url: 'expressNumQuery',
+                    data: {
+                        "startDate": startDate,
+                        "endDate": endDate,
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var respCode = data.respCode;
+                        if (respCode == 0) {
+                            list = data.detailInfo;
+                            if (list.length == 0) {
+                                $("#noDataExpress").css('display', 'block');
+                                echarts.init(document.getElementById('expressPieChart')).clear();
+                                $("#pieTable").bootstrapTable('load', []);
+                            } else {
+                                $("#noDataExpress").css('display', 'none');
+                                pieChart(list, "expressPieChart", "扶贫商品订单物流快递分布");
+                                $("#pieTable").bootstrapTable('load', list);
+                            }
+                        }
+                        setButtonDisabled('queryDateExpress', false);
+                    }
+                });
+            }
+        });
     });
 
     generateDataTable("graphTable", [[{"field": "source"}, {"field": "indexValue"}, {"field": "orderNum"}],
         [{"title": "地域"}, {"title": "该地域下单订单数数"}, {"title": "该地域收件订单数"}]])
     $("#graphTable").bootstrapTable('load', list[1]);
+    generateDataTable("pieTable", [[{"field": "company"}, {"field": "orderNum"}],
+        [{"title": "快递公司名称"}, {"title": "订单量"}]])
+    $("#pieTable").bootstrapTable('load', list[2]);
 </script>
 
 </body>

@@ -106,11 +106,11 @@
             <div class="service-box">
                 <div class="service-icon orange">
                     <div class="front-content">
-                        <h3 class="fa fa-truck">&nbsp;扶贫商品订单下单及收货地域分析查询 </h3>
+                        <h3 class="fa fa-truck">&nbsp;扶贫商品订单下单、收件地域及物流快递分析查询 </h3>
                     </div>
                 </div>
                 <div class="service-content">
-                    <p>扶贫商品订单下单地域及收件地域展示，支持时间维度、下单地域及收件地域的交互查询 <a href="/ecdata/orderStat/fromToInfoSummary" class="btn btn-success btn-xs"
+                    <p>扶贫商品订单下单、收件地域及物流快递信息展示，支持时间维度、下单地域及收件地域的交互查询 <a href="/ecdata/orderStat/fromToInfoSummary" class="btn btn-success btn-xs"
                                                              target="_blank">点击查看</a></p>
                 </div>
             </div>

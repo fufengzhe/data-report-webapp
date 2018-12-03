@@ -24,7 +24,7 @@
                 'setImp': false,
                 'setTrackerHost': 'w1.chinalife.com.cn', // vds域名
                 'setTrackerScheme': 'https',
-                'setOrigin': 'http://chinalife.com.cn/ecdata/' // 前端主域名
+                'setOrigin': 'https://w2.chinalife.com.cn/ecdata/' // 前端主域名
             });
 
         //put your custom page code here
