@@ -63,17 +63,55 @@ public class OrderStatServiceImpl implements OrderStatService {
         List<String> sellerIDList = orderStatDao.getFuPinSellerIDListForSpecifiedArea(" ('丹江口','龙州','郧西','天等') ");
         String sellerIDFilter = getSellerFilterUsingList(sellerIDList);
         queryPara.setWhereCondition(sellerIDFilter);
+        // 分公司后期补录发票抬头
+        List<OrderStat> supplyBillTitleListFromOracle = orderStatDao.getSupplyBillTitleListFromOracle();
+        List<String> orderNoList = new ArrayList<String>();
+        for (OrderStat orderStat : supplyBillTitleListFromOracle) {
+            orderNoList.add(orderStat.getOrderNo());
+        }
+        String orderNoFilter = getSellerFilterUsingList(orderNoList);
+        queryPara.setWhereCondition1(orderNoFilter);
         DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
         List<OrderStat> onlineRetailAndJiCaiList = orderStatDao.getOnlineRetailAndJiCaiList(queryPara);
         List<OrderStat> offlineMailList = orderStatDao.getOfflineMailList(queryPara);
-        List<OrderStat> companyOrderAmountList = this.dealMemberTileAndCompanyRelationUsingLists(onlineRetailAndJiCaiList, offlineMailList);
+        List<OrderStat> supplyBillTitleList = orderStatDao.getSupplyBillTitleList(queryPara);
+        List<OrderStat> supplyList = this.fillBillTitleForSuppliedOrder(supplyBillTitleList, supplyBillTitleListFromOracle);
+        List<OrderStat> companyOrderAmountList = this.dealMemberTileAndCompanyRelationUsingLists(onlineRetailAndJiCaiList, offlineMailList, supplyList);
         return companyOrderAmountList;
     }
 
-    private List<OrderStat> dealMemberTileAndCompanyRelationUsingLists(List<OrderStat> onlineRetailAndJiCaiList, List<OrderStat> offlineMailList) {
+    private List<OrderStat> fillBillTitleForSuppliedOrder(List<OrderStat> supplyBillTitleList, List<OrderStat> supplyBillTitleListFromOracle) {
+        Map<String, String> orderNoAndTitle = new HashMap<String, String>();
+        Map<String, OrderStat> titleAndOrderInfoMap = new HashMap<String, OrderStat>();
+        for (OrderStat orderStat : supplyBillTitleListFromOracle) {
+            orderNoAndTitle.put(orderStat.getOrderNo(), orderStat.getCompany());
+        }
+        for (OrderStat orderStat : supplyBillTitleList) {
+            String company = orderNoAndTitle.get(orderStat.getOrderNo());
+            OrderStat orderInfo = titleAndOrderInfoMap.get(company);
+            if (orderInfo == null) {
+                orderInfo = new OrderStat();
+                orderInfo.setCompany(company);
+                orderInfo.setOrderNum(1);
+                orderInfo.setOrderAmount(orderStat.getOrderAmount());
+                titleAndOrderInfoMap.put(company, orderInfo);
+            } else {
+                orderInfo.setOrderNum(orderInfo.getOrderNum() + 1);
+                orderInfo.setOrderAmount(orderInfo.getOrderAmount().add(orderStat.getOrderAmount()));
+            }
+        }
+        List<OrderStat> supplyList = new ArrayList<OrderStat>();
+        for (Map.Entry<String, OrderStat> entry : titleAndOrderInfoMap.entrySet()) {
+            supplyList.add(entry.getValue());
+        }
+        return supplyList;
+    }
+
+    private List<OrderStat> dealMemberTileAndCompanyRelationUsingLists(List<OrderStat> onlineRetailAndJiCaiList, List<OrderStat> offlineMailList, List<OrderStat> supplyList) {
         List<OrderStat> originalCompanyList = new ArrayList<OrderStat>();
         originalCompanyList.addAll(onlineRetailAndJiCaiList);
         originalCompanyList.addAll(offlineMailList);
+        originalCompanyList.addAll(supplyList);
         List<OrderStat> companyList = new ArrayList<OrderStat>();
         Map<String, OrderStat> companyKeyWordAndOrderStatMap = this.generateCompanyKeyWordAndOrderStatMap();
         List<OrderStat> notIncludedList = new ArrayList<OrderStat>();
@@ -174,8 +212,8 @@ public class OrderStatServiceImpl implements OrderStatService {
         String sellerNameFilter = getSellerFilterUsingList(sellerNameList);
         queryPara.setWhereCondition1(sellerNameFilter);
         List<OrderStat> sellerList = orderStatDao.getFuPinSellerAreaList();
-        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
         //只包含线上零售和线上集采的部分，因为线下邮件所用供应商因人工录入可能会导致问题，所以线下邮件部分直接取地区维度的
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
         List<OrderStat> orderAmountSellerDimensionOfOnlineList = orderStatDao.getOrderAmountListForSellerDimension(queryPara);
         List<OrderStat> orderAmountAreaOfOfflineMailList = orderStatDao.getOrderAmountListForAreaOfOfflineMail(queryPara);
         Map<String, String> sellerNameAndAreaMap = new HashMap<String, String>();
@@ -222,6 +260,13 @@ public class OrderStatServiceImpl implements OrderStatService {
         for (Map.Entry<String, OrderStat> entry : areaStatMap.entrySet()) {
             String key = entry.getKey();
             OrderStat value = entry.getValue();
+            if ("丹江口".equals(key)) {
+                value.setOrderAmount(value.getOrderAmount().subtract(new BigDecimal("720.2")));
+            }else if("龙州".equals(key)){
+                value.setOrderAmount(value.getOrderAmount().subtract(new BigDecimal("6836.42")));
+            }else if("郧西".equals(key)){
+                value.setOrderAmount(value.getOrderAmount().subtract(new BigDecimal("395.57")));
+            }
             if (fupinSpecifiedAreaSet.contains(key)) {
                 orderAmountAreaDimensionList.add(value);
                 sumAmount.setOrderNum(value.getOrderNum() + sumAmount.getOrderNum());
@@ -248,6 +293,7 @@ public class OrderStatServiceImpl implements OrderStatService {
         return orderAmountAreaDimensionList;
     }
 
+
     private Set<String> getFupinSpecifiedArea() {
         Set<String> fuPinSpecifiedSet = new HashSet<String>();
         fuPinSpecifiedSet.add("龙州");
@@ -257,23 +303,6 @@ public class OrderStatServiceImpl implements OrderStatService {
         return fuPinSpecifiedSet;
     }
 
-
-    public List<OrderStat> getOrderStatListForTimeSpanFromStatTable(QueryPara queryPara) {
-        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
-        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
-        queryPara.setWhereCondition(CommonUtils.getWhereConditionUsingPara(queryPara.getWhereCondition()));
-        List<OrderStat> orderStatList = orderStatDao.getOrderStatListForTimeSpanFromStatTable(queryPara);
-        logger.info("service返回结果为 {}", JSON.toJSONString(orderStatList));
-        return orderStatList;
-    }
-
-    public List<OrderStat> getOrderProductList() {
-        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
-        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
-        List<OrderStat> orderProductList = orderStatDao.getOrderProductList();
-        logger.info("service返回结果为 {}", JSON.toJSONString(orderProductList));
-        return orderProductList;
-    }
 
     public List<OrderStat> getPageClickIPInfoList(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
@@ -429,14 +458,6 @@ public class OrderStatServiceImpl implements OrderStatService {
             fromToAreaDistributeInfoList.add(orderStat);
         }
         return fromToAreaDistributeInfoList;
-    }
-
-    private List<OrderStat> getOrderStatListForTimeSpanTrendFromStatTable(QueryPara queryPara) {
-        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
-        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
-        List<OrderStat> orderStatList = orderStatDao.getOrderStatListForTimeSpanTrendFromStatTable(queryPara);
-        logger.info("service返回结果为 {}", JSON.toJSONString(orderStatList));
-        return orderStatList;
     }
 
     public int updateOrderFromToAreaInfo(List<OrderStat> orderFromToAreaInfoList) {

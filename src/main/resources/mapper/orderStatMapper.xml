@@ -444,6 +444,24 @@
         ) t GROUP BY t.company ORDER BY orderNum DESC
     </select>
 
+    <select id="getSupplyBillTitleListFromOracle" resultType="OrderStat" parameterType="QueryPara">
+        SELECT	ORDER_NO orderNo,BILL_TITLE company FROM DMP_SELECT.FUPIN_ORDER_SUPPLY_BILL_INFO
+    </select>
+
+    <select id="getSupplyBillTitleList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT ob.order_no orderNo,ob.money_amount orderAmount
+        FROM order_book ob INNER JOIN seller s ON ob.seller_id = s.id
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                        AND ob.create_time <= concat(#{endDate},' 23:59:59')
+            ]]>
+        AND ob.STATUS NOT IN (6, 7, 8)
+        AND ob.seller_id IN ${whereCondition}
+        AND ob.order_no IN ${whereCondition1}
+        INNER JOIN order_goods og ON ob.order_no=og.order_no AND og.product_name
+        NOT LIKE '%国寿丹泉%'
+    </select>
+
     <insert id="updateOrderIPInfo" parameterType="java.util.List">
         INSERT INTO DMP_SELECT.FUPIN_DISTRIBUTE_RESULT
         (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, DISTRIBUTE_TYPE, DISTRIBUTE_NAME,INDEX_VALUE,CREATE_TIME,UPDATE_TIME)

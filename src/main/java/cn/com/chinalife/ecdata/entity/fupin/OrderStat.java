@@ -36,7 +36,7 @@ public class OrderStat {
     private String to;
     private String source;
     private String target;
-
+    private String orderNo;
 
     public String getStatDate() {
         return statDate;
@@ -279,6 +279,14 @@ public class OrderStat {
         this.target = target;
     }
 
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
     @Override
     public String toString() {
         return "OrderStat{" +
@@ -312,6 +320,7 @@ public class OrderStat {
                 ", to='" + to + '\'' +
                 ", source='" + source + '\'' +
                 ", target='" + target + '\'' +
+                ", orderNo='" + orderNo + '\'' +
                 '}';
     }
 

@@ -65,4 +65,8 @@ public interface OrderStatDao {
     List<OrderStat> getOfflineMailList(QueryPara queryPara);
 
     List<OrderStat> getExpressDisList(QueryPara queryPara);
+
+    List<OrderStat> getSupplyBillTitleListFromOracle();
+
+    List<OrderStat> getSupplyBillTitleList(QueryPara queryPara);
 }

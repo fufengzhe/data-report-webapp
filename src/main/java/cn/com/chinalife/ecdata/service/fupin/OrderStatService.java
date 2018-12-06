@@ -16,10 +16,6 @@ public interface OrderStatService {
 
     List<List<OrderStat>> getOrderStatList(QueryPara queryPara);
 
-    List<OrderStat> getOrderStatListForTimeSpanFromStatTable(QueryPara queryPara);
-
-    List<OrderStat> getOrderProductList();
-
     List<OrderStat> getPageClickIPInfoList(QueryPara queryPara);
 
     int updateOrderIPInfo(List<OrderStat> orderIPInfoList);

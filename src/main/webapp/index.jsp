@@ -13,23 +13,21 @@
           type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
           type="text/css">
-    <script type='text/javascript'>
-        !function (e, t, n, g, i) {
-            e[i] = e[i] || function () {
-                    (e[i].q = e[i].q || []).push(arguments)
-                }, n = t.createElement("script"), tag = t.getElementsByTagName("script")[0], n.async = 1, n.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + g, tag.parentNode.insertBefore(n, tag)
-        }(window, document, "script", "assets.growingio.com/op/2.0/gio.js", "gio");
-        gio('init', '0abf49df562142e58cc6a347d844e436',
-            {
-                'setImp': false,
-                'setTrackerHost': 'w1.chinalife.com.cn', // vds域名
-                'setTrackerScheme': 'https',
-                'setOrigin': 'https://w2.chinalife.com.cn/ecdata/' // 前端主域名
-            });
+    <!-- GrowingIO Analytics code version 2.1 -->
+    <!-- Copyright 2015-2018 GrowingIO, Inc. More info available at http://www.growingio.com -->
 
-        //put your custom page code here
+    <script type='text/javascript'>
+        !function(e,t,n,g,i){e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},n=t.createElement("script"),tag=t.getElementsByTagName("script")[0],n.async=1,n.src=('https:'==document.location.protocol?'https://':'http://')+g,tag.parentNode.insertBefore(n,tag)}(window,document,"script","assets.growingio.com/2.1/gio.js","gio");
+        gio('init','90f30b81216788e7', {});
+
+        //custom page code begin here
+
+        //custom page code end here
+
         gio('send');
+
     </script>
+
     <!-- End GrowingIO Analytics code version: 2.1 -->
 
 </head>
