@@ -144,6 +144,10 @@ public class OrderStatServiceImpl implements OrderStatService {
         OrderStat sum = new OrderStat("总计", 0, new BigDecimal(0.00), new BigDecimal("18000000"), "0.00%");
         for (Map.Entry<String, OrderStat> entry : companyAndOrderStatMap.entrySet()) {
             OrderStat orderStat = entry.getValue();
+            // 寿险扶贫采购活动减去这些订单里面的补退金额
+            if ("寿险公司".equals(orderStat.getCompany())) {
+                orderStat.setOrderAmount(orderStat.getOrderAmount().add(new BigDecimal("608412.48")));
+            }
             if (orderStat.getOrderAmountGoal() != null) {
                 orderStat.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(orderStat.getOrderAmount(), orderStat.getOrderAmountGoal(), 2)));
                 orderStat.setOrderAmountGoal(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmountGoal()));
@@ -168,6 +172,7 @@ public class OrderStatServiceImpl implements OrderStatService {
         orderStatMap.put("中国人寿股份", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
         orderStatMap.put("中国人寿保险（海外）股份", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
         orderStatMap.put("中国人寿绵阳市分公司工会", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
+        orderStatMap.put("中国人寿保险", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
         orderStatMap.put("中国人寿无锡市分公司", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
         orderStatMap.put("中国共产党中国人寿四川省分公司机关委员会", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
         orderStatMap.put("广东荔湾大厦", new OrderStat("寿险公司", 0, new BigDecimal("0.00"), new BigDecimal("12000000"), "0.00%"));
@@ -177,6 +182,7 @@ public class OrderStatServiceImpl implements OrderStatService {
         orderStatMap.put("养老", new OrderStat("养老险公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
         orderStatMap.put("中国人寿电子商务", new OrderStat("电商公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
         orderStatMap.put("投资", new OrderStat("国寿投资公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
+        orderStatMap.put("国寿嘉园", new OrderStat("国寿投资公司", 0, new BigDecimal("0.00"), new BigDecimal("300000"), "0.00%"));
         orderStatMap.put("保险职业学院", new OrderStat("保险职业学院", 0, new BigDecimal("0.00"), null, null));
         orderStatMap.put("安保基金", new OrderStat("安保基金", 0, new BigDecimal("0.00"), null, null));
         orderStatMap.put("财富管理", new OrderStat("财富管理", 0, new BigDecimal("0.00"), null, null));
@@ -262,9 +268,9 @@ public class OrderStatServiceImpl implements OrderStatService {
             OrderStat value = entry.getValue();
             if ("丹江口".equals(key)) {
                 value.setOrderAmount(value.getOrderAmount().subtract(new BigDecimal("720.2")));
-            }else if("龙州".equals(key)){
+            } else if ("龙州".equals(key)) {
                 value.setOrderAmount(value.getOrderAmount().subtract(new BigDecimal("6836.42")));
-            }else if("郧西".equals(key)){
+            } else if ("郧西".equals(key)) {
                 value.setOrderAmount(value.getOrderAmount().subtract(new BigDecimal("395.57")));
             }
             if (fupinSpecifiedAreaSet.contains(key)) {
