@@ -462,6 +462,36 @@
         NOT LIKE '%国寿丹泉%'
     </select>
 
+    <select id="getOrderEvaluateDetailList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT ob.order_no orderNo,p.name productName,g.spec_remark target,pr.master_rate indexValue,pr.content indexName
+        FROM order_book ob
+        INNER JOIN product_rate pr ON ob.id = pr.order_id
+        INNER JOIN product p ON pr.product_id=p.id
+        INNER JOIN goods g ON pr.goods_id=g.id
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                            AND ob.create_time <= concat(#{endDate},' 23:59:59')
+                ]]>
+        AND ob.STATUS NOT IN (6, 7, 8)
+        AND ob.seller_id IN ${whereCondition}
+        <if test="whereCondition1 != null and whereCondition1 != ''">
+            AND pr.master_rate IN ${whereCondition1}
+        </if>
+    </select>
+
+    <select id="getOrderEvaluateValueList" resultType="OrderStat" parameterType="QueryPara">
+        SELECT pr.master_rate indexValue,count(*) orderNum
+        FROM order_book ob
+        INNER JOIN product_rate pr ON ob.id = pr.order_id
+        AND ob.create_time >= concat(#{startDate},' 00:00:00')
+        <![CDATA[
+                            AND ob.create_time <= concat(#{endDate},' 23:59:59')
+                ]]>
+        AND ob.STATUS NOT IN (6, 7, 8)
+        AND ob.seller_id IN ${whereCondition}
+        GROUP BY pr.master_rate
+    </select>
+
     <insert id="updateOrderIPInfo" parameterType="java.util.List">
         INSERT INTO DMP_SELECT.FUPIN_DISTRIBUTE_RESULT
         (STAT_TIME,STAT_TIME_SPAN, INDEX_NAME, DISTRIBUTE_TYPE, DISTRIBUTE_NAME,INDEX_VALUE,CREATE_TIME,UPDATE_TIME)

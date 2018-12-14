@@ -116,6 +116,20 @@
             </div>
         </li>
 
+        <li class="list-group-item">
+            <div class="service-box">
+                <div class="service-icon orange">
+                    <div class="front-content">
+                        <h3 class="fa fa-group">&nbsp;扶贫商品订单评价查询 </h3>
+                    </div>
+                </div>
+                <div class="service-content">
+                    <p>扶贫商品相关订单评价详情及分值分布信息展示，支持时间维度、评价分值的交互查询 <a href="/ecdata/orderStat/orderEvaluateSummary" class="btn btn-success btn-xs"
+                                                                       target="_blank">点击查看</a></p>
+                </div>
+            </div>
+        </li>
+
         <%--<li class="list-group-item">5、扶贫商品订单下单及收货地域分析查询 <a href="/ecdata/orderStat/fromToInfoSummary"--%>
                                                            <%--class="btn btn-success btn-xs"--%>
                                                            <%--target="_blank">点击查看</a>--%>

@@ -69,4 +69,8 @@ public interface OrderStatDao {
     List<OrderStat> getSupplyBillTitleListFromOracle();
 
     List<OrderStat> getSupplyBillTitleList(QueryPara queryPara);
+
+    List<OrderStat> getOrderEvaluateDetailList(QueryPara queryPara);
+
+    List<OrderStat> getOrderEvaluateValueList(QueryPara queryPara);
 }

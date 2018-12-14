@@ -103,6 +103,32 @@ public class OrderStatController {
         }
     }
 
+    @RequestMapping("/orderEvaluateSummary")
+    public String queryOrderEvaluateSummary(Model model) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            QueryPara queryPara = new QueryPara();
+            queryPara.setStartDate(DateUtils.getBeforeXDay(15));
+            queryPara.setEndDate(DateUtils.getYesterday());
+            List<List<OrderStat>> orderEvaluateList = orderStatService.getOrderEvaluateInfo(queryPara);
+            List<String> evaluateValueList = orderStatService.getEvaluateValueList();
+            model.addAttribute("orderStatList", JSON.toJSONString(orderEvaluateList));
+            model.addAttribute("evaluateValueList", JSON.toJSONString(evaluateValueList));
+            model.addAttribute("startDate", queryPara.getStartDate());
+            model.addAttribute("endDate", queryPara.getEndDate());
+            model.addAttribute("jsVersion", CommonConstant.jsVersion);
+            responseBean.setDetailInfo(model);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return "fupin/orderEvaluateSummary";
+        }
+    }
+
     @RequestMapping(value = "/numQuery", produces = {"text/html;charset=UTF-8;"})
     @ResponseBody
     public String queryOrderStatNum(QueryPara queryPara) {
@@ -176,5 +202,23 @@ public class OrderStatController {
         }
     }
 
+
+    @RequestMapping(value = "/evaluateNumQuery", produces = {"text/html;charset=UTF-8;"})
+    @ResponseBody
+    public String queryEvaluateNum(QueryPara queryPara) {
+        logger.info("前端传入的参数为 {}", JSON.toJSONString(null));
+        ResponseBean responseBean = new ResponseBean();
+        try {
+            List<List<OrderStat>> orderEvaluateList = orderStatService.getOrderEvaluateInfo(queryPara);
+            responseBean.setDetailInfo(orderEvaluateList);
+        } catch (Exception e) {
+            logger.error("异常信息为", e);
+            responseBean.setRespCode(1);
+            responseBean.setRespMsg(CommonConstant.queryFailureStr);
+        } finally {
+            logger.info("后端返回结果为 {}", JSON.toJSONString(responseBean));
+            return JSON.toJSONString(responseBean);
+        }
+    }
 
 }

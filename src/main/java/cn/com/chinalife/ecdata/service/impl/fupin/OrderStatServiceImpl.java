@@ -548,4 +548,31 @@ public class OrderStatServiceImpl implements OrderStatService {
         logger.info("service返回结果为 {}", JSON.toJSONString(expressDisList));
         return expressDisList;
     }
+
+    public List<List<OrderStat>> getOrderEvaluateInfo(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        List<List<OrderStat>> orderEvaluateList = new ArrayList<List<OrderStat>>();
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
+        List<String> sellerIDList = orderStatDao.getFuPinSellerIDList();
+        String sellerIDFilter = getSellerFilterUsingList(sellerIDList);
+        queryPara.setWhereCondition(sellerIDFilter);
+        DataSourceContextHolder.setDbType(CommonConstant.fupinDataSource);
+        queryPara.setWhereCondition1(CommonUtils.getWhereConditionUsingPara(queryPara.getWhereCondition1()));
+        List<OrderStat> orderEvaluateDetailList = orderStatDao.getOrderEvaluateDetailList(queryPara);
+        orderEvaluateList.add(orderEvaluateDetailList);
+        List<OrderStat> orderEvaluateValueList = orderStatDao.getOrderEvaluateValueList(queryPara);
+        orderEvaluateList.add(orderEvaluateValueList);
+        logger.info("service返回结果为 {}", JSON.toJSONString(orderEvaluateList));
+        return orderEvaluateList;
+    }
+
+    public List<String> getEvaluateValueList() {
+        List<String> list = new ArrayList<String>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add("4");
+        list.add("5");
+        return list;
+    }
 }
