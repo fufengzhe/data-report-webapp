@@ -148,10 +148,6 @@ public class OrderStatServiceImpl implements OrderStatService {
             if ("寿险公司".equals(orderStat.getCompany())) {
                 orderStat.setOrderAmount(orderStat.getOrderAmount().add(new BigDecimal("608412.48")));
             }
-            if (orderStat.getOrderAmountGoal() != null) {
-                orderStat.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(orderStat.getOrderAmount(), orderStat.getOrderAmountGoal(), 2)));
-                orderStat.setOrderAmountGoal(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmountGoal()));
-            }
             sum.setOrderAmount(sum.getOrderAmount().add(orderStat.getOrderAmount()));
             sum.setOrderNum(sum.getOrderNum() + orderStat.getOrderNum());
             companyList.add(orderStat);
@@ -160,6 +156,10 @@ public class OrderStatServiceImpl implements OrderStatService {
         companyList.add(sum);
         companyList.addAll(notIncludedList);
         for (OrderStat orderStat : companyList) {
+            if (orderStat.getOrderAmountGoal() != null) {
+                orderStat.setCompleteRatio(CommonUtils.getPercentageStr(CommonUtils.divideWithXPrecision(orderStat.getOrderAmount(), orderStat.getOrderAmountGoal(), 2)));
+                orderStat.setOrderAmountGoal(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmountGoal()));
+            }
             orderStat.setOrderAmount(CommonUtils.convertToTenThousandUnit(orderStat.getOrderAmount()));
         }
         return companyList;
