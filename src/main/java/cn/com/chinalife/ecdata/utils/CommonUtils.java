@@ -12,6 +12,7 @@ import java.util.*;
  * Created by xiexiangyu on 2018/3/8.
  */
 public class CommonUtils {
+
     public static void setCookieInvalid(Cookie cookieToSet) {
         cookieToSet.setValue(null);
         cookieToSet.setMaxAge(0);
@@ -139,5 +140,17 @@ public class CommonUtils {
     }
 
     public static void main(String[] args) throws Exception {
+        System.out.println(test());
+    }
+
+    private static int test() {
+        int i = 0;
+        try {
+            return 1;
+        } catch (Exception e) {
+
+        } finally {
+            return 2;
+        }
     }
 }

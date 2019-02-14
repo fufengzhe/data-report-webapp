@@ -129,6 +129,7 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
 //        List<OrderStat> orderStatList = orderStatService.getOrderStatListForTimeSpan(queryPara);
 //        int effectedRowNum = orderStatService.updateOrderStat(orderStatList);
         int effectedRowNum = 1;
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfFupinOrderStat, "扶贫商品订单数据", effectedRowNum);
         return effectedRowNum;
     }

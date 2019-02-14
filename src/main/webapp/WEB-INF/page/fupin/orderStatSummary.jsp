@@ -23,7 +23,7 @@
 <div class="container-fluid text-center">
     <div class="container">
         <h3>数据概览(线下订单核对中，数据仅供参考)</h3>
-        <p><h5>截止今天凌晨2018年<abbr title="只计算四县及非丹泉水订单">扶贫订单</abbr>数为<kbd id="sumOrderNum">xx</kbd>件，销售额为<kbd
+        <p><h5>2018-01-01到今天凌晨<abbr title="只计算四县及非丹泉水订单">扶贫订单</abbr>数为<kbd id="sumOrderNum">xx</kbd>件，销售额为<kbd
             id="sumOrderAmount">xx</kbd>万元；内蒙扶贫订单数为<kbd id="neiMengOrderNum">xx</kbd>件，销售额为<kbd
             id="neiMengOrderAmount">xx</kbd>万元；国寿丹泉水订单数为<kbd id="danQuanOrderNum">xx</kbd>件，销售额为<kbd
             id="danQuanOrderAmount">xx</kbd>万元。

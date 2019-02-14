@@ -14,10 +14,7 @@ import cn.com.chinalife.ecdata.service.user.RegisterUserService;
 import cn.com.chinalife.ecdata.service.user.UserAttributeService;
 import cn.com.chinalife.ecdata.service.user.UserRetentionService;
 import cn.com.chinalife.ecdata.service.userShare.UserShareService;
-import cn.com.chinalife.ecdata.utils.CommonConstant;
-import cn.com.chinalife.ecdata.utils.DateUtils;
-import cn.com.chinalife.ecdata.utils.HtmlUtils;
-import cn.com.chinalife.ecdata.utils.MailUtils;
+import cn.com.chinalife.ecdata.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +114,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     // 根据前端传入的日期及渠道更新相应的数据，如无渠道相关信息则更新改日期区间内所有渠道的数据
     public int updateRegister(QueryPara queryPara) {
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         List<RegisterUser> registerUserList = registerUserService.getRegisterUserNumOfAllSources(queryPara);
         return registerUserService.updateRegister(registerUserList);
     }
@@ -125,6 +123,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRowNum = 0;
         int temp;
         List<ActiveUser> activeUserList;
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         //电商自有渠道
         activeUserList = activeUserService.getActiveUserNumOfAllSources(queryPara);
         temp = activeUserService.updateActive(activeUserList);
@@ -144,7 +143,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     public int updateLifePremium(QueryPara queryPara) {
         int effectedRowNum = 0;
-
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         logger.info("开始删除历史所有寿险保费相关数据");
         int temp = lifePremiumService.deleteAllExistedRecord(CommonConstant.statIndexNameOfLifePremium);
         logger.info("结束删除历史所有寿险保费相关数据");
@@ -162,7 +161,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     public int updatePropertyPremium(QueryPara queryPara) {
         int effectedRowNum = 0;
-
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         logger.info("开始删除历史所有财险保费相关数据");
         int temp = propertyPremiumService.deleteAllExistedRecord(CommonConstant.statIndexNameListOfPropertyPremium);
         logger.info("结束删除历史所有财险保费相关数据");
@@ -204,11 +203,12 @@ public class ScheduleServiceImpl implements ScheduleService {
         html.append("<tr><td>").append(HtmlUtils.getTable(tableOfHour)).append("</tr></td>");
         html.append("</table>");
         html.append("</html>");
-        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"344822404@qq.com","swliux@isoftstone.com"}, "348452440@qq.com", "1635454312@qq.com", "官网活跃数据", html.toString());
+        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"344822404@qq.com","swliux@isoftstone.com","2303974533@qq.com","370295797@qq.com"}, "348452440@qq.com", "1635454312@qq.com", "官网活跃数据", html.toString());
 //        MailUtils.sendHtmlMail("348452440@qq.com", new String[]{"348452440@qq.com", "348452440@qq.com"}, "348452440@qq.com", "348452440@qq.com", "官网活跃数据", html.toString());
     }
 
     public List<List<ActiveUser>> queryOfficialSiteActiveNum(QueryPara queryPara) {
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         return activeUserService.queryOfficialSiteActiveNum(queryPara);
     }
 
@@ -226,6 +226,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public int updateDistribute(QueryPara queryPara) throws Exception {
         int effectedRow = 0;
         int temp;
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         if (queryPara.getWhereCondition() == null || CommonConstant.distributeIndexNameOfRegisterMobile.equals(queryPara.getWhereCondition())) {
             logger.info("开始更新注册手机号相关的运营商及地理位置分布信息");
             temp = locationAnalysisService.updateRegisterMobileDistribute(queryPara);
@@ -267,6 +268,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public int updateActiveTimeDis(QueryPara queryPara) {
         int effectedRow;
         logger.info("开始更新活跃用户小时分布信息");
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         effectedRow = locationAnalysisService.updateActiveTimeDis(queryPara);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfActiveHour, "活跃用户小时分布数据", effectedRow);
         logger.info("结束更新活跃用户小时分布信息");
@@ -276,6 +278,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public int updateUserCollectionInvokeDis(QueryPara queryPara) {
         int effectedRow;
         logger.info("开始更新USER集合请求情况分布信息");
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         effectedRow = locationAnalysisService.updateUserCollectionInvokeDis(queryPara);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.distributeIndexNameOfUserCollection, "USER集合请求情况分布数据", effectedRow);
         logger.info("结束更新USER集合请求情况分布信息,影响的条数为 {}", effectedRow);
@@ -294,6 +297,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         int effectedRow = 0;
         int temp;
         logger.info("开始更新migrate集合分布信息");
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         temp = locationAnalysisService.updateMigrateCollection(queryPara);
         effectedRow += temp;
         logger.info("结束更新migrate集合分布信息,影响的行数为 {}", effectedRow);
@@ -312,6 +316,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public int updateUserShare(QueryPara queryPara) {
         int effectedRowNum = 0;
         logger.info("开始更新共享条款相关数据");
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         effectedRowNum = userShareService.updateUserShare(queryPara);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, CommonConstant.statIndexNameOfUserShare, "共享条款数据", effectedRowNum);
         logger.info("结束更新共享条款相关数据，影响的条数为 {}", effectedRowNum);
@@ -329,6 +334,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public int updateUserRetention(QueryPara queryPara) throws Exception {
         int effectedRowNum = 0;
         logger.info("开始更新用户留存相关数据");
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         effectedRowNum = userRetentionService.updateUserRetention(queryPara);
         initService.updateDataStatus(queryPara.getStartDate(), CommonConstant.statTimeSpanOfDate, "userRetention", "用户留存数据", effectedRowNum);
         logger.info("结束更新用户留存相关数据，影响的条数为 {}", effectedRowNum);
@@ -346,6 +352,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public int updateUserAttribute(QueryPara queryPara, boolean isScheduledRun) throws ParseException {
         int effectedRowNum = 0;
         logger.info("开始更新用户属性相关数据");
+        DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         effectedRowNum = userAttributeService.updateUserAttribute(queryPara, isScheduledRun);
         logger.info("结束更新用户属性相关数据，影响的条数为 {}", effectedRowNum);
         return effectedRowNum;

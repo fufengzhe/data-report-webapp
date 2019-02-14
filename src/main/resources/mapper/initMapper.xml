@@ -51,7 +51,7 @@
 
     <select id="getUpdateResult" resultType="UpdateResult">
         SELECT DISTINCT INDEX_NAME indexName FROM DMP_SELECT.DATA_STATUS
-        WHERE EFFECTED_ROW_NUM > 0 AND INDEX_NAME NOT LIKE 'fupin%'
+        WHERE  INDEX_NAME NOT LIKE 'fupin%'
         AND
         <![CDATA[
 			        CREATE_TIME >= TO_DATE (CONCAT (TO_CHAR (SYSDATE, 'yyyy-mm-dd'),' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
@@ -63,8 +63,7 @@
 
     <select id="getFupinUpdateResult" resultType="UpdateResult">
         SELECT DISTINCT INDEX_NAME indexName FROM DMP_SELECT.DATA_STATUS
-        WHERE EFFECTED_ROW_NUM > 0
-        AND
+        WHERE
         <![CDATA[
 			        CREATE_TIME >= TO_DATE (CONCAT (TO_CHAR (SYSDATE, 'yyyy-mm-dd'),' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
 		        ]]>
