@@ -13,7 +13,6 @@ import cn.com.chinalife.ecdata.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -34,7 +33,8 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
     @Autowired
     InitService initService;
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    // 扶贫定时任务,需要时取消下面注释即可
+//    @Scheduled(cron = "0 0 1 * * ?")
     private void scheduledEntryForPageClickUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = new QueryPara();
@@ -46,7 +46,7 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         logger.info("结束更新扶贫相关页面的点击数据，影响的条数为 {}", effectedRowNum);
     }
 
-    @Scheduled(cron = "0 30 1 * * ?")
+//    @Scheduled(cron = "0 30 1 * * ?")
     private void scheduledEntryForOrderStatUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = new QueryPara();
@@ -58,7 +58,7 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         logger.info("结束更新扶贫订单相关数据，影响的条数为 {}", effectedRowNum);
     }
 
-    @Scheduled(cron = "0 0 8 * * ?")
+//    @Scheduled(cron = "0 0 8 * * ?")
     private void scheduledEntryForPageClickIPInfoUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = new QueryPara();
@@ -70,7 +70,7 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         logger.info("结束更新扶贫相关页面的点击IP分布数据，影响的条数为 {}", effectedRowNum);
     }
 
-    @Scheduled(cron = "0 30 8 * * ?")
+//    @Scheduled(cron = "0 30 8 * * ?")
     private void scheduledEntryForOrderIPInfoUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = new QueryPara();
@@ -82,7 +82,7 @@ public class FupinScheduleServiceImpl implements FupinScheduleService {
         logger.info("结束更新扶贫相关订单的下单IP分布数据，影响的条数为 {}", effectedRowNum);
     }
 
-    @Scheduled(cron = "0 40 8 * * ?")
+//    @Scheduled(cron = "0 40 8 * * ?")
     private void scheduledEntryForOrderFromToAreaInfoUpdate() throws InterruptedException, ParseException {
         // 默认更新昨天所有渠道的数据
         QueryPara queryPara = new QueryPara();

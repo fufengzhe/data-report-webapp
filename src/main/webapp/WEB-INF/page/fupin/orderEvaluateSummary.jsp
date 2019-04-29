@@ -167,8 +167,6 @@
     if (list[0].length == 0) {
         $("#noData").css('display', 'block');
     } else {
-        generateDataTable("evaluateDetailTable", [[{"field": "orderNo"}, {"field": "productName"}, {"field": "target"}, {"field": "indexValue"}, {"field": "indexName"}],
-            [{"title": "订单号"}, {"title": "商品名称"}, {"title": "规格"}, {"title": "评价分值"}, {"title": "评价内容"}]])
         $("#evaluateDetailTable").bootstrapTable('load', list[0]);
     }
     if (list[1].length == 0) {
@@ -255,6 +253,8 @@
         });
     });
 
+    generateDataTable("evaluateDetailTable", [[{"field": "orderNo"}, {"field": "productName"}, {"field": "target"}, {"field": "indexValue"}, {"field": "indexName"}],
+        [{"title": "订单号"}, {"title": "商品名称"}, {"title": "规格"}, {"title": "评价分值"}, {"title": "评价内容"}]])
     generateDataTable("pieTable", [[{"field": "indexValue"}, {"field": "orderNum"}],
         [{"title": "评价分值"}, {"title": "评价数量"}]])
     $("#pieTable").bootstrapTable('load', list[1]);

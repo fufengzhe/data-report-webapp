@@ -61,8 +61,8 @@ public class InvokeUtils {
 //        Map<String, String> map = new HashMap<String, String>();
 //        map.put("tel", "15810604756");
 //        map.put("mob", "13935994080");
-        URIBuilder uriBuilder = new URIBuilder("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm");
-        CloseableHttpResponse response = doGetWithProxy(uriBuilder, "tel", "15810604756");
+        URIBuilder uriBuilder = new URIBuilder("http://ip.taobao.com/service/getIpInfo2.php");
+        CloseableHttpResponse response = doGet(uriBuilder, "ip", "124.207.131.235");
         String entity = EntityUtils.toString(response.getEntity());
         System.out.println(entity);
 //        CloseableHttpResponse response1 = doGet(uriBuilder, "tel", "13935994080");
