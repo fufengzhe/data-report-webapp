@@ -24,6 +24,8 @@
         <typeAlias alias="UpdateResult" type="cn.com.chinalife.ecdata.entity.UpdateResult" />
         <typeAlias alias="PageClick" type="cn.com.chinalife.ecdata.entity.fupin.PageClick" />
         <typeAlias alias="OrderStat" type="cn.com.chinalife.ecdata.entity.fupin.OrderStat" />
+        <typeAlias alias="SaleOrder" type="cn.com.chinalife.ecdata.entity.sale.SaleOrder" />
+        <typeAlias alias="SaleUser" type="cn.com.chinalife.ecdata.entity.sale.SaleUser" />
     </typeAliases>
 </configuration>
 

@@ -15,4 +15,8 @@ public interface LogUserDao {
     List<LogUser> getAllValidUserInfo();
 
     LogUser findUserResourcesUsingName(LogUser logUser);
+
+    LogUser findUserResourcesFromMysqlUsingName(LogUser logUser);
+
+    LogUser findUserFromMysql(LogUser requestUser);
 }

@@ -16,6 +16,8 @@ public class CommonConstant {
     public static String userAuthDataSource = "userAuthDataSource";
     public static String businessDataSource = "businessDataSource";
     public static String fupinDataSource = "fupinDataSource";
+    public static String saleOrderDataSource = "saleOrderDataSource";
+    public static String saleUserDataSource = "saleUserDataSource";
     public static String notLoggedIn = "notLoggedIn";
     public static String unauthorized = "unauthorized";
     public static String statTimeSpanOfDate = "D";

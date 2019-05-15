@@ -41,9 +41,10 @@ public class FileUtils {
     }
 
     public static void main(String[] args) {
-        List<String> fileList = getStrListFromSpecifiedFile("fupinPageUrlList.txt");
-        for (String line : fileList) {
-            System.out.println(line);
-        }
+//        List<String> fileList = getStrListFromSpecifiedFile("fupinPageUrlList.txt");
+//        for (String line : fileList) {
+//            System.out.println(line);
+//        }
+        System.out.println(Math.round(-1.6));
     }
 }

@@ -27,6 +27,7 @@ public class UserLogServiceImpl implements UserLogService {
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         requestUser.setPassword(CommonUtils.getMD5(requestUser.getPassword()));
         LogUser logUser = logUserDao.findUser(requestUser);
+//        LogUser logUser = logUserDao.findUserFromMysql(requestUser);
 //        LogUser logUser = this.findLogUserUsingAuthUtils(requestUser);
         logger.info("service返回结果为 {}", JSON.toJSONString(logUser));
         return logUser;

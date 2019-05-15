@@ -81,6 +81,7 @@ public class AuthServiceImpl implements AuthService {
     private String getResourceUsingUsername(LogUser logUser) {
         DataSourceContextHolder.setDbType(CommonConstant.businessDataSource);
         LogUser temp = logUserDao.findUserResourcesUsingName(logUser);
+//        LogUser temp = logUserDao.findUserResourcesFromMysqlUsingName(logUser);
         if (temp != null) {
             return temp.getResources();
         } else {

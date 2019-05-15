@@ -7,11 +7,24 @@
         WHERE  username= #{username} AND  password=#{password} AND ISVALID='1'
     </select>
 
+    <select id="findUserFromMysql" resultType="LogUser" parameterType="LogUser">
+        SELECT USERNAME username,PASSWORD password,RESOURCES resources
+        FROM SYS_USER
+        WHERE  username= #{username} AND  password=#{password} AND ISVALID='1'
+    </select>
+
     <select id="findUserResourcesUsingName" resultType="LogUser" parameterType="LogUser">
         SELECT USERNAME username,RESOURCES resources
         FROM DMP_SELECT.SYS_USER
         WHERE  username= #{username} AND ISVALID='1'
     </select>
+
+    <select id="findUserResourcesFromMysqlUsingName" resultType="LogUser" parameterType="LogUser">
+        SELECT USERNAME username,RESOURCES resources
+        FROM SYS_USER
+        WHERE  username= #{username} AND ISVALID='1'
+    </select>
+
 
     <select id="getAllValidUserInfo" resultType="java.util.List" parameterType="LogUser">
         SELECT USERNAME username,PASSWORD password,RESOURCES resource

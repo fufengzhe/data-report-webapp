@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.sale.SaleOrderDao">
+
+    <select id="getSaleOrderListOfProduct" resultType="SaleOrder" parameterType="QueryPara">
+        SELECT IFNULL(dp.product_name,'未知产品') productName,sum(op.total_amount) totalAmount,sum(op.total_premium) totalPremium
+        FROM order_base ob INNER JOIN order_appl op ON ob.order_id = op.order_id
+        <![CDATA[
+			       AND ob.create_time >= concat(#{startDate},' 00:00:00')
+		        ]]>
+        <![CDATA[
+			       AND ob.create_time <= concat(#{endDate},' 23:59:59')
+		        ]]>
+        INNER JOIN dic_product dp ON ob.product_id = dp.product_id
+        GROUP BY dp.product_name ORDER BY totalPremium DESC
+    </select>
+
+
+    <select id="getSaleOrderListForTrendOfDate" resultType="SaleOrder" parameterType="QueryPara">
+        SELECT IFNULL(dp.product_name,'未知产品') productName,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-7) THEN op.total_premium ELSE 0 END) totalPremium7,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-6) THEN op.total_premium ELSE 0 END) totalPremium6,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-5) THEN op.total_premium ELSE 0 END) totalPremium5,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-4) THEN op.total_premium ELSE 0 END) totalPremium4,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-3) THEN op.total_premium ELSE 0 END) totalPremium3,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-2) THEN op.total_premium ELSE 0 END) totalPremium2,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-1) THEN op.total_premium ELSE 0 END) totalPremium1
+        FROM order_base ob INNER JOIN order_appl op ON ob.order_id = op.order_id
+        <![CDATA[
+			      AND ob.create_time >= concat(date(CURDATE()-7),' 00:00:00')
+		        ]]>
+        <![CDATA[
+                  AND ob.create_time <= concat(date(CURDATE()-1),' 23:59:59')
+        ]]>
+        INNER JOIN dic_product dp ON ob.product_id = dp.product_id
+        GROUP BY dp.product_name
+    </select>
+
+</mapper>
