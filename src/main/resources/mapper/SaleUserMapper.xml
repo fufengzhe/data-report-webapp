@@ -3,20 +3,21 @@
 <mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.sale.SaleUserDao">
 
     <select id="getSaleUserListOfSource" resultType="SaleUser" parameterType="QueryPara">
-        SELECT user_source registerSource,count(*) registerNum
-        FROM user_base WHERE
+        SELECT IFNULL(dc. NAME, ub.user_source) registerSource,count(*) registerNum
+        FROM f_user.user_base ub LEFT JOIN f_user.dic_channel dc ON ub.user_source = dc.id
+        WHERE
         <![CDATA[
-			       create_time >= concat(#{startDate},' 00:00:00')
+			       ub.create_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
         <![CDATA[
-			       AND create_time <= concat(#{endDate},' 23:59:59')
+			       AND ub.create_time <= concat(#{endDate},' 23:59:59')
 		        ]]>
-        GROUP BY user_source ORDER BY registerNum DESC
+        GROUP BY registerSource ORDER BY registerNum DESC
     </select>
 
     <select id="getSaleUserListOfHour" resultType="SaleUser" parameterType="QueryPara">
         SELECT SUBSTRING(create_time FROM 12 FOR 2) registerHour,count(*) registerNum
-        FROM user_base WHERE
+        FROM f_user.user_base WHERE
         <![CDATA[
 			       create_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
@@ -28,66 +29,69 @@
 
 
     <select id="getSaleUserListForTrendOfDate" resultType="SaleUser" parameterType="QueryPara">
-        SELECT user_source registerSource,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-7) THEN 1 ELSE 0 END) registerNum7,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-6) THEN 1 ELSE 0 END) registerNum6,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-5) THEN 1 ELSE 0 END) registerNum5,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-4) THEN 1 ELSE 0 END) registerNum4,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-3) THEN 1 ELSE 0 END) registerNum3,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-2) THEN 1 ELSE 0 END) registerNum2,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-1) THEN 1 ELSE 0 END) registerNum1
-        FROM user_base WHERE
+        SELECT  IFNULL(dc. NAME, ub.user_source) registerSource,
+        SUM( CASE WHEN date(ub.create_time) = date(CURDATE()-7) THEN 1 ELSE 0 END) registerNum7,
+        SUM( CASE WHEN date(ub.create_time) = date(CURDATE()-6) THEN 1 ELSE 0 END) registerNum6,
+        SUM( CASE WHEN date(ub.create_time) = date(CURDATE()-5) THEN 1 ELSE 0 END) registerNum5,
+        SUM( CASE WHEN date(ub.create_time) = date(CURDATE()-4) THEN 1 ELSE 0 END) registerNum4,
+        SUM( CASE WHEN date(ub.create_time) = date(CURDATE()-3) THEN 1 ELSE 0 END) registerNum3,
+        SUM( CASE WHEN date(ub.create_time) = date(CURDATE()-2) THEN 1 ELSE 0 END) registerNum2,
+        SUM( CASE WHEN date(ub.create_time) = date(CURDATE()-1) THEN 1 ELSE 0 END) registerNum1
+        FROM f_user.user_base ub LEFT JOIN f_user.dic_channel dc ON ub.user_source = dc.id
+        WHERE
         <![CDATA[
-			      create_time >= concat(date(CURDATE()-7),' 00:00:00')
+			      ub.create_time >= concat(date(CURDATE()-7),' 00:00:00')
 		        ]]>
         <![CDATA[
-                  AND create_time <= concat(date(CURDATE()-1),' 23:59:59')
+                  AND ub.create_time <= concat(date(CURDATE()-1),' 23:59:59')
         ]]>
-        GROUP BY user_source
+        GROUP BY registerSource
     </select>
 
     <select id="getSaleLogUserListOfSource" resultType="SaleUser" parameterType="QueryPara">
-        SELECT login_system logSource,count(*) logTimes,count(DISTINCT mobile_phone) logNum,round(count(*)/count(DISTINCT mobile_phone),2) logTimesPerUser
-        FROM user_login_log WHERE
+        SELECT IFNULL(dc. NAME, ull.login_system) logSource,count(*) logTimes,count(DISTINCT ull.user_id) logNum,round(count(*)/count(DISTINCT ull.user_id),2) logTimesPerUser
+        FROM f_user.user_login_log ull LEFT JOIN f_user.dic_channel dc ON ull.login_system = dc.id
+        WHERE
         <![CDATA[
-			       login_time >= concat(#{startDate},' 00:00:00')
+			       ull.login_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
         <![CDATA[
-			       AND login_time <= concat(#{endDate},' 23:59:59')
+			       AND ull.login_time <= concat(#{endDate},' 23:59:59')
 		        ]]>
-        GROUP BY login_system ORDER BY logNum DESC
+        GROUP BY logSource ORDER BY logNum DESC
     </select>
 
     <select id="getSaleLogUserListOfMode" resultType="SaleUser" parameterType="QueryPara">
-        SELECT CASE login_mode WHEN 1 then '静默登陆' WHEN 2 THEN '手机号验证码' WHEN 3 THEN '手机号密码'  WHEN 4 THEN '身份证密码' WHEN 5 THEN '第三方'
-        ELSE '未知' END logMode,count(*) logTimes,count(DISTINCT mobile_phone) logNum,round(count(*)/count(DISTINCT mobile_phone),2) logTimesPerUser
-        FROM user_login_log WHERE
+        SELECT IFNULL(dlm.name, ull.login_mode) logMode,count(*) logTimes,count(DISTINCT ull.user_id) logNum,round(count(*)/count(DISTINCT ull.user_id),2) logTimesPerUser
+        FROM f_user.user_login_log ull LEFT JOIN f_user.dic_login_mode dlm ON ull.login_mode=dlm.id
+        WHERE
         <![CDATA[
-			       login_time >= concat(#{startDate},' 00:00:00')
+			       ull.login_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
         <![CDATA[
-			       AND login_time <= concat(#{endDate},' 23:59:59')
+			       AND ull.login_time <= concat(#{endDate},' 23:59:59')
 		        ]]>
         GROUP BY logMode ORDER BY logNum DESC
     </select>
 
     <select id="getSaleLogUserListForTrendOfDate" resultType="SaleUser" parameterType="QueryPara">
-        SELECT login_system logSource,
-        count(DISTINCT CASE WHEN date(login_time) = date(CURDATE()-7) THEN mobile_phone ELSE NULL END) logNum7,
-        count(DISTINCT CASE WHEN date(login_time) = date(CURDATE()-6) THEN mobile_phone ELSE NULL END) logNum6,
-        count(DISTINCT CASE WHEN date(login_time) = date(CURDATE()-5) THEN mobile_phone ELSE NULL END) logNum5,
-        count(DISTINCT CASE WHEN date(login_time) = date(CURDATE()-4) THEN mobile_phone ELSE NULL END) logNum4,
-        count(DISTINCT CASE WHEN date(login_time) = date(CURDATE()-3) THEN mobile_phone ELSE NULL END) logNum3,
-        count(DISTINCT CASE WHEN date(login_time) = date(CURDATE()-2) THEN mobile_phone ELSE NULL END) logNum2,
-        count(DISTINCT CASE WHEN date(login_time) = date(CURDATE()-1) THEN mobile_phone ELSE NULL END) logNum1
-        FROM user_login_log WHERE
+        SELECT IFNULL(dc. NAME, ull.login_system) logSource ,
+        count(DISTINCT CASE WHEN date(ull.login_time) = date(CURDATE()-7) THEN ull.user_id ELSE NULL END) logNum7,
+        count(DISTINCT CASE WHEN date(ull.login_time) = date(CURDATE()-6) THEN ull.user_id ELSE NULL END) logNum6,
+        count(DISTINCT CASE WHEN date(ull.login_time) = date(CURDATE()-5) THEN ull.user_id ELSE NULL END) logNum5,
+        count(DISTINCT CASE WHEN date(ull.login_time) = date(CURDATE()-4) THEN ull.user_id ELSE NULL END) logNum4,
+        count(DISTINCT CASE WHEN date(ull.login_time) = date(CURDATE()-3) THEN ull.user_id ELSE NULL END) logNum3,
+        count(DISTINCT CASE WHEN date(ull.login_time) = date(CURDATE()-2) THEN ull.user_id ELSE NULL END) logNum2,
+        count(DISTINCT CASE WHEN date(ull.login_time) = date(CURDATE()-1) THEN ull.user_id ELSE NULL END) logNum1
+        FROM f_user.user_login_log ull LEFT JOIN f_user.dic_channel dc ON ull.login_system = dc.id
+        WHERE
         <![CDATA[
-			       login_time >= concat(#{startDate},' 00:00:00')
+			       ull.login_time >= concat(date(CURDATE()-7),' 00:00:00')
 		        ]]>
         <![CDATA[
-			       AND login_time <= concat(#{endDate},' 23:59:59')
+			       AND ull.login_time <= concat(date(CURDATE()-1),' 23:59:59')
 		        ]]>
-        GROUP BY login_system
+        GROUP BY logSource
     </select>
 
 </mapper>

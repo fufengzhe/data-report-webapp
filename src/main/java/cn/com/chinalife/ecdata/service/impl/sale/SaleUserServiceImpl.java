@@ -27,7 +27,7 @@ public class SaleUserServiceImpl implements SaleUserService {
     public List<List<SaleUser>> getSaleUserRegisterNumList(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<List<SaleUser>> lists = new ArrayList<List<SaleUser>>();
-        DataSourceContextHolder.setDbType(CommonConstant.saleUserDataSource);
+        DataSourceContextHolder.setDbType(CommonConstant.saleStatisticsDataSource);
         List<SaleUser> saleUserListOfSource = saleUserDao.getSaleUserListOfSource(queryPara);
         lists.add(saleUserListOfSource);
         List<SaleUser> saleUserListOfHour = saleUserDao.getSaleUserListOfHour(queryPara);
@@ -41,7 +41,7 @@ public class SaleUserServiceImpl implements SaleUserService {
     public List<List<SaleUser>> getSaleUserRegisterNumListOfSourceAndHour(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<List<SaleUser>> lists = new ArrayList<List<SaleUser>>();
-        DataSourceContextHolder.setDbType(CommonConstant.saleUserDataSource);
+        DataSourceContextHolder.setDbType(CommonConstant.saleStatisticsDataSource);
         List<SaleUser> saleUserListOfSource = saleUserDao.getSaleUserListOfSource(queryPara);
         lists.add(saleUserListOfSource);
         List<SaleUser> saleUserListOfHour = saleUserDao.getSaleUserListOfHour(queryPara);
@@ -53,7 +53,7 @@ public class SaleUserServiceImpl implements SaleUserService {
     public List<List<SaleUser>> getSaleUserLogNumList(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<List<SaleUser>> lists = new ArrayList<List<SaleUser>>();
-        DataSourceContextHolder.setDbType(CommonConstant.saleUserDataSource);
+        DataSourceContextHolder.setDbType(CommonConstant.saleStatisticsDataSource);
         List<SaleUser> saleUserListOfSource = saleUserDao.getSaleLogUserListOfSource(queryPara);
         lists.add(saleUserListOfSource);
         List<SaleUser> saleUserListOfMode = saleUserDao.getSaleLogUserListOfMode(queryPara);
@@ -67,7 +67,7 @@ public class SaleUserServiceImpl implements SaleUserService {
     public List<List<SaleUser>> getSaleUserLogNumListOfSourceAndMode(QueryPara queryPara) {
         logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
         List<List<SaleUser>> lists = new ArrayList<List<SaleUser>>();
-        DataSourceContextHolder.setDbType(CommonConstant.saleUserDataSource);
+        DataSourceContextHolder.setDbType(CommonConstant.saleStatisticsDataSource);
         List<SaleUser> saleUserListOfSource = saleUserDao.getSaleLogUserListOfSource(queryPara);
         lists.add(saleUserListOfSource);
         List<SaleUser> saleUserListOfMode = saleUserDao.getSaleLogUserListOfMode(queryPara);

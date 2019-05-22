@@ -154,7 +154,7 @@
         var xData = [];
         var seriesData = [];
         for (var i = 0; i < data.length; i++) {
-            legendData.push(data[i].registerSource);
+            legendData.push(data[i].logSource);
             seriesData.push({
                 name: data[i].logSource, type: 'line', areaStyle: {normal: {}},
                 data: [data[i].logNum7, data[i].logNum6, data[i].logNum5, data[i].logNum4, data[i].logNum3, data[i].logNum2, data[i].logNum1]

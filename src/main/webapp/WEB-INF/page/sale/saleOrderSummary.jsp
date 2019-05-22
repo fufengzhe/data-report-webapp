@@ -6,7 +6,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="icon" href="${pageContext.request.contextPath}/static/img/sale_ico.ico" type="img/x-ico"/>
-    <title>保费保额查询分析</title>
+    <title>保单查询分析</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
           type="text/css">
@@ -22,7 +22,7 @@
 <div class="container-fluid text-center">
     <div class="panel panel-default">
         <div class="panel-heading">
-            保费保额分布
+            保费分布
         </div>
     </div>
 
@@ -44,19 +44,21 @@
                 </div>
             </div>
             <div class='col-sm-2'>
-                <button class="btn btn-success" data-toggle="modal" data-target="#productPieModal">表格视图
+                <button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图
+                </button>
+                <button class="btn btn-info" onClick="return exportData();">详情导出
                 </button>
             </div>
             <div class='col-sm-3'>
             </div>
         </div>
         <div class="text-center col-sm-6">
-            <div class="alert alert-warning" style="display:none;" id="noDataOfPremiumPie">无数据，请更改查询条件或联系开发人员。</div>
-            <div id="premiumPieChart" style="height:600px"></div>
+            <div class="alert alert-warning" style="display:none;" id="noDataOfProductPie">无数据，请更改查询条件或联系开发人员。</div>
+            <div id="productPieChart" style="height:600px"></div>
         </div>
         <div class="text-center col-sm-6">
-            <div class="alert alert-warning" style="display:none;" id="noDataOfAmountPie">无数据，请更改查询条件或联系开发人员。</div>
-            <div id="amountPieChart" style="height:600px"></div>
+            <div class="alert alert-warning" style="display:none;" id="noDataOfSourcePie">无数据，请更改查询条件或联系开发人员。</div>
+            <div id="sourcePieChart" style="height:600px"></div>
         </div>
     </div>
     <div class="panel panel-default">
@@ -70,7 +72,7 @@
     <div class="container-fluid text-center" id="dateTrendChart" style="height:700px;">
     </div>
     <%--模态框--%>
-    <div class="modal fade" id="productPieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    <div class="modal fade" id="pieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -79,6 +81,7 @@
                 </div>
                 <div class="modal-body">
                     <table id="productPieTable"></table>
+                    <table id="sourcePieTable"></table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -124,28 +127,30 @@
     var dateRange = '${startDate}' + " ~ " + '${endDate}';
     $("#dateRange").val(dateRange);
     if (list[0].length == 0) {
-        $("#noDataOfPremiumPie").css('display', 'block');
-        $("#noDataOfAmountPie").css('display', 'block');
+        $("#noDataOfProductPie").css('display', 'block');
     } else {
-        pieChart(list[0], "premiumPieChart", "amountPieChart", "保费分布", "保额分布");
+        pieChart(list[0], "productPieChart", "保费产品分布", 1);
     }
-    function pieChart(data, divId1, divId2, chartName1, chartName2) {
+    if (list[1].length == 0) {
+        $("#noDataOfSourcePie").css('display', 'block');
+    } else {
+        pieChart(list[1], "sourcePieChart", "保费渠道分布", 2);
+    }
+    function pieChart(data, divId, chartName, legendIndex) {
         var legendData = [];
-        var seriesData1 = [];
-        var seriesData2 = [];
+        var seriesData = [];
         for (var i = 0; i < data.length; i++) {
-            legendData.push(data[i].pageName);
-            seriesData1.push({value: data[i].totalPremium, name: data[i].productName});
-            seriesData2.push({value: data[i].totalAmount, name: data[i].productName});
+            var str = legendIndex == 1 ? data[i].productName : data[i].source;
+            legendData.push(str);
+            seriesData.push({value: data[i].totalPremium, name: str});
         }
-        drawPieChart(divId1, chartName1, legendData, seriesData1);
-        drawPieChart(divId2, chartName2, legendData, seriesData2);
+        drawPieChart(divId, chartName, legendData, seriesData);
     }
     var dateStrs =${dates};
-    if (list[1].length == 0) {
+    if (list[2].length == 0) {
         $("#noDataOfDateTrend").css('display', 'block');
     } else {
-        trendChart(list[1], dateStrs, "dateTrendChart", "过去七天保费趋势");
+        trendChart(list[2], dateStrs, "dateTrendChart", "过去七天保费趋势");
     }
     function trendChart(data, dateStrs, divId, chartName) {
         var legendData = [];
@@ -179,17 +184,20 @@
                         var respCode = data.respCode;
                         if (respCode == 0) {
                             list = data.detailInfo;
-                            if (list.length == 0) {
-                                $("#noDataOfPremiumPie").css('display', 'block');
-                                $("#noDataOfAmountPie").css('display', 'block');
-                                echarts.init(document.getElementById('premiumPieChart')).clear();
-                                echarts.init(document.getElementById('amountPieChart')).clear();
+                            if (list[0].length == 0 || list[1].length == 0) {
+                                $("#noDataOfProductPie").css('display', 'block');
+                                $("#noDataOfSourcePie").css('display', 'block');
+                                echarts.init(document.getElementById('productPieChart')).clear();
+                                echarts.init(document.getElementById('sourcePieChart')).clear();
                                 $("#productPieTable").bootstrapTable('load', []);
+                                $("#sourcePieTable").bootstrapTable('load', []);
                             } else {
-                                $("#noDataOfPremiumPie").css('display', 'none');
-                                $("#noDataOfAmountPie").css('display', 'none');
-                                pieChart(list, "premiumPieChart", "amountPieChart", "保费分布", "保额分布");
-                                $("#productPieTable").bootstrapTable('load', list);
+                                $("#noDataOfProductPie").css('display', 'none');
+                                $("#noDataOfSourcePie").css('display', 'none');
+                                pieChart(list[0], "productPieChart", "保费产品分布", 1);
+                                pieChart(list[1], "sourcePieChart", "保费渠道分布", 2);
+                                $("#productPieTable").bootstrapTable('load', list[0]);
+                                $("#sourcePieTable").bootstrapTable('load', list[1]);
                             }
                         }
                         setButtonDisabled('queryDate', false);
@@ -198,14 +206,27 @@
             }
         });
     });
-    generateDataTable("productPieTable", [[{"field": "productName"}, {"field": "totalPremium"}, {"field": "totalAmount"}],
-        [{"title": "产品名称"}, {"title": "保费"}, {"title": "保额"}]])
+    generateDataTable("productPieTable", [[{"field": "productName"}, {"field": "totalPremium"}],
+        [{"title": "产品名称"}, {"title": "保费"}]])
+    generateDataTable("sourcePieTable", [[{"field": "source"}, {"field": "totalPremium"}],
+        [{"title": "渠道名称"}, {"title": "保费"}]])
     $("#productPieTable").bootstrapTable('load', list[0]);
+    $("#sourcePieTable").bootstrapTable('load', list[1]);
     generateDataTable("dateTrendTable", [[{"field": "productName"}, {"field": "totalPremium7"}, {"field": "totalPremium6"}, {"field": "totalPremium5"},
         {"field": "totalPremium4"}, {"field": "totalPremium3"}, {"field": "totalPremium2"}, {"field": "totalPremium1"}],
         [{"title": "产品名称"}, {"title": dateStrs[0]}, {"title": dateStrs[1]}, {"title": dateStrs[2]}, {"title": dateStrs[3]}, {"title": dateStrs[4]}, {"title": dateStrs[5]}, {"title": dateStrs[6]}]])
-    $("#dateTrendTable").bootstrapTable('load', list[1]);
-</script>
+    $("#dateTrendTable").bootstrapTable('load', list[2]);
 
+    function exportData() {
+        var downloadConfirm = confirm("确定导出?");
+        if (downloadConfirm) {
+            var dateRange = $("#dateRange").val();
+            var startDate = dateRange.substr(0, 10);
+            var endDate = dateRange.substr(13);
+            var down_url = '../download/saleOrderDetail?startDate=' + startDate + "&endDate=" + endDate;
+            window.open(down_url, "_self");
+        }
+    }
+</script>
 </body>
 </html>

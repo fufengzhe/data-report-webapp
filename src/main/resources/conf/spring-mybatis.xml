@@ -78,32 +78,11 @@
         <property name="testOnBorrow" value="false"></property>
     </bean>
 
-    <bean id="saleOrderDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="saleStatisticsDataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
-        <property name="url" value="jdbc:mysql://10.7.38.12/f_order"></property>
-        <property name="username" value="f_order"></property>
-        <property name="password" value="focuspass"></property>
-        <!-- 初始化连接大小 -->
-        <property name="initialSize" value="5"/>
-        <!-- 连接池最大数量 -->
-        <property name="maxActive" value="100"/>
-        <!-- 连接池最大空闲 -->
-        <property name="maxIdle" value="20"/>
-        <!-- 连接池最小空闲 -->
-        <property name="minIdle" value="3"/>
-        <!-- 获取连接最大等待时间 -->
-        <property name="maxWait" value="60000"/>
-        <property name="timeBetweenEvictionRunsMillis" value="60000"></property>
-        <property name="testWhileIdle" value="true"></property>
-        <property name="validationQuery" value="SELECT 1"></property>
-        <property name="testOnBorrow" value="false"></property>
-    </bean>
-
-    <bean id="saleUserDataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
-        <property name="url" value="jdbc:mysql://10.7.38.12/f_user?characterEncoding=utf8"></property>
-        <property name="username" value="f_user"></property>
-        <property name="password" value="focuspass"></property>
+        <property name="url" value="jdbc:mysql://10.18.59.37:3306?characterEncoding=utf8"></property>
+        <property name="username" value="f_statistic"></property>
+        <property name="password" value="Focus@2019"></property>
         <!-- 初始化连接大小 -->
         <property name="initialSize" value="5"/>
         <!-- 连接池最大数量 -->
@@ -127,8 +106,7 @@
                 <entry value-ref="businessDataSource" key="businessDataSource"></entry>
                 <entry value-ref="userAuthDataSource" key="userAuthDataSource"></entry>
                 <entry value-ref="fupinDataSource" key="fupinDataSource"></entry>
-                <entry value-ref="saleOrderDataSource" key="saleOrderDataSource"></entry>
-                <entry value-ref="saleUserDataSource" key="saleUserDataSource"></entry>
+                <entry value-ref="saleStatisticsDataSource" key="saleStatisticsDataSource"></entry>
             </map>
         </property>
         <property name="defaultTargetDataSource" ref="businessDataSource"></property>

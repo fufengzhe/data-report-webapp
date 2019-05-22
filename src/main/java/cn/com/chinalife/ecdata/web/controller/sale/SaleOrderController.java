@@ -61,7 +61,7 @@ public class SaleOrderController {
         logger.info("前端传入的参数为 {}", JSON.toJSONString(queryPara));
         ResponseBean responseBean = new ResponseBean();
         try {
-            List<SaleOrder> saleOrderList = saleOrderService.getSaleOrderListOfProduct(queryPara);
+            List<List<SaleOrder>> saleOrderList = saleOrderService.getSaleOrderListOfProductAndSource(queryPara);
             responseBean.setDetailInfo(saleOrderList);
         } catch (Exception e) {
             logger.error("异常信息为", e);

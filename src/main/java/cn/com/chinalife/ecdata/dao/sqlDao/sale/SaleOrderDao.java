@@ -15,4 +15,8 @@ public interface SaleOrderDao {
     List<SaleOrder> getSaleOrderListOfProduct(QueryPara queryPara);
 
     List<SaleOrder> getSaleOrderListForTrendOfDate(QueryPara queryPara);
+
+    List<SaleOrder> getSaleOrderListOfSource(QueryPara queryPara);
+
+    List<SaleOrder> getSaleOrderDetailList(QueryPara queryPara);
 }

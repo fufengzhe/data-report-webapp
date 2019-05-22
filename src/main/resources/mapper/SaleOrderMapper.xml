@@ -3,37 +3,69 @@
 <mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.sale.SaleOrderDao">
 
     <select id="getSaleOrderListOfProduct" resultType="SaleOrder" parameterType="QueryPara">
-        SELECT IFNULL(dp.product_name,'未知产品') productName,sum(op.total_amount) totalAmount,sum(op.total_premium) totalPremium
-        FROM order_base ob INNER JOIN order_appl op ON ob.order_id = op.order_id
+        SELECT dp.product_name productName,sum(ob.total_premium) totalPremium
+        FROM f_order.order_base ob
+        INNER JOIN f_order.dic_product dp ON ob.product_id = dp.product_id
         <![CDATA[
 			       AND ob.create_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
         <![CDATA[
 			       AND ob.create_time <= concat(#{endDate},' 23:59:59')
 		        ]]>
-        INNER JOIN dic_product dp ON ob.product_id = dp.product_id
-        GROUP BY dp.product_name ORDER BY totalPremium DESC
+        GROUP BY productName ORDER BY totalPremium DESC
+    </select>
+
+    <select id="getSaleOrderListOfSource" resultType="SaleOrder" parameterType="QueryPara">
+        SELECT  dc.name source,sum(ob.total_premium) totalPremium
+        FROM f_order.order_base ob
+        INNER JOIN f_order.dic_channel dc ON ob.source = dc.id
+        <![CDATA[
+			       AND ob.create_time >= concat(#{startDate},' 00:00:00')
+		        ]]>
+        <![CDATA[
+			       AND ob.create_time <= concat(#{endDate},' 23:59:59')
+		        ]]>
+        GROUP BY source ORDER BY totalPremium DESC
     </select>
 
 
     <select id="getSaleOrderListForTrendOfDate" resultType="SaleOrder" parameterType="QueryPara">
-        SELECT IFNULL(dp.product_name,'未知产品') productName,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-7) THEN op.total_premium ELSE 0 END) totalPremium7,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-6) THEN op.total_premium ELSE 0 END) totalPremium6,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-5) THEN op.total_premium ELSE 0 END) totalPremium5,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-4) THEN op.total_premium ELSE 0 END) totalPremium4,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-3) THEN op.total_premium ELSE 0 END) totalPremium3,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-2) THEN op.total_premium ELSE 0 END) totalPremium2,
-        SUM( CASE WHEN date(create_time) = date(CURDATE()-1) THEN op.total_premium ELSE 0 END) totalPremium1
-        FROM order_base ob INNER JOIN order_appl op ON ob.order_id = op.order_id
+        SELECT dp.product_name productName,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-7) THEN ob.total_premium ELSE 0 END) totalPremium7,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-6) THEN ob.total_premium ELSE 0 END) totalPremium6,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-5) THEN ob.total_premium ELSE 0 END) totalPremium5,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-4) THEN ob.total_premium ELSE 0 END) totalPremium4,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-3) THEN ob.total_premium ELSE 0 END) totalPremium3,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-2) THEN ob.total_premium ELSE 0 END) totalPremium2,
+        SUM( CASE WHEN date(create_time) = date(CURDATE()-1) THEN ob.total_premium ELSE 0 END) totalPremium1
+        FROM f_order.order_base ob
+        INNER JOIN f_order.dic_product dp ON ob.product_id = dp.product_id
         <![CDATA[
 			      AND ob.create_time >= concat(date(CURDATE()-7),' 00:00:00')
 		        ]]>
         <![CDATA[
                   AND ob.create_time <= concat(date(CURDATE()-1),' 23:59:59')
         ]]>
-        INNER JOIN dic_product dp ON ob.product_id = dp.product_id
-        GROUP BY dp.product_name
+        GROUP BY productName
+    </select>
+
+    <select id="getSaleOrderDetailList" resultType="SaleOrder" parameterType="QueryPara">
+        SELECT IFNULL(dc.name ,ob.source) source,ob.order_id orderId,opi.name personName,IFNULL(dce.name ,opi.identify_type) certificateType,opi.identify_no certificateNo,
+        CASE WHEN opi.sex = 'M' THEN '男' WHEN opi.sex = 'F' THEN '女' ELSE '未知' END sex,opi.age age,date(ob.create_time) orderDate,
+        ob.start_date startDate,opi.mobile mobilePhone,opi.email email,ob.total_premium totalPremium,
+        CASE WHEN ob.paid_flag IS NULL THEN '未支付' WHEN ob.paid_flag='1' THEN '支付成功' WHEN ob.paid_flag='0' THEN '支付失败' ELSE '未知状态' END payStatus,
+        CURDATE() extractionDate
+        FROM f_order.order_base ob
+        INNER JOIN f_order.order_plc_ins opi ON ob.order_id = opi.order_id AND opi.insurer_flag='2'
+        <![CDATA[
+			      AND ob.create_time >= concat(#{startDate},' 00:00:00')
+		        ]]>
+        <![CDATA[
+                  AND ob.create_time <= concat(#{endDate},' 23:59:59')
+        ]]>
+        LEFT JOIN f_order.dic_channel dc ON ob.source = dc.id
+        LEFT JOIN f_order.dic_certificate dce ON opi.identify_type = dce.id
+        GROUP BY orderId
     </select>
 
 </mapper>

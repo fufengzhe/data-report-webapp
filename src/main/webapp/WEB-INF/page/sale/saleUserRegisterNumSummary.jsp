@@ -131,7 +131,7 @@
     if (list[1].length == 0) {
         $("#noDataOfHourPie").css('display', 'block');
     } else {
-        pieChart(list[1], "hourPieChart", "时段分布", 2);
+        pieChart(list[1], "hourPieChart", "注册时段分布", 2);
     }
     function pieChart(data, divId, chartName, legendIndex) {
         var legendData = [];
@@ -192,7 +192,7 @@
                                 $("#noDataOfSourcePie").css('display', 'none');
                                 $("#noDataOfHourPie").css('display', 'none');
                                 pieChart(list[0], "sourcePieChart", "渠道分布", 1);
-                                pieChart(list[1], "hourPieChart", "时段分布", 2);
+                                pieChart(list[1], "hourPieChart", "注册时段分布", 2);
                                 $("#sourcePieTable").bootstrapTable('load', list[0]);
                                 $("#hourPieTable").bootstrapTable('load', list[1]);
                             }
@@ -207,7 +207,7 @@
         [{"title": "渠道"}, {"title": "注册数"}]])
     $("#sourcePieTable").bootstrapTable('load', list[0]);
     generateDataTable("hourPieTable", [[{"field": "registerHour"}, {"field": "registerNum"}],
-        [{"title": "时段"}, {"title": "注册数"}]])
+        [{"title": "注册时段"}, {"title": "注册数"}]])
     $("#hourPieTable").bootstrapTable('load', list[1]);
     generateDataTable("dateTrendTable", [[{"field": "registerSource"}, {"field": "registerNum7"}, {"field": "registerNum6"}, {"field": "registerNum5"},
         {"field": "registerNum4"}, {"field": "registerNum3"}, {"field": "registerNum2"}, {"field": "registerNum1"}],

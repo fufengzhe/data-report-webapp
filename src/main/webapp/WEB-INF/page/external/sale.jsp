@@ -7,7 +7,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="icon" href="${pageContext.request.contextPath}/static/img/sale_ico.ico" type="img/x-ico"/>
-    <title>中国人寿销售公司数据平台</title>
+    <title>中国人寿销售公司数据分析平台</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
           type="text/css">
@@ -40,7 +40,7 @@
     </h2>
     <br/>
     <ul class="list-group"  style="font-size:18px">
-        <li class="list-group-item"><span class="glyphicon glyphicon-usd"></span>&nbsp;&nbsp;&nbsp;保费保额查询分析 <a href="/ecdata/saleOrder/summary" class="btn btn-success btn-xs"
+        <li class="list-group-item"><span class="glyphicon glyphicon-usd"></span>&nbsp;&nbsp;&nbsp;保单查询分析 <a href="/ecdata/saleOrder/summary" class="btn btn-success btn-xs"
                                                  target="_blank">点击查看</a>
         </li>
         <li class="list-group-item"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;用户注册查询分析 <a href="/ecdata/saleUser/registerNumSummary" class="btn btn-success btn-xs"
