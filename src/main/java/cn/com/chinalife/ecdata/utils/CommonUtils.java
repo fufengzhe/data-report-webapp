@@ -140,7 +140,7 @@ public class CommonUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(test());
+        System.out.println(getMD5("clec@2019"));
     }
 
     private static int test() {

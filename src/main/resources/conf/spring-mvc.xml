@@ -60,18 +60,13 @@
             <mvc:exclude-mapping path="/external/userCenter"/>
             <mvc:exclude-mapping path="/external/fupin"/>
             <mvc:exclude-mapping path="/external/sale"/>
-            <mvc:exclude-mapping path="/saleOrder/summary"/>
-            <mvc:exclude-mapping path="/saleOrder/numQuery"/>
-            <mvc:exclude-mapping path="/download/saleOrderDetail"/>
-            <mvc:exclude-mapping path="/saleUser/registerNumSummary"/>
-            <mvc:exclude-mapping path="/saleUser/registerNumQuery"/>
-            <mvc:exclude-mapping path="/saleUser/registerMobileSummary"/>
-            <mvc:exclude-mapping path="/saleUser/logNumSummary"/>
-            <mvc:exclude-mapping path="/saleUser/logNumQuery"/>
-            <mvc:exclude-mapping path="/salesman/**"/>
-            <mvc:exclude-mapping path="/activeUser/summary"/>
-            <mvc:exclude-mapping path="/registerUser/summary"/>
-            <mvc:exclude-mapping path="/combinationAnalysis/**"/>
+            <!--<mvc:exclude-mapping path="/saleOrder/*"/>-->
+            <!--<mvc:exclude-mapping path="/download/*"/>-->
+            <!--<mvc:exclude-mapping path="/saleUser/*"/>-->
+            <!--<mvc:exclude-mapping path="/salesman/**"/>-->
+            <!--<mvc:exclude-mapping path="/activeUser/summary"/>-->
+            <!--<mvc:exclude-mapping path="/registerUser/summary"/>-->
+            <!--<mvc:exclude-mapping path="/combinationAnalysis/**"/>-->
             <bean class="cn.com.chinalife.ecdata.web.interceptor.LoginHandlerInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>

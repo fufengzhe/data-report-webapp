@@ -144,7 +144,7 @@
             legendData.push(str);
             seriesData.push({value: data[i].totalPremium, name: str});
         }
-        drawPieChart(divId, chartName, legendData, seriesData);
+        drawPieChart(divId, chartName, legendData, seriesData, "");
     }
     var dateStrs =${dates};
     if (list[2].length == 0) {

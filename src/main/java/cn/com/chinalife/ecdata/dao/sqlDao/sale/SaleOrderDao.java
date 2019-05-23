@@ -19,4 +19,14 @@ public interface SaleOrderDao {
     List<SaleOrder> getSaleOrderListOfSource(QueryPara queryPara);
 
     List<SaleOrder> getSaleOrderDetailList(QueryPara queryPara);
+
+    List<SaleOrder> getAllProductList();
+
+    List<SaleOrder> getAllSourceList();
+
+    List<SaleOrder> getSaleOrderListOfSex(QueryPara queryPara);
+
+    List<SaleOrder> getSaleOrderListOfAge(QueryPara queryPara);
+
+    List<SaleOrder> getSaleOrderListOfRelation(QueryPara queryPara);
 }

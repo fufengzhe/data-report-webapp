@@ -27,44 +27,44 @@
     </div>
 
     <%--<div class="row">--%>
-        <%--<div class="row panel-heading">--%>
-            <%--<div class='col-sm-3'></div>--%>
-            <%--<div class='col-sm-4'>--%>
-                <%--<div class="form-group">--%>
-                    <%--<div class='input-group date text-center'>--%>
-                        <%--<span class="input-group-addon">注册时间</span>--%>
-                        <%--<span class="input-group-addon">--%>
-                            <%--<span class="glyphicon glyphicon-calendar"></span>--%>
-                        <%--</span>--%>
-                        <%--<input type="text" class="form-control" placeholder="时间范围" id="dateRange"/>--%>
-                        <%--<span class="input-group-btn">--%>
-                            <%--<button type="button" class="btn btn-primary" id="queryDate">开始查询</button>--%>
-                        <%--</span>--%>
-                    <%--</div>--%>
-                <%--</div>--%>
-            <%--</div>--%>
-            <%--<div class='col-sm-2'>--%>
-                <%--<button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图--%>
-                <%--</button>--%>
-            <%--</div>--%>
-            <%--<div class='col-sm-3'>--%>
-            <%--</div>--%>
-        <%--</div>--%>
-        <%--<div class="text-center col-sm-6">--%>
-            <%--<div class="alert alert-warning" style="display:none;" id="noDataOfSourcePie">无数据，请更改查询条件或联系开发人员。</div>--%>
-            <%--<div id="sourcePieChart" style="height:600px"></div>--%>
-        <%--</div>--%>
-        <%--<div class="text-center col-sm-6">--%>
-            <%--<div class="alert alert-warning" style="display:none;" id="noDataOfHourPie">无数据，请更改查询条件或联系开发人员。</div>--%>
-            <%--<div id="hourPieChart" style="height:600px"></div>--%>
-        <%--</div>--%>
+    <%--<div class="row panel-heading">--%>
+    <%--<div class='col-sm-3'></div>--%>
+    <%--<div class='col-sm-4'>--%>
+    <%--<div class="form-group">--%>
+    <%--<div class='input-group date text-center'>--%>
+    <%--<span class="input-group-addon">注册时间</span>--%>
+    <%--<span class="input-group-addon">--%>
+    <%--<span class="glyphicon glyphicon-calendar"></span>--%>
+    <%--</span>--%>
+    <%--<input type="text" class="form-control" placeholder="时间范围" id="dateRange"/>--%>
+    <%--<span class="input-group-btn">--%>
+    <%--<button type="button" class="btn btn-primary" id="queryDate">开始查询</button>--%>
+    <%--</span>--%>
+    <%--</div>--%>
+    <%--</div>--%>
+    <%--</div>--%>
+    <%--<div class='col-sm-2'>--%>
+    <%--<button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图--%>
+    <%--</button>--%>
+    <%--</div>--%>
+    <%--<div class='col-sm-3'>--%>
+    <%--</div>--%>
+    <%--</div>--%>
+    <%--<div class="text-center col-sm-6">--%>
+    <%--<div class="alert alert-warning" style="display:none;" id="noDataOfSourcePie">无数据，请更改查询条件或联系开发人员。</div>--%>
+    <%--<div id="sourcePieChart" style="height:600px"></div>--%>
+    <%--</div>--%>
+    <%--<div class="text-center col-sm-6">--%>
+    <%--<div class="alert alert-warning" style="display:none;" id="noDataOfHourPie">无数据，请更改查询条件或联系开发人员。</div>--%>
+    <%--<div id="hourPieChart" style="height:600px"></div>--%>
+    <%--</div>--%>
     <%--</div>--%>
     <%--<div class="panel panel-default">--%>
-        <%--<div class="panel-heading">--%>
-            <%--过去七天注册人数趋势&nbsp&nbsp--%>
-            <%--<button class="btn btn-success" data-toggle="modal" data-target="#dateTrendModal">表格视图--%>
-            <%--</button>--%>
-        <%--</div>--%>
+    <%--<div class="panel-heading">--%>
+    <%--过去七天注册人数趋势&nbsp&nbsp--%>
+    <%--<button class="btn btn-success" data-toggle="modal" data-target="#dateTrendModal">表格视图--%>
+    <%--</button>--%>
+    <%--</div>--%>
     <%--</div>--%>
     <%--<div class="alert alert-warning" style="display:none;" id="noDataOfDateTrend">无数据，请更改查询条件或联系开发人员。</div>--%>
     <%--<div class="container-fluid text-center" id="dateTrendChart" style="height:700px;">--%>
@@ -141,7 +141,7 @@
             legendData.push(str);
             seriesData.push({value: data[i].registerNum, name: str});
         }
-        drawPieChart(divId, chartName, legendData, seriesData);
+        drawPieChart(divId, chartName, legendData, seriesData, "");
     }
     var dateStrs =${dates};
     if (list[2].length == 0) {

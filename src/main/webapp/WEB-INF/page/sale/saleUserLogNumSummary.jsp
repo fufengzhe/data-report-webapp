@@ -141,7 +141,7 @@
             legendData.push(str);
             seriesData.push({value: data[i].logNum, name: str});
         }
-        drawPieChart(divId, chartName, legendData, seriesData);
+        drawPieChart(divId, chartName, legendData, seriesData, "");
     }
     var dateStrs =${dates};
     if (list[2].length == 0) {

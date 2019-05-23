@@ -18,4 +18,10 @@ public interface SaleOrderService {
     List<SaleOrder> getSaleOrderDetailList(QueryPara queryPara);
 
     Workbook getOrderDetailWorkBook(List<SaleOrder> saleOrderDetailsList);
+
+    List<List<SaleOrder>> getApplicantAttributeList(QueryPara queryPara);
+
+    List<SaleOrder> getAllProductList();
+
+    List<SaleOrder> getAllSourceList();
 }

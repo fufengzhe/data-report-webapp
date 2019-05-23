@@ -5,6 +5,7 @@ import cn.com.chinalife.ecdata.entity.query.QueryPara;
 import cn.com.chinalife.ecdata.entity.sale.SaleOrder;
 import cn.com.chinalife.ecdata.service.sale.SaleOrderService;
 import cn.com.chinalife.ecdata.utils.CommonConstant;
+import cn.com.chinalife.ecdata.utils.CommonUtils;
 import cn.com.chinalife.ecdata.utils.DataSourceContextHolder;
 import cn.com.chinalife.ecdata.utils.ExcelUtils;
 import com.alibaba.fastjson.JSON;
@@ -47,7 +48,7 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         lists.add(saleOrderListOfProduct);
         List<SaleOrder> saleOrderListOfSource = saleOrderDao.getSaleOrderListOfSource(queryPara);
         lists.add(saleOrderListOfSource);
-        logger.info("service返回结果为 {}", JSON.toJSONString(saleOrderListOfProduct));
+        logger.info("service返回结果为 {}", JSON.toJSONString(lists));
         return lists;
     }
 
@@ -77,8 +78,41 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         columnFieldMap.put("保费金额", "totalPremium");
         fieldTypeMap.put("totalPremium", ExcelUtils.DOUBLE_FORMAT);
         columnFieldMap.put("支付状态", "payStatus");
+        columnFieldMap.put("订单状态", "orderStatus");
         columnFieldMap.put("数据提取日期", "extractionDate");
         return ExcelUtils.getWorkBook(columnFieldMap, fieldTypeMap, dataBeanList, null);
+    }
+
+    public List<List<SaleOrder>> getApplicantAttributeList(QueryPara queryPara) {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(queryPara));
+        List<List<SaleOrder>> lists = new ArrayList<List<SaleOrder>>();
+        DataSourceContextHolder.setDbType(CommonConstant.saleStatisticsDataSource);
+        queryPara.setWhereCondition(CommonUtils.getWhereConditionUsingPara(queryPara.getWhereCondition()));
+        queryPara.setWhereCondition1(CommonUtils.getWhereConditionUsingPara(queryPara.getWhereCondition1()));
+        List<SaleOrder> saleOrderListOfSex = saleOrderDao.getSaleOrderListOfSex(queryPara);
+        lists.add(saleOrderListOfSex);
+        List<SaleOrder> saleOrderListOfAge = saleOrderDao.getSaleOrderListOfAge(queryPara);
+        lists.add(saleOrderListOfAge);
+        List<SaleOrder> saleOrderListOfRelation = saleOrderDao.getSaleOrderListOfRelation(queryPara);
+        lists.add(saleOrderListOfRelation);
+        logger.info("service返回结果为 {}", JSON.toJSONString(lists));
+        return lists;
+    }
+
+    public List<SaleOrder> getAllProductList() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        DataSourceContextHolder.setDbType(CommonConstant.saleStatisticsDataSource);
+        List<SaleOrder> saleOrderList = saleOrderDao.getAllProductList();
+        logger.info("service返回结果为 {}", JSON.toJSONString(saleOrderList));
+        return saleOrderList;
+    }
+
+    public List<SaleOrder> getAllSourceList() {
+        logger.info("controller传入的参数为 {}", JSON.toJSONString(null));
+        DataSourceContextHolder.setDbType(CommonConstant.saleStatisticsDataSource);
+        List<SaleOrder> saleOrderList = saleOrderDao.getAllSourceList();
+        logger.info("service返回结果为 {}", JSON.toJSONString(saleOrderList));
+        return saleOrderList;
     }
 
 }

@@ -6,7 +6,9 @@ import java.math.BigDecimal;
  * Created by xiexiangyu on 2019/5/8.
  */
 public class SaleOrder {
+    private String productId;
     private String productName;
+    private String sourceId;
     private String source;
     private String orderId;
     private String personName;
@@ -14,12 +16,15 @@ public class SaleOrder {
     private String certificateNo;
     private String sex;
     private Integer age;
+    private String ageSegment;
+    private String relation;
     private String orderDate;
     private String startDate;
     private String mobilePhone;
     private String email;
     private String extractionDate;
     private String payStatus;
+    private String orderStatus;
     private BigDecimal totalPremium;
     private BigDecimal totalPremium1;
     private BigDecimal totalPremium2;
@@ -28,6 +33,15 @@ public class SaleOrder {
     private BigDecimal totalPremium5;
     private BigDecimal totalPremium6;
     private BigDecimal totalPremium7;
+    private Integer orderNum;
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
 
     public String getProductName() {
         return productName;
@@ -35,6 +49,14 @@ public class SaleOrder {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public String getSource() {
@@ -89,6 +111,22 @@ public class SaleOrder {
         return age;
     }
 
+    public String getAgeSegment() {
+        return ageSegment;
+    }
+
+    public void setAgeSegment(String ageSegment) {
+        this.ageSegment = ageSegment;
+    }
+
+    public String getRelation() {
+        return relation;
+    }
+
+    public void setRelation(String relation) {
+        this.relation = relation;
+    }
+
     public void setAge(Integer age) {
         this.age = age;
     }
@@ -139,6 +177,14 @@ public class SaleOrder {
 
     public void setPayStatus(String payStatus) {
         this.payStatus = payStatus;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public BigDecimal getTotalPremium() {
@@ -203,5 +249,13 @@ public class SaleOrder {
 
     public void setTotalPremium7(BigDecimal totalPremium7) {
         this.totalPremium7 = totalPremium7;
+    }
+
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
     }
 }
