@@ -41,6 +41,8 @@ public class SaleOrderController {
             model.addAttribute("endDate", queryPara.getEndDate());
             List<String> dateList = DateUtils.getDateList(DateUtils.getBeforeXDay(7), DateUtils.getBeforeXDay(1));
             model.addAttribute("dates", JSON.toJSONString(dateList));
+            List<SaleOrder> statusList = saleOrderService.getAllStatusList();
+            model.addAttribute("statusList", JSON.toJSONString(statusList));
             model.addAttribute("jsVersion", CommonConstant.jsVersion);
             responseBean.setDetailInfo(model);
         } catch (Exception e) {
@@ -89,6 +91,8 @@ public class SaleOrderController {
             model.addAttribute("productList", JSON.toJSONString(productList));
             List<SaleOrder> sourceList = saleOrderService.getAllSourceList();
             model.addAttribute("sourceList", JSON.toJSONString(sourceList));
+            List<SaleOrder> statusList = saleOrderService.getAllStatusList();
+            model.addAttribute("statusList", JSON.toJSONString(statusList));
             model.addAttribute("jsVersion", CommonConstant.jsVersion);
             responseBean.setDetailInfo(model);
         } catch (Exception e) {

@@ -96,8 +96,8 @@ public class DateUtils {
 
 
     public static void main(String[] args) throws ParseException {
-        System.out.println(getDaySpanBetweenStartAndEnd("2018-01-01","2018-01-06"));
-        System.out.println(addXDateBasedGivenDate("2018-01-01",1));
+        System.out.println(getDaySpanBetweenStartAndEnd("2018-01-01", "2018-01-06"));
+        System.out.println(getBeforeXDay(0));
     }
 
 }

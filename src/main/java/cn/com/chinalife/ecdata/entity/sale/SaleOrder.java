@@ -24,6 +24,7 @@ public class SaleOrder {
     private String email;
     private String extractionDate;
     private String payStatus;
+    private String orderStatusId;
     private String orderStatus;
     private BigDecimal totalPremium;
     private BigDecimal totalPremium1;
@@ -177,6 +178,14 @@ public class SaleOrder {
 
     public void setPayStatus(String payStatus) {
         this.payStatus = payStatus;
+    }
+
+    public String getOrderStatusId() {
+        return orderStatusId;
+    }
+
+    public void setOrderStatusId(String orderStatusId) {
+        this.orderStatusId = orderStatusId;
     }
 
     public String getOrderStatus() {

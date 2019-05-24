@@ -24,4 +24,6 @@ public interface SaleOrderService {
     List<SaleOrder> getAllProductList();
 
     List<SaleOrder> getAllSourceList();
+
+    List<SaleOrder> getAllStatusList();
 }

@@ -16,7 +16,7 @@
     <button type="button" style="width:280px;" class="btn btn-info" data-toggle="popover" data-trigger="hover"
             data-container="body" data-toggle="popover" data-placement="bottom"
             title="账号帮助" data-html="true"
-            data-content="联系人：信息技术部-解翔宇<br/>电话：010-83574831">账号帮助
+            data-content="联系人：销售公司运营中心-解翔宇<br/>电话：010-83574706">账号帮助
     </button><br/><br/>
     <button type="button" style="width:280px;" class="btn btn-danger" id="close">关闭
     </button>

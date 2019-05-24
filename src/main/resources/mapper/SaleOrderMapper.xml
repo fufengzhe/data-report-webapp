@@ -3,28 +3,34 @@
 <mapper namespace="cn.com.chinalife.ecdata.dao.sqlDao.sale.SaleOrderDao">
 
     <select id="getSaleOrderListOfProduct" resultType="SaleOrder" parameterType="QueryPara">
-        SELECT dp.product_name productName,round(sum(ob.total_premium)/100,2) totalPremium
+        SELECT dp.product_name productName,count(*) orderNum,round(sum(ob.total_premium)/100,2) totalPremium
         FROM f_order.order_base ob
-        INNER JOIN f_order.dic_product dp ON ob.product_id = dp.product_id AND ob.paid_flag='1'
+        INNER JOIN f_order.dic_product dp ON ob.product_id = dp.product_id
         <![CDATA[
 			       AND ob.create_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
         <![CDATA[
 			       AND ob.create_time <= concat(#{endDate},' 23:59:59')
 		        ]]>
+        <if test="whereCondition != null and whereCondition != ''">
+            AND ob.order_state IN ${whereCondition}
+        </if>
         GROUP BY productName ORDER BY totalPremium DESC
     </select>
 
     <select id="getSaleOrderListOfSource" resultType="SaleOrder" parameterType="QueryPara">
-        SELECT  dc.name source,round(sum(ob.total_premium)/100,2) totalPremium
+        SELECT dc.name source,count(*) orderNum,round(sum(ob.total_premium)/100,2) totalPremium
         FROM f_order.order_base ob
-        INNER JOIN f_order.dic_channel dc ON ob.source = dc.id AND ob.paid_flag='1'
+        INNER JOIN f_order.dic_channel dc ON ob.source = dc.id
         <![CDATA[
 			       AND ob.create_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
         <![CDATA[
 			       AND ob.create_time <= concat(#{endDate},' 23:59:59')
 		        ]]>
+        <if test="whereCondition != null and whereCondition != ''">
+            AND ob.order_state IN ${whereCondition}
+        </if>
         GROUP BY source ORDER BY totalPremium DESC
     </select>
 
@@ -39,13 +45,16 @@
         round(SUM( CASE WHEN date(create_time) = date(CURDATE()-2) THEN ob.total_premium ELSE 0 END)/100,2) totalPremium2,
         round(SUM( CASE WHEN date(create_time) = date(CURDATE()-1) THEN ob.total_premium ELSE 0 END)/100,2) totalPremium1
         FROM f_order.order_base ob
-        INNER JOIN f_order.dic_product dp ON ob.product_id = dp.product_id AND ob.paid_flag='1'
+        INNER JOIN f_order.dic_product dp ON ob.product_id = dp.product_id
         <![CDATA[
 			      AND ob.create_time >= concat(date(CURDATE()-7),' 00:00:00')
 		        ]]>
         <![CDATA[
                   AND ob.create_time <= concat(date(CURDATE()-1),' 23:59:59')
         ]]>
+        <if test="whereCondition != null and whereCondition != ''">
+            AND ob.order_state IN ${whereCondition}
+        </if>
         GROUP BY productName
     </select>
 
@@ -54,13 +63,9 @@
         CASE WHEN opi.sex = 'M' THEN '男' WHEN opi.sex = 'F' THEN '女' ELSE '未知' END sex,opi.age age,date(ob.create_time) orderDate,
         ob.start_date startDate,opi.mobile mobilePhone,opi.email email,round(ob.total_premium/100,2) totalPremium,
         CASE WHEN ob.paid_flag IS NULL THEN '未支付' WHEN ob.paid_flag='1' THEN '支付成功' WHEN ob.paid_flag='0' THEN '支付失败' ELSE '未知状态' END payStatus,
-        CASE
-        WHEN ob.order_state='00' THEN '待编辑(暂存)' WHEN ob.order_state='01' THEN '待核保(已提交保单不可编辑)' WHEN ob.order_state='02' THEN '核保中'
-        WHEN ob.order_state='03' THEN '核保失败(结束)' WHEN ob.order_state='04' THEN '删除(结束)' WHEN ob.order_state='05' THEN '待支付(核保成功，支付失败)'
-        WHEN ob.order_state='06' THEN '未完成(说明：团险创建)' WHEN ob.order_state='07' THEN '待出单(支付成功)' WHEN ob.order_state='08' THEN '支付过期(结束)'
-        WHEN ob.order_state='09' THEN '出单成功' WHEN ob.order_state='10' THEN '待撤单' WHEN ob.order_state='11' THEN '待退款'
-        WHEN ob.order_state='12' THEN '撤销(结束)' WHEN ob.order_state='13' THEN '结束'
-        ELSE '未知状态' END orderStatus,
+        CASE  WHEN  ds.name IS NULL THEN ob.order_state
+        WHEN  ds.name IS NOT NULL  AND ds.memo IS NULL THEN ds.name
+        WHEN ds.NAME IS NOT NULL AND ds.memo IS NOT NULL THEN concat(ds.name,'(',ds.memo,')') END orderStatus,
         CURDATE() extractionDate
         FROM f_order.order_base ob
         INNER JOIN f_order.order_plc_ins opi ON ob.order_id = opi.order_id AND opi.insurer_flag='2'
@@ -72,6 +77,7 @@
         ]]>
         LEFT JOIN f_order.dic_channel dc ON ob.source = dc.id
         LEFT JOIN f_order.dic_certificate dce ON opi.identify_type = dce.id
+        LEFT JOIN f_order.dic_state ds ON ob.order_state=ds.id
         GROUP BY orderId
     </select>
 
@@ -85,9 +91,15 @@
         FROM f_order.dic_channel
     </select>
 
+    <select id="getAllStatusList" resultType="SaleOrder" parameterType="QueryPara">
+        SELECT id orderStatusId,CASE WHEN memo is NULL THEN name WHEN memo IS NOT NULL THEN concat(name,'(',memo,')') END orderStatus
+        FROM f_order.dic_state;
+    </select>
+
     <select id="getSaleOrderListOfSex" resultType="SaleOrder" parameterType="QueryPara">
         select CASE WHEN opi.sex = 'M' THEN '男' WHEN opi.sex = 'F' THEN '女' ELSE '未知' END sex,count(*) orderNum
-        FROM f_order.order_base ob INNER JOIN f_order.order_plc_ins opi ON ob.order_id = opi.order_id AND opi.insurer_flag = '2'
+        FROM f_order.order_base ob INNER JOIN f_order.order_plc_ins opi ON ob.order_id = opi.order_id AND
+        opi.insurer_flag = '2'
         <![CDATA[
 			      AND ob.create_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
@@ -99,17 +111,25 @@
         </if>
         <if test="whereCondition1 != null and whereCondition1 != ''">
             AND ob.source IN ${whereCondition1}
+        </if>
+        <if test="whereCondition2 != null and whereCondition2 != ''">
+            AND ob.order_state IN ${whereCondition2}
         </if>
         GROUP BY sex ORDER BY orderNum DESC
     </select>
 
     <select id="getSaleOrderListOfAge" resultType="SaleOrder" parameterType="QueryPara">
-        select  CASE WHEN opi.age BETWEEN 0 AND 10 THEN '0~10' WHEN opi.age BETWEEN 11 AND 15 THEN '11~15' WHEN opi.age BETWEEN 16 AND 20 THEN '16~20'
-        WHEN opi.age BETWEEN 21 AND 25 THEN '21~25' WHEN opi.age BETWEEN 26 AND 30 THEN '26~30' WHEN opi.age BETWEEN 31 AND 35 THEN '31~35'
-        WHEN opi.age BETWEEN 36 AND 40 THEN '36~40' WHEN opi.age BETWEEN 41 AND 45 THEN '41~45' WHEN opi.age BETWEEN 46 AND 50 THEN '46~50'
-        WHEN opi.age BETWEEN 51 AND 55 THEN '51~55' WHEN opi.age BETWEEN 56 AND 60 THEN '56~60' WHEN opi.age BETWEEN 61 AND 65 THEN '61~65'
+        select CASE WHEN opi.age BETWEEN 0 AND 10 THEN '0~10' WHEN opi.age BETWEEN 11 AND 15 THEN '11~15' WHEN opi.age
+        BETWEEN 16 AND 20 THEN '16~20'
+        WHEN opi.age BETWEEN 21 AND 25 THEN '21~25' WHEN opi.age BETWEEN 26 AND 30 THEN '26~30' WHEN opi.age BETWEEN 31
+        AND 35 THEN '31~35'
+        WHEN opi.age BETWEEN 36 AND 40 THEN '36~40' WHEN opi.age BETWEEN 41 AND 45 THEN '41~45' WHEN opi.age BETWEEN 46
+        AND 50 THEN '46~50'
+        WHEN opi.age BETWEEN 51 AND 55 THEN '51~55' WHEN opi.age BETWEEN 56 AND 60 THEN '56~60' WHEN opi.age BETWEEN 61
+        AND 65 THEN '61~65'
         ELSE '65~' END ageSegment,count(*) orderNum
-        FROM f_order.order_base ob INNER JOIN f_order.order_plc_ins opi ON ob.order_id = opi.order_id AND opi.insurer_flag = '2'
+        FROM f_order.order_base ob INNER JOIN f_order.order_plc_ins opi ON ob.order_id = opi.order_id AND
+        opi.insurer_flag = '2'
         <![CDATA[
 			      AND ob.create_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
@@ -122,12 +142,16 @@
         <if test="whereCondition1 != null and whereCondition1 != ''">
             AND ob.source IN ${whereCondition1}
         </if>
+        <if test="whereCondition2 != null and whereCondition2 != ''">
+            AND ob.order_state IN ${whereCondition2}
+        </if>
         GROUP BY ageSegment ORDER BY orderNum DESC
     </select>
 
     <select id="getSaleOrderListOfRelation" resultType="SaleOrder" parameterType="QueryPara">
-        select  dir.name relation,count(*) orderNum
-        FROM f_order.order_base ob INNER JOIN f_order.order_plc_ins opi ON ob.order_id = opi.order_id AND opi.insurer_flag = '2'
+        select dir.name relation,count(*) orderNum
+        FROM f_order.order_base ob INNER JOIN f_order.order_plc_ins opi ON ob.order_id = opi.order_id AND
+        opi.insurer_flag = '2'
         <![CDATA[
 			      AND ob.create_time >= concat(#{startDate},' 00:00:00')
 		        ]]>
@@ -140,6 +164,9 @@
         </if>
         <if test="whereCondition1 != null and whereCondition1 != ''">
             AND ob.source IN ${whereCondition1}
+        </if>
+        <if test="whereCondition2 != null and whereCondition2 != ''">
+            AND ob.order_state IN ${whereCondition2}
         </if>
         GROUP BY relation ORDER BY orderNum DESC
     </select>

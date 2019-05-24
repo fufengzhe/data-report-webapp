@@ -4,11 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="icon" href="${pageContext.request.contextPath}/static/img/sale_ico.ico" type="img/x-ico"/>
     <title>保单查询分析</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-datetimepicker.min.css"
+          type="text/css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-select.min.css"
           type="text/css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-table.css"
           type="text/css">
@@ -20,6 +23,45 @@
 </head>
 <body>
 <div class="container-fluid text-center">
+    <div class="row panel-heading">
+        <div class='col-sm-2'></div>
+        <div class='col-sm-3'>
+            <div class="form-group">
+                <div class='input-group date text-center'>
+                    <span class="input-group-addon">投保时间</span>
+                    <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    <input type="text" class="form-control" placeholder="时间范围" id="dateRange"/>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-2'>
+            <div class="form-group">
+                <div class='select-group text-center'>
+                    <select id="orderStatus" class="selectpicker" data-live-search="true" multiple>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-1'>
+            <div class="form-group">
+                <div class='input-group date text-center'>
+                    <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="queryDate">开始查询</button>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-2'>
+            <button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图
+            </button>
+            <button class="btn btn-info" onClick="return exportData();">详情导出
+            </button>
+        </div>
+        <div class='col-sm-2'>
+        </div>
+    </div>
     <div class="panel panel-default">
         <div class="panel-heading">
             保费分布
@@ -27,31 +69,6 @@
     </div>
 
     <div class="row">
-        <div class="row panel-heading">
-            <div class='col-sm-3'></div>
-            <div class='col-sm-4'>
-                <div class="form-group">
-                    <div class='input-group date text-center'>
-                        <span class="input-group-addon">投保时间</span>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                        <input type="text" class="form-control" placeholder="时间范围" id="dateRange"/>
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-primary" id="queryDate">开始查询</button>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class='col-sm-2'>
-                <button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图
-                </button>
-                <button class="btn btn-info" onClick="return exportData();">详情导出
-                </button>
-            </div>
-            <div class='col-sm-3'>
-            </div>
-        </div>
         <div class="text-center col-sm-6">
             <div class="alert alert-warning" style="display:none;" id="noDataOfProductPie">无数据，请更改查询条件或联系开发人员。</div>
             <div id="productPieChart" style="height:600px"></div>
@@ -116,6 +133,8 @@
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript"
+        src="${pageContext.request.contextPath}/static/js/bootstrap-select.min.js"></script>
+<script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/bootstrap-table.js"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/static/js/utils/commonUtils.js?ver=${jsVersion}"></script>
@@ -125,7 +144,17 @@
 <script>
     var list =${saleOrderList};
     var dateRange = '${startDate}' + " ~ " + '${endDate}';
+    var statusList =${statusList};
     $("#dateRange").val(dateRange);
+    //初始化状态选择框
+    var saleStatusDom = $("#orderStatus");
+    saleStatusDom.selectpicker({
+        noneSelectedText: '全部状态'
+    });
+    for (var i = 0; i < statusList.length; i++) {
+        saleStatusDom.append("<option value=" + statusList[i].orderStatusId + ">" + statusList[i].orderStatus + "</option>");
+    }
+    saleStatusDom.selectpicker('refresh');
     if (list[0].length == 0) {
         $("#noDataOfProductPie").css('display', 'block');
     } else {
@@ -174,11 +203,13 @@
             var dateRange = $("#dateRange").val();
             var startDate = dateRange.substr(0, 10);
             var endDate = dateRange.substr(13);
+            var whereCondition = $('#orderStatus').selectpicker('val');
             if ("" != startDate.trim() && "" != endDate.trim()) {
                 setButtonDisabled('queryDate', true);
                 $.ajax({
                     url: 'numQuery',
-                    data: {"startDate": startDate, "endDate": endDate},
+                    data: {"startDate": startDate, "endDate": endDate, "whereCondition": whereCondition,},
+                    traditional: true,
                     dataType: "json",
                     success: function (data) {
                         var respCode = data.respCode;
@@ -199,6 +230,15 @@
                                 $("#productPieTable").bootstrapTable('load', list[0]);
                                 $("#sourcePieTable").bootstrapTable('load', list[1]);
                             }
+                            if (list[2].length == 0) {
+                                $("#noDataOfDateTrend").css('display', 'block');
+                                echarts.init(document.getElementById('dateTrendChart')).clear();
+                                $("#dateTrendTable").bootstrapTable('load', []);
+                            } else {
+                                $("#noDataOfDateTrend").css('display', 'none');
+                                trendChart(list[2], dateStrs, "dateTrendChart", "过去七天保费趋势");
+                                $("#dateTrendTable").bootstrapTable('load', list[2]);
+                            }
                         }
                         setButtonDisabled('queryDate', false);
                     }
@@ -206,10 +246,10 @@
             }
         });
     });
-    generateDataTable("productPieTable", [[{"field": "productName"}, {"field": "totalPremium"}],
-        [{"title": "产品名称"}, {"title": "保费"}]])
-    generateDataTable("sourcePieTable", [[{"field": "source"}, {"field": "totalPremium"}],
-        [{"title": "渠道名称"}, {"title": "保费"}]])
+    generateDataTable("productPieTable", [[{"field": "productName"}, {"field": "orderNum"}, {"field": "totalPremium"}],
+        [{"title": "产品名称"}, {"title": "订单量"}, {"title": "保费"}]])
+    generateDataTable("sourcePieTable", [[{"field": "source"}, {"field": "orderNum"}, {"field": "totalPremium"}],
+        [{"title": "渠道名称"}, {"title": "订单量"}, {"title": "保费"}]])
     $("#productPieTable").bootstrapTable('load', list[0]);
     $("#sourcePieTable").bootstrapTable('load', list[1]);
     generateDataTable("dateTrendTable", [[{"field": "productName"}, {"field": "totalPremium7"}, {"field": "totalPremium6"}, {"field": "totalPremium5"},

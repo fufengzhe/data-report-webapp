@@ -29,4 +29,6 @@ public interface SaleOrderDao {
     List<SaleOrder> getSaleOrderListOfAge(QueryPara queryPara);
 
     List<SaleOrder> getSaleOrderListOfRelation(QueryPara queryPara);
+
+    List<SaleOrder> getAllStatusList();
 }

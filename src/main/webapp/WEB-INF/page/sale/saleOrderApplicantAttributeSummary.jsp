@@ -5,6 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0"/>
     <link rel="icon" href="${pageContext.request.contextPath}/static/img/sale_ico.ico" type="img/x-ico"/>
     <title>保单被保人属性分析查询</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" type="text/css">
@@ -24,8 +25,7 @@
 <div class="container-fluid text-center">
 
     <div class="row panel-heading">
-        <div class='col-sm-2'></div>
-        <div class='col-sm-3'>
+        <div class='col-sm-4'>
             <div class="form-group">
                 <div class='input-group date text-center'>
                     <span class="input-group-addon">投保时间</span>
@@ -52,6 +52,14 @@
                 </div>
             </div>
         </div>
+        <div class='col-sm-2'>
+            <div class="form-group">
+                <div class='select-group text-center'>
+                    <select id="orderStatus" class="selectpicker" data-live-search="true" multiple>
+                    </select>
+                </div>
+            </div>
+        </div>
         <div class='col-sm-1'>
             <div class="form-group">
                 <div class='input-group text-center'>
@@ -64,8 +72,6 @@
         <div class='col-sm-1'>
             <button class="btn btn-success" data-toggle="modal" data-target="#pieModal">表格视图
             </button>
-        </div>
-        <div class='col-sm-1'>
         </div>
     </div>
 
@@ -133,6 +139,7 @@
 <script>
     var productList =${productList};
     var sourceList =${sourceList};
+    var statusList =${statusList};
     var list =${applicantAttributeList};
     var dateRange = '${startDate}' + " ~ " + '${endDate}';
     $("#dateRange").val(dateRange);
@@ -154,6 +161,16 @@
         saleSourceDom.append("<option value=" + sourceList[i].sourceId + ">" + sourceList[i].source + "</option>");
     }
     saleSourceDom.selectpicker('refresh');
+
+    //初始化状态选择框
+    var saleStatusDom = $("#orderStatus");
+    saleStatusDom.selectpicker({
+        noneSelectedText: '全部状态'
+    });
+    for (var i = 0; i < statusList.length; i++) {
+        saleStatusDom.append("<option value=" + statusList[i].orderStatusId + ">" + statusList[i].orderStatus + "</option>");
+    }
+    saleStatusDom.selectpicker('refresh');
 
     if (list[0].length == 0) {
         $("#noDataOfSexPie").css('display', 'block');
@@ -188,6 +205,7 @@
             var endDate = dateRange.substr(13);
             var whereCondition = $('#orderProduct').selectpicker('val');
             var whereCondition1 = $('#orderSource').selectpicker('val');
+            var whereCondition2 = $('#orderStatus').selectpicker('val');
             if ("" != startDate.trim() && "" != endDate.trim()) {
                 setButtonDisabled('queryDate', true);
                 $.ajax({
@@ -196,7 +214,8 @@
                         "startDate": startDate,
                         "endDate": endDate,
                         "whereCondition": whereCondition,
-                        "whereCondition1": whereCondition1
+                        "whereCondition1": whereCondition1,
+                        "whereCondition2": whereCondition2
                     },
                     traditional: true,
                     dataType: "json",
